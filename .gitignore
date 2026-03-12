@@ -1,0 +1,38 @@
+# Environment — NEVER commit
+.env
+.env.*
+*.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Data — large files, not for version control
+data/processed/
+data/processed_nigeria/
+data/raw/
+data/downloads/
+notebooks/.ipynb_checkpoints/
+
+# Credentials / keys
+*.key
+*.pem
+*.p12
+secrets.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — InsightsAfrica</title>
+  <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0f1e;
+      --bg-card:   #0d1527;
+      --bg-input:  #0a1020;
+      --border:    #1e3a5f;
+      --border-f:  #3b82f6;
+      --accent:    #3b82f6;
+      --accent-2:  #06b6d4;
+      --green:     #22c55e;
+      --red:       #ef4444;
+      --text-1:    #f1f5f9;
+      --text-2:    #94a3b8;
+      --text-3:    #475569;
+      --text-4:    #334155;
+      --font-d:    'Syne', system-ui, sans-serif;
+      --font-m:    'DM Mono', monospace;
+      --font-b:    'Segoe UI', system-ui, sans-serif;
+    }
+
+    [data-theme="light"] {
+      --bg:        #f1f5f9;
+      --bg-card:   #ffffff;
+      --bg-input:  #f8fafc;
+      --border:    #e2e8f0;
+      --border-f:  #2563eb;
+      --accent:    #2563eb;
+      --text-1:    #0f172a;
+      --text-2:    #475569;
+      --text-3:    #64748b;
+      --text-4:    #94a3b8;
+    }
+
+    body {
+      font-family: var(--font-b);
+      background: var(--bg); color: var(--text-1);
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 1.5rem; position: relative; overflow: hidden;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: radial-gradient(circle, rgba(59,130,246,0.1) 1px, transparent 1px);
+      background-size: 30px 30px; pointer-events: none;
+    }
+
+    .glow { position: fixed; border-radius: 50%; pointer-events: none; }
+    .glow-r { top: -10%; right: -5%; width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%); }
+    .glow-l { bottom: -10%; left: -5%; width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(6,182,212,0.05) 0%, transparent 70%); }
+
+    .theme-btn {
+      position: fixed; top: 1.25rem; right: 1.25rem; z-index: 10;
+      background: none; border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text-3); cursor: pointer; padding: 0.3rem 0.55rem;
+      font-size: 0.88rem; line-height: 1; transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-btn:hover { border-color: var(--accent); color: var(--text-1); }
+
+    .back-link {
+      position: fixed; top: 1.25rem; left: 1.25rem; z-index: 10;
+      font-size: 0.78rem; color: var(--text-3); text-decoration: none;
+      display: flex; align-items: center; gap: 0.4rem; transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    .card-wrap {
+      width: 100%; max-width: 420px; position: relative; z-index: 1;
+      animation: fadein 0.5s ease both;
+    }
+    @keyframes fadein { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+    .brand-header {
+      display: flex; flex-direction: column; align-items: center;
+      margin-bottom: 1.75rem; gap: 0.55rem;
+    }
+    .brand-logo {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    }
+    .brand-logo svg { width: 20px; height: 25px; fill: white; }
+    .brand-name { font-family: var(--font-d); font-size: 1.25rem; font-weight: 800; color: var(--text-1); letter-spacing: -0.02em; }
+    .brand-tag  { font-size: 0.67rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 2rem;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.32);
+    }
+    [data-theme="light"] .card { box-shadow: 0 8px 40px rgba(0,0,0,0.07); }
+
+    .card-title { font-family: var(--font-d); font-size: 1.12rem; font-weight: 800; color: var(--text-1); letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+    .card-sub   { font-size: 0.79rem; color: var(--text-3); margin-bottom: 1.7rem; line-height: 1.5; }
+
+    .tabs { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 1.7rem; }
+    .tab  { flex: 1; padding: 0.55rem; font-size: 0.82rem; font-weight: 600; background: none; border: none; cursor: pointer; color: var(--text-3); transition: background 0.15s, color 0.15s; }
+    .tab.active { background: var(--accent); color: white; }
+    .tab:not(.active):hover { background: rgba(59,130,246,0.08); color: var(--text-1); }
+
+    .alert { padding: 0.72rem 0.95rem; border-radius: 8px; font-size: 0.8rem; line-height: 1.5; margin-bottom: 1.15rem; display: none; }
+    .alert.show { display: block; }
+    .alert-err { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.28); color: #fca5a5; }
+    .alert-ok  { background: rgba(34,197,94,0.1);  border: 1px solid rgba(34,197,94,0.28);  color: #86efac; }
+
+    .field { margin-bottom: 1.05rem; }
+    .field label { display: block; font-size: 0.73rem; font-weight: 600; color: var(--text-2); margin-bottom: 0.42rem; }
+    .input-wrap { position: relative; }
+    .field input {
+      width: 100%; padding: 0.7rem 1rem; font-size: 0.87rem; font-family: var(--font-b);
+      background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text-1); outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .field input:focus { border-color: var(--border-f); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+    .field input::placeholder { color: var(--text-4); }
+    .pw-input { padding-right: 4.5rem !important; }
+
+
+    .pw-btn {
+      position: absolute; right: 0.8rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      font-size: 0.73rem; color: var(--text-3); font-family: var(--font-m);
+      padding: 0.18rem 0.38rem; border-radius: 4px; transition: color 0.15s;
+    }
+    .pw-btn:hover { color: var(--accent); }
+
+    .remember-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.45rem; }
+    .remember-lbl { display: flex; align-items: center; gap: 0.5rem; font-size: 0.79rem; color: var(--text-2); cursor: pointer; }
+    .remember-lbl input { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
+    .forgot-a { font-size: 0.77rem; color: var(--accent); text-decoration: none; transition: opacity 0.15s; }
+    .forgot-a:hover { opacity: 0.75; }
+
+    .btn-submit {
+      width: 100%; padding: 0.78rem; font-size: 0.9rem; font-weight: 700; font-family: var(--font-b);
+      background: var(--accent); color: white; border: none; border-radius: 9px;
+      cursor: pointer; transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-submit:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(59,130,246,0.28); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 0.38rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .card-foot { margin-top: 1.4rem; text-align: center; font-size: 0.77rem; color: var(--text-3); }
+    .card-foot a { color: var(--accent); text-decoration: none; }
+    .card-foot a:hover { text-decoration: underline; }
+
+    .privacy { margin-top: 1.4rem; text-align: center; font-size: 0.67rem; color: var(--text-4); font-family: var(--font-m); }
+    .privacy a { color: var(--text-3); text-decoration: none; }
+    .privacy a:hover { color: var(--accent); }
+
+    /* Forgot password panel */
+    .reset-sent { text-align: center; padding: 0.25rem 0; }
+    .reset-sent .envelope { font-size: 2rem; margin-bottom: 0.65rem; }
+    .reset-sent p { font-size: 0.84rem; color: var(--text-2); line-height: 1.65; }
+
+    /* ── Thank You panel ── */
+    #thankyou-panel { animation: fadein 0.55s ease both; }
+    .ty-icon { font-size: 2.4rem; text-align: center; margin-bottom: 1.1rem; }
+    .ty-headline {
+      font-family: var(--font-d); font-size: 1.3rem; font-weight: 800;
+      color: var(--text-1); letter-spacing: -0.03em;
+      text-align: center; margin-bottom: 1rem;
+    }
+    .ty-quote {
+      font-style: italic; font-size: 0.82rem; color: var(--accent-2);
+      text-align: center; border-left: 2px solid var(--accent-2);
+      padding: 0.5rem 1rem; margin: 0 0 1.25rem;
+      background: rgba(6,182,212,0.05); border-radius: 0 6px 6px 0;
+      line-height: 1.6;
+    }
+    .ty-body { font-size: 0.82rem; color: var(--text-2); line-height: 1.72; margin-bottom: 0.9rem; }
+    .ty-body strong { color: var(--text-1); }
+    .ty-email-note {
+      display: flex; align-items: flex-start; gap: 0.85rem;
+      background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 10px; padding: 1rem; margin: 1.25rem 0 1.5rem;
+    }
+    .ty-email-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .ty-email-title { font-size: 0.82rem; font-weight: 700; color: var(--text-1); margin-bottom: 0.25rem; }
+    .ty-email-sub   { font-size: 0.78rem; color: var(--text-2); line-height: 1.55; }
+    .ty-btn { display: block; text-align: center; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<div class="glow glow-r"></div>
+<div class="glow glow-l"></div>
+
+<a href="index.html" class="back-link">&larr; Back to InsightsAfrica</a>
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#9728;</button>
+
+<div class="card-wrap">
+
+  <!-- Brand -->
+  <div class="brand-header">
+    <div class="brand-logo">
+      <svg viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5,1 L9,0 L13,1.5 L15,5 L15.5,9 L15,13 L14,16 L12,18.5 L9,20 L7,19.5 L5,17.5 L3,14 L2,10 L2,6 L3,3 Z"/>
+      </svg>
+    </div>
+    <div class="brand-name">InsightsAfrica</div>
+    <div class="brand-tag">Satellite Intelligence Platform</div>
+  </div>
+
+  <div class="card">
+
+    <!-- ── AUTH PANEL ── -->
+    <div id="auth-panel">
+      <div class="card-title" id="card-title">Sign in to InsightsAfrica</div>
+      <div class="card-sub"  id="card-sub">Access satellite intelligence for Ghana and West Africa.</div>
+
+      <div class="tabs">
+        <button class="tab active" id="tab-in"  onclick="setMode('login')">Sign In</button>
+        <button class="tab"        id="tab-up"  onclick="setMode('signup')">Create Account</button>
+      </div>
+
+      <div class="alert alert-err" id="alert-err"></div>
+      <div class="alert alert-ok"  id="alert-ok"></div>
+
+      <form id="auth-form" onsubmit="handleSubmit(event)" novalidate>
+
+        <div class="field" id="f-name" style="display:none">
+          <label for="inp-name">Full Name</label>
+          <input type="text" id="inp-name" placeholder="e.g. Amara Diallo" autocomplete="name"/>
+        </div>
+
+        <div class="field">
+          <label for="inp-email">Email Address</label>
+          <input type="email" id="inp-email" placeholder="you@example.com" autocomplete="email" required/>
+        </div>
+
+        <div class="field">
+          <label for="inp-pw">Password</label>
+          <div class="input-wrap">
+            <input type="password" id="inp-pw" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" class="pw-input" autocomplete="current-password" required/>
+            <button type="button" class="pw-btn" onclick="togglePw('inp-pw',this)">Show</button>
+          </div>
+        </div>
+
+        <div class="field" id="f-confirm" style="display:none">
+          <label for="inp-confirm">Confirm Password</label>
+          <div class="input-wrap">
+            <input type="password" id="inp-confirm" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" class="pw-input"/>
+            <button type="button" class="pw-btn" onclick="togglePw('inp-confirm',this)">Show</button>
+          </div>
+        </div>
+
+        <div class="remember-row" id="row-remember">
+          <label class="remember-lbl">
+            <input type="checkbox" id="inp-remember" checked/>
+            Keep me signed in
+          </label>
+          <a href="#" class="forgot-a" onclick="showForgot(event)">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btn-submit">Sign In</button>
+      </form>
+
+      <!-- Two pre-built footers toggled by JS -->
+      <div class="card-foot" id="foot-login">
+        Not a member? <a href="#" onclick="setMode('signup'); return false;">Create an InsightsAfrica account.</a>
+      </div>
+      <div class="card-foot" id="foot-signup" style="display:none">
+        Already have an account? <a href="#" onclick="setMode('login'); return false;">Sign in.</a>
+      </div>
+    </div>
+
+    <!-- ── THANK YOU PANEL ── -->
+    <div id="thankyou-panel" style="display:none">
+      <div class="ty-icon">&#9989;</div>
+      <div class="ty-headline">Welcome to InsightsAfrica.</div>
+      <div class="ty-quote">
+        &ldquo;Africa is not a problem to be solved. It is a world to be discovered.&rdquo;
+      </div>
+      <p class="ty-body">
+        You&rsquo;ve just joined a platform built on the belief that <strong>Africa&rsquo;s future
+        belongs to those who can see it clearly</strong> &mdash; not through speculation, but through data.
+        Satellite by satellite. District by district. Season by season.
+      </p>
+      <p class="ty-body">
+        From early flood warnings to food security signals, from mining impact to urban heat &mdash;
+        InsightsAfrica is building the ground truth that governments, businesses, and communities
+        across the continent need to make better decisions. We&rsquo;re glad you&rsquo;re part of it.
+      </p>
+      <div class="ty-email-note">
+        <span class="ty-email-icon">&#9993;</span>
+        <div>
+          <div class="ty-email-title">One last step</div>
+          <div class="ty-email-sub">A confirmation email is on its way. Click the link inside to activate your account, then come back and sign in.</div>
+        </div>
+      </div>
+      <a href="#" onclick="setMode('login'); showPanel('auth'); return false;" class="btn-submit ty-btn" style="padding:0.78rem">
+        Sign In Now &rarr;
+      </a>
+      <div class="card-foot" style="margin-top:1.25rem">
+        <a href="index.html">&larr; Back to InsightsAfrica</a>
+      </div>
+    </div>
+
+    <!-- ── FORGOT PASSWORD PANEL ── -->
+    <div id="forgot-panel" style="display:none">
+      <div class="card-title">Reset your password</div>
+      <div class="card-sub">Enter your email and we&rsquo;ll send a reset link.</div>
+
+      <div class="alert alert-err" id="reset-err"></div>
+
+      <div id="reset-form">
+        <div class="field">
+          <label for="inp-reset-email">Email Address</label>
+          <input type="email" id="inp-reset-email" placeholder="you@example.com"/>
+        </div>
+        <button class="btn-submit" id="btn-reset" onclick="sendReset()">Send Reset Link</button>
+      </div>
+
+      <div id="reset-sent" style="display:none" class="reset-sent">
+        <div class="envelope">&#9993;</div>
+        <p>Check your inbox &mdash; a reset link is on its way.<br>
+          <span style="color:var(--text-4); font-size:0.76rem;">Check spam if it doesn&rsquo;t arrive within a minute.</span>
+        </p>
+      </div>
+
+      <div class="card-foot" style="margin-top:1.2rem">
+        <a href="#" onclick="showAuth(event)">&larr; Back to Sign In</a>
+      </div>
+    </div>
+
+  </div><!-- /card -->
+
+  <div class="privacy">
+    Secured by <a href="https://supabase.com" target="_blank" rel="noopener">Supabase</a>
+    &nbsp;&middot;&nbsp; <a href="#">Privacy Policy</a>
+  </div>
+
+</div>
+
+<script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://ajkpbpiqmsmahzetfxzc.supabase.co',
+    'sb_publishable_yGiG6-hzI0EIY5SCnyR2vw_PTpJ5tLy'
+  );
+
+  // Redirect if already logged in
+  (async () => {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) window.location.href = 'hub.html';
+  })();
+
+  // Theme
+  function toggleTheme() {
+    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('ia-theme', next);
+    document.getElementById('theme-btn').textContent = next === 'dark' ? '\u2600' : '\u263e';
+  }
+  document.getElementById('theme-btn').textContent =
+    document.documentElement.getAttribute('data-theme') === 'dark' ? '\u2600' : '\u263e';
+
+  // Mode
+  let mode = 'login';
+  function setMode(m) {
+    mode = m;
+    const login = m === 'login';
+    document.getElementById('tab-in').classList.toggle('active', login);
+    document.getElementById('tab-up').classList.toggle('active', !login);
+    document.getElementById('f-name').style.display       = login ? 'none' : 'block';
+    document.getElementById('f-confirm').style.display    = login ? 'none' : 'block';
+    document.getElementById('row-remember').style.display = login ? 'flex' : 'none';
+    document.getElementById('foot-login').style.display   = login ? 'block' : 'none';
+    document.getElementById('foot-signup').style.display  = login ? 'none' : 'block';
+    document.getElementById('card-title').textContent     = login ? 'Sign in to InsightsAfrica' : 'Create your account';
+    document.getElementById('card-sub').textContent       = login
+      ? 'Access satellite intelligence for Ghana and West Africa.'
+      : 'Join InsightsAfrica to access the platform.';
+    document.getElementById('btn-submit').textContent     = login ? 'Sign In' : 'Create Account';
+    document.getElementById('inp-pw').autocomplete        = login ? 'current-password' : 'new-password';
+    clearAlerts();
+  }
+
+  // Submit
+  async function handleSubmit(e) {
+    e.preventDefault();
+    clearAlerts();
+    const email = document.getElementById('inp-email').value.trim();
+    const pw    = document.getElementById('inp-pw').value;
+    const btn   = document.getElementById('btn-submit');
+    if (!email || !pw) { showErr('Please fill in all fields.'); return; }
+
+    if (mode === 'signup') {
+      const name    = document.getElementById('inp-name').value.trim();
+      const confirm = document.getElementById('inp-confirm').value;
+      if (!name)          { showErr('Please enter your full name.'); return; }
+      if (pw !== confirm)  { showErr('Passwords do not match.'); return; }
+      if (pw.length < 8)   { showErr('Password must be at least 8 characters.'); return; }
+    }
+
+    setLoading(btn, true);
+    try {
+      if (mode === 'login') {
+        const { error } = await sb.auth.signInWithPassword({ email, password: pw });
+        if (error) throw error;
+        window.location.href = 'hub.html';
+      } else {
+        const name = document.getElementById('inp-name').value.trim();
+
+        const { data, error } = await sb.auth.signUp({
+          email, password: pw,
+          options: { data: { full_name: name } }
+        });
+        if (error) throw error;
+        if (data.session) {
+          window.location.href = 'hub.html';
+        } else {
+          // Show thank you screen — do NOT call setMode() as it clears alerts
+          document.getElementById('auth-form').reset();
+          showPanel('thankyou');
+        }
+      }
+    } catch (err) {
+      showErr(friendly(err.message));
+    } finally {
+      setLoading(btn, false);
+    }
+  }
+
+  // Panel switcher
+  function showPanel(name) {
+    const panels = ['auth-panel', 'forgot-panel', 'thankyou-panel'];
+    panels.forEach(function(id) {
+      document.getElementById(id).style.display = (id === name + '-panel') ? 'block' : 'none';
+    });
+  }
+
+  // Forgot password
+  function showForgot(e) {
+    e.preventDefault();
+    showPanel('forgot');
+  }
+  function showAuth(e) {
+    e.preventDefault();
+    showPanel('auth');
+    document.getElementById('reset-form').style.display = 'block';
+    document.getElementById('reset-sent').style.display = 'none';
+    clearAlerts();
+  }
+  async function sendReset() {
+    const email = document.getElementById('inp-reset-email').value.trim();
+    const btn   = document.getElementById('btn-reset');
+    const errEl = document.getElementById('reset-err');
+    errEl.classList.remove('show');
+    if (!email) { errEl.textContent = 'Please enter your email.'; errEl.classList.add('show'); return; }
+    setLoading(btn, true, 'Send Reset Link');
+    try {
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/login.html?reset=1'
+      });
+      if (error) throw error;
+      document.getElementById('reset-form').style.display = 'none';
+      document.getElementById('reset-sent').style.display = 'block';
+    } catch (err) {
+      errEl.textContent = friendly(err.message);
+      errEl.classList.add('show');
+    } finally {
+      setLoading(btn, false, 'Send Reset Link');
+    }
+  }
+
+  // Helpers
+  function togglePw(id, btn) {
+    const inp = document.getElementById(id);
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.textContent = show ? 'Hide' : 'Show';
+  }
+  function setLoading(btn, loading, label) {
+    btn.disabled = loading;
+    if (loading) {
+      const sp = document.createElement('span');
+      sp.className = 'spinner';
+      btn.textContent = '';
+      btn.appendChild(sp);
+      btn.appendChild(document.createTextNode('Please wait\u2026'));
+    } else {
+      btn.textContent = label || (mode === 'login' ? 'Sign In' : 'Create Account');
+    }
+  }
+  function showErr(msg) {
+    const el = document.getElementById('alert-err');
+    el.textContent = msg; el.classList.add('show');
+  }
+  function showOk(msg) {
+    const el = document.getElementById('alert-ok');
+    el.textContent = msg; el.classList.add('show');
+  }
+  function clearAlerts() {
+    document.getElementById('alert-err').classList.remove('show');
+    document.getElementById('alert-ok').classList.remove('show');
+  }
+  function friendly(msg) {
+    if (!msg) return 'Something went wrong. Please try again.';
+    if (msg.includes('Invalid login'))        return 'Incorrect email or password.';
+    if (msg.includes('Email not confirmed'))   return 'Please confirm your email before signing in.';
+    if (msg.includes('already registered'))    return 'An account with this email already exists. Try signing in.';
+    if (msg.includes('Password should'))       return 'Password must be at least 8 characters.';
+    if (msg.includes('rate limit'))            return 'Too many attempts. Please wait a moment and try again.';
+    return msg;
+  }
+
+  // Handle password recovery redirect
+  if (window.location.search.includes('reset=1')) {
+    sb.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        const newPw = prompt('Enter your new password (min 8 characters):');
+        if (newPw && newPw.length >= 8) {
+          sb.auth.updateUser({ password: newPw }).then(({ error }) => {
+            if (error) alert('Error: ' + error.message);
+            else { alert('Password updated. Signing you in\u2026'); window.location.href = 'hub.html'; }
+          });
+        }
+      }
+    });
+  }
+</script>
+</body>
+</html>

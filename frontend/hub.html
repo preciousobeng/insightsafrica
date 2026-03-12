@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InsightsAfrica — Ghana Intelligence Platform</title>
+  <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0f1e;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background: #0d1527;
+      border-bottom: 1px solid #1e3a5f;
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.85rem; text-decoration: none; }
+
+    .brand-logo {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      border-radius: 8px;
+    }
+
+    .brand-name {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #f1f5f9;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-tagline {
+      font-size: 0.65rem;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .header-right {
+      font-size: 0.75rem;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* ── Country switcher pill ── */
+    .country-switcher {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      background: #0a0f1e;
+      border: 1px solid #1e3a5f;
+      border-radius: 99px;
+      overflow: hidden;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .cs-item {
+      padding: 0.28rem 0.75rem;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .cs-item.active {
+      background: #1e3a5f;
+      color: #38bdf8;
+      cursor: default;
+    }
+    .cs-item.link {
+      color: #475569;
+    }
+    .cs-item.link:hover {
+      background: rgba(59,130,246,0.1);
+      color: #94a3b8;
+    }
+    .cs-divider {
+      color: #1e3a5f;
+      font-size: 0.9rem;
+      line-height: 1;
+      user-select: none;
+    }
+    [data-theme="light"] .country-switcher { background: #f8fafc; border-color: #e2e8f0; }
+    [data-theme="light"] .cs-item.active   { background: #dbeafe; color: #1d4ed8; }
+    [data-theme="light"] .cs-item.link     { color: #64748b; }
+    [data-theme="light"] .cs-item.link:hover { background: rgba(37,99,235,0.07); color: #1e293b; }
+    [data-theme="light"] .cs-divider       { color: #cbd5e1; }
+
+    /* Country banner */
+    .country-banner {
+      background: linear-gradient(135deg, #0d1527 0%, #0f2040 100%);
+      border-bottom: 1px solid #1e3a5f;
+      padding: 2.5rem 2rem 2rem;
+    }
+
+    .country-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #1e3a5f;
+      border: 1px solid #2d5a8f;
+      border-radius: 99px;
+      padding: 0.3rem 0.85rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .country-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #f1f5f9;
+      letter-spacing: -0.04em;
+      margin-bottom: 0.5rem;
+    }
+
+    .country-title span { color: #38bdf8; }
+
+    .country-desc {
+      font-size: 0.9rem;
+      color: #64748b;
+      max-width: 560px;
+      line-height: 1.6;
+    }
+
+    /* Product grid */
+    .products-section {
+      padding: 2rem;
+      flex: 1;
+    }
+
+    .section-heading {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #3b82f6;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 1.25rem;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .product-card {
+      background: #0d1527;
+      border: 1px solid #1e3a5f;
+      border-radius: 14px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s, transform 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .product-card:hover {
+      border-color: #3b82f6;
+      transform: translateY(-2px);
+    }
+
+    .product-card.coming-soon {
+      opacity: 0.5;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .card-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .card-icon.blue  { background: rgba(59,130,246,0.15); }
+    .card-icon.amber { background: rgba(245,158,11,0.15); }
+    .card-icon.green { background: rgba(34,197,94,0.15); }
+    .card-icon.red   { background: rgba(239,68,68,0.15); }
+
+    .card-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #475569;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: -0.02em;
+    }
+
+    .card-desc {
+      font-size: 0.82rem;
+      color: #64748b;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.75rem;
+      border-top: 1px solid #1e2d45;
+    }
+
+    .card-status {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 99px;
+    }
+
+    .status-live    { background: rgba(34,197,94,0.15);  color: #22c55e; }
+    .status-beta    { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .status-soon    { background: rgba(71,85,105,0.3);   color: #64748b; }
+
+    .card-arrow {
+      font-size: 0.85rem;
+      color: #3b82f6;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid #1e2d45;
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-brand {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    .footer-note {
+      font-size: 0.7rem;
+      color: #334155;
+    }
+
+    /* ── Theme toggle ── */
+    .theme-toggle {
+      background: none; border: 1px solid #1e3a5f; border-radius: 6px;
+      color: #475569; cursor: pointer; font-size: 0.85rem;
+      padding: 0.2rem 0.5rem; line-height: 1;
+      transition: border-color 0.15s, color 0.15s; margin-left: 0.75rem;
+    }
+    .theme-toggle:hover { border-color: #3b82f6; color: #e2e8f0; }
+
+    /* ── Light theme ── */
+    [data-theme="light"] body { background: #f1f5f9; color: #1e293b; }
+    [data-theme="light"] header { background: #ffffff; border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .brand-name { color: #0f172a; }
+    [data-theme="light"] .brand-tagline { color: #64748b; }
+    [data-theme="light"] .header-right { color: #64748b; }
+    [data-theme="light"] .theme-toggle { border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .theme-toggle:hover { border-color: #3b82f6; color: #0f172a; }
+    [data-theme="light"] .country-banner { background: linear-gradient(135deg,#ffffff 0%,#eff6ff 100%); border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .country-pill { background: #dbeafe; border-color: #93c5fd; color: #1d4ed8; }
+    [data-theme="light"] .country-title { color: #0f172a; }
+    [data-theme="light"] .country-title span { color: #2563eb; }
+    [data-theme="light"] .country-desc { color: #475569; }
+    [data-theme="light"] .section-heading { color: #2563eb; }
+    [data-theme="light"] .product-card { background: #ffffff; border-color: #e2e8f0; }
+    [data-theme="light"] .product-card:hover { border-color: #3b82f6; }
+    [data-theme="light"] .card-label { color: #64748b; }
+    [data-theme="light"] .card-title { color: #0f172a; }
+    [data-theme="light"] .card-desc { color: #475569; }
+    [data-theme="light"] .card-footer { border-top-color: #e2e8f0; }
+    [data-theme="light"] footer { border-top-color: #e2e8f0; }
+    [data-theme="light"] .footer-brand { color: #475569; }
+    [data-theme="light"] .footer-note { color: #64748b; }
+
+    /* ── Mobile ── */
+    @media (max-width: 767px) {
+      header { padding: 0 1rem; }
+      .brand-tagline { display: none; }
+      /* On small screens: hide the switcher label text, keep icon portion readable */
+      .country-switcher { font-size: 0.65rem; }
+      .cs-item { padding: 0.25rem 0.5rem; }
+
+      .country-banner { padding: 1.5rem 1rem 1.25rem; }
+      .country-title  { font-size: 1.6rem; }
+      .country-desc   { font-size: 0.85rem; }
+
+      .products-section { padding: 1.25rem 1rem; }
+      .product-grid { grid-template-columns: 1fr; gap: 0.85rem; }
+
+      footer {
+        flex-direction: column;
+        gap: 0.35rem;
+        padding: 1rem;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand">
+      <div class="brand-logo"></div>
+      <div>
+        <div class="brand-name">InsightsAfrica</div>
+        <div class="brand-tagline">Satellite Intelligence Platform</div>
+      </div>
+    </a>
+    <div class="header-right">
+      <a href="/" style="font-size:0.75rem;color:#475569;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#475569'">&larr; Home</a>
+      <div class="country-switcher" title="Switch country hub">
+        <span class="cs-item active">&#127468;&#127469; Ghana</span>
+        <span class="cs-divider">&#124;</span>
+        <a class="cs-item link" href="/nigeria/hub.html">&#127475;&#127468; Nigeria</a>
+      </div>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
+    </div>
+  </header>
+
+  <div class="country-banner">
+    <div class="country-pill">&#127468;&#127469; Ghana</div>
+    <h1 class="country-title">Ghana <span>Intelligence Hub</span></h1>
+    <p class="country-desc">
+      Real-time and historical satellite intelligence for Ghana's most critical
+      environmental, agricultural, and infrastructure challenges — built on open data,
+      hosted on cloud, actionable for business and government.
+    </p>
+  </div>
+
+  <section class="products-section">
+    <div class="section-heading">Available Products</div>
+
+    <div class="product-grid">
+
+      <a href="/flood/" class="product-card">
+        <div class="card-icon blue">&#127783;</div>
+        <div>
+          <div class="card-label">Hydrology</div>
+          <div class="card-title">FloodWatch</div>
+        </div>
+        <p class="card-desc">
+          Monthly rainfall intelligence across all 16 regions and 260 districts.
+          CHIRPS satellite data, year-on-year comparison, zonal statistics per boundary.
+        </p>
+        <div class="card-footer">
+          <span class="card-status status-live">Live &mdash; 2024&ndash;2025</span>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+      </a>
+
+      <a href="/mine/" class="product-card">
+        <div class="card-icon amber">&#9889;</div>
+        <div>
+          <div class="card-label">Mining &amp; Environment</div>
+          <div class="card-title">MineWatch</div>
+        </div>
+        <p class="card-desc">
+          Sentinel-2 optical change detection for illegal galamsey activity.
+          NDVI and NDWI shift analysis over known mining corridors and water bodies.
+        </p>
+        <div class="card-footer">
+          <span class="card-status status-live">Live &mdash; 2024&ndash;2026</span>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+      </a>
+
+      <a href="/crop/" class="product-card">
+        <div class="card-icon green">&#127807;</div>
+        <div>
+          <div class="card-label">Agriculture</div>
+          <div class="card-title">CropWatch</div>
+        </div>
+        <p class="card-desc">
+          MODIS 250m NDVI 16-day composites for crop stress monitoring and food
+          security risk scoring across Ghana's key farming regions.
+        </p>
+        <div class="card-footer">
+          <span class="card-status status-beta">In Development</span>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+      </a>
+
+      <a href="/heat/" class="product-card">
+        <div class="card-icon red">&#127774;</div>
+        <div>
+          <div class="card-label">Urban Climate</div>
+          <div class="card-title">HeatWatch</div>
+        </div>
+        <p class="card-desc">
+          Urban heat island mapping using Landsat thermal bands.
+          Targeting Accra, Kumasi, and Tamale for city planning and public health use.
+        </p>
+        <div class="card-footer">
+          <span class="card-status status-beta">In Development</span>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-brand">InsightsAfrica &mdash; Ghana</div>
+    <div class="footer-note">
+      Data: CHIRPS, Sentinel-2, MODIS, Landsat &mdash; all open source
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Show logged-in user name if available (no hard gate — content is public)
+    (async () => {
+      const { createClient } = supabase;
+      const sb = createClient(
+        'https://ajkpbpiqmsmahzetfxzc.supabase.co',
+        'sb_publishable_yGiG6-hzI0EIY5SCnyR2vw_PTpJ5tLy'
+      );
+      const { data: { session } } = await sb.auth.getSession();
+      const el = document.querySelector('.header-right span');
+      if (session && el) {
+        const name = session.user.user_metadata?.full_name || session.user.email;
+        el.textContent = name;
+      }
+    })();
+
+    function toggleTheme() {
+      var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ia-theme', next);
+      document.getElementById('theme-toggle').textContent = next === 'dark' ? '\u2600' : '\u263e';
+    }
+    document.getElementById('theme-toggle').textContent =
+      document.documentElement.getAttribute('data-theme') === 'dark' ? '\u2600' : '\u263e';
+  </script>
+</body>
+</html>
