@@ -1,5 +1,7 @@
 # InsightsAfrica — Satellite Intelligence Platform for Africa
 
+[![Licence: CC BY-NC 4.0](https://img.shields.io/badge/Licence-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+
 **Live platform:** [insightsafrica.org](https://insightsafrica.org)
 
 InsightsAfrica is an open-access satellite intelligence platform that monitors environmental risk across Africa. It delivers interactive, data-driven intelligence on **flood risk**, **illegal mining**, **crop health**, and **urban heat** — currently covering **Ghana** and **Nigeria**.
@@ -127,6 +129,16 @@ insightsafrica.org/nigeria/heat/     Nigeria HeatWatch
 
 For research collaboration, data access, or partnership enquiries:
 **info@insightsafrica.org** | [insightsafrica.org](https://insightsafrica.org)
+
+---
+
+## Licence
+
+This project is licensed under [Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/).
+
+You may use, share, and adapt this work for **non-commercial purposes** with attribution. Commercial use requires explicit written permission.
+
+For commercial licensing: **info@insightsafrica.org**
 
 ---
 
