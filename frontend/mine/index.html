@@ -56,7 +56,7 @@
 
     /* Sidebar */
     .sidebar {
-      width: 280px;
+      width: 320px;
       background: #0d1527;
       border-right: 1px solid #1e3a5f;
       display: flex;
@@ -66,7 +66,7 @@
     }
 
     .sidebar-section {
-      padding: 1.25rem;
+      padding: 1.5rem;
       border-bottom: 1px solid #1e2d45;
     }
 
@@ -229,6 +229,19 @@
     @media (max-width: 767px) {
       [data-theme="light"] .sidebar { border-top-color: #e2e8f0; }
     }
+  
+    /* ── Download buttons ── */
+    .download-buttons { display: flex; flex-direction: column; gap: 6px; }
+    .dl-btn {
+      display: block; padding: 7px 12px;
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 6px; color: #10b981; font-size: 12px;
+      text-decoration: none; text-align: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .dl-btn:hover { background: rgba(16,185,129,0.2); border-color: #10b981; }
+    [data-theme="light"] .dl-btn { background: #f0fdf4; border-color: #bbf7d0; color: #059669; }
+    [data-theme="light"] .dl-btn:hover { background: #dcfce7; border-color: #6ee7b7; }
   </style>
 </head>
 <body>
@@ -329,7 +342,15 @@
         </div>
       </div>
 
-    </aside>
+
+      <div class="sidebar-section">
+        <div class="section-label">Download Data</div>
+        <div class="download-buttons">
+          <button class="dl-btn" onclick="dlCsv('/api/mine/download/csv', 'insightsafrica_ghana_mine_sites.csv')">CSV — Mining Sites</button>
+        </div>
+      </div>
+
+        </aside>
 
     <div id="map"></div>
   </div>
@@ -572,6 +593,24 @@
     loadSites();
   </script>
 
+  <script>
+  function dlCsv(baseUrl, filename) {
+    const raw   = localStorage.getItem('sb-ajkpbpiqmsmahzetfxzc-auth-token');
+    const token = raw ? JSON.parse(raw)?.access_token : null;
+    const hdrs  = token ? { 'Authorization': 'Bearer ' + token } : {};
+    fetch(baseUrl, { headers: hdrs })
+      .then(r => r.blob())
+      .then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+      });
+  }
+  </script>
   <script>
     function toggleTheme() {
       var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';

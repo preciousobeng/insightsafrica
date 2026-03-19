@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CropWatch Nigeria — InsightsAfrica</title>
+  <title>CropWatch Côte d'Ivoire — InsightsAfrica</title>
   <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
@@ -285,11 +285,11 @@
       <div class="brand-logo"></div>
       <div>
         <div class="brand-name">CropWatch</div>
-        <div class="brand-sub">InsightsAfrica &middot; Nigeria &middot; Crop Stress Intelligence</div>
+        <div class="brand-sub">InsightsAfrica &middot; Côte d'Ivoire &middot; Crop Stress Intelligence</div>
       </div>
     </div>
     <div class="header-right">
-      <a href="/nigeria/hub.html" class="back-link">&#8592; Nigeria Hub</a>
+      <a href="/ivorycoast/hub.html" class="back-link">&#8592; Côte d'Ivoire Hub</a>
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
       <div class="status-dot"></div>
       <span class="status-text" id="status-text">Loading&hellip;</span>
@@ -375,7 +375,7 @@
         <div class="section-label">About</div>
         <div class="info-box">
           MODIS MOD13Q1 &mdash; 250m NDVI 16-day composites. Red = stressed/bare
-          land, green = healthy vegetation. Covers Nigeria's main farming regions:
+          land, green = healthy vegetation. Covers Côte d'Ivoire's main farming regions:
           Kano Plains, Middle Belt (Benue), Sokoto Basin, Anambra/Cross River,
           Niger River Valley.
           Data from NASA Earthdata (free).
@@ -392,7 +392,7 @@
             <label>To</label>
             <input type="month" id="dl-to" value="2025-12" min="2024-01" max="2025-12">
           </div>
-          <button class="dl-btn" onclick="dlCsv('/api/nigeria/crop/download/csv', 'insightsafrica_nigeria_crop_ndvi.csv')">CSV — NDVI Composites</button>
+          <button class="dl-btn" onclick="dlCsv('/api/ivorycoast/crop/download/csv', 'insightsafrica_ivorycoast_crop_ndvi.csv')">CSV — NDVI Composites</button>
         </div>
       </div>
 
@@ -406,7 +406,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const map = L.map('map', { center: [9.0, 8.0], zoom: 6 });
+    const map = L.map('map', { center: [7.5, -5.5], zoom: 6 });
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       attribution: '\u00a9 OpenStreetMap \u00a9 CARTO',
@@ -424,7 +424,7 @@
 
     function setStatus(t) { document.getElementById('status-text').textContent = t; }
 
-    // Key farming region highlights — Nigeria zones
+    // Key farming region highlights — Côte d'Ivoire zones
     const FARMING_REGIONS = [
       { name: 'Kano Plains',          bounds: [[11.5, 7.5], [12.8, 9.5]], colour: '#22c55e' },
       { name: 'Middle Belt (Benue)',   bounds: [[7.0,  7.5], [9.0,  9.5]], colour: '#16a34a' },
@@ -484,7 +484,7 @@
 
       if (layer.png) {
         currentOverlay = L.imageOverlay(
-          '/ng-tiles/' + layer.png, layer.leaflet_bounds, { opacity: 0.8 }
+          '/ic-tiles/' + layer.png, layer.leaflet_bounds, { opacity: 0.8 }
         ).addTo(map);
         if (!fromPlayer) map.fitBounds(layer.leaflet_bounds, { padding: [20, 20] });
       }
@@ -734,7 +734,7 @@
 
     async function loadLayers() {
       try {
-        const res = await fetch('/api/nigeria/crop/layers');
+        const res = await fetch('/api/ivorycoast/crop/layers');
         if (!res.ok) throw new Error('no data');
         allLayers = await res.json();
 

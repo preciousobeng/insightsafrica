@@ -40,11 +40,11 @@
     .main { display: flex; flex: 1; overflow: hidden; }
 
     .sidebar {
-      width: 280px; background: #0d1527;
+      width: 320px; background: #0d1527;
       border-right: 1px solid #1e3a5f;
       display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
     }
-    .sidebar-section { padding: 1.25rem; border-bottom: 1px solid #1e2d45; }
+    .sidebar-section { padding: 1.5rem; border-bottom: 1px solid #1e2d45; }
     .sidebar-section:last-child { border-bottom: none; }
 
     .section-label {
@@ -249,6 +249,33 @@
     @media (max-width: 767px) {
       [data-theme="light"] .sidebar { border-top-color: #e2e8f0; }
     }
+  
+    /* ── Download buttons ── */
+    .download-buttons { display: flex; flex-direction: column; gap: 6px; }
+    .dl-btn {
+      display: block; padding: 7px 12px;
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 6px; color: #10b981; font-size: 12px;
+      text-decoration: none; text-align: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .dl-btn:hover { background: rgba(16,185,129,0.2); border-color: #10b981; }
+    [data-theme="light"] .dl-btn { background: #f0fdf4; border-color: #bbf7d0; color: #059669; }
+    [data-theme="light"] .dl-btn:hover { background: #dcfce7; border-color: #6ee7b7; }
+
+    .dl-date-range {
+      display: grid; grid-template-columns: auto 1fr; gap: 6px 8px;
+      align-items: center; margin-bottom: 8px;
+    }
+    .dl-date-range label { font-size: 11px; color: #94a3b8; white-space: nowrap; }
+    .dl-date-range input[type=month] {
+      flex: 1; min-width: 120px; padding: 4px 6px; border-radius: 5px;
+      border: 1px solid rgba(148,163,184,0.3); background: rgba(255,255,255,0.05);
+      color: inherit; font-size: 12px; cursor: pointer;
+    }
+    [data-theme="light"] .dl-date-range input[type=month] {
+      background: #f8fafc; border-color: #e2e8f0; color: #0f172a;
+    }
   </style>
 </head>
 <body>
@@ -354,7 +381,21 @@
         </div>
       </div>
 
-    </aside>
+
+      <div class="sidebar-section">
+        <div class="section-label">Download Data</div>
+        <div class="download-buttons">
+          <div class="dl-date-range">
+            <label>From</label>
+            <input type="month" id="dl-from" value="2024-01" min="2024-01" max="2025-12">
+            <label>To</label>
+            <input type="month" id="dl-to" value="2025-12" min="2024-01" max="2025-12">
+          </div>
+          <button class="dl-btn" onclick="dlCsv('/api/crop/download/csv', 'insightsafrica_ghana_crop_ndvi.csv')">CSV — NDVI Composites</button>
+        </div>
+      </div>
+
+        </aside>
 
     <div class="map-wrap">
       <div class="map-date-badge" id="map-date-badge"></div>
@@ -739,5 +780,28 @@
     document.getElementById('theme-toggle').textContent =
       document.documentElement.getAttribute('data-theme') === 'dark' ? '\u2600' : '\u263e';
   </script>
+<script>
+  function dlCsv(baseUrl, filename) {
+    const from = document.getElementById('dl-from')?.value;
+    const to   = document.getElementById('dl-to')?.value;
+    let url = baseUrl;
+    if (from) url += (url.includes('?') ? '&' : '?') + 'from=' + from;
+    if (to)   url += (url.includes('?') ? '&' : '?') + 'to='   + to;
+    const raw   = localStorage.getItem('sb-ajkpbpiqmsmahzetfxzc-auth-token');
+    const token = raw ? JSON.parse(raw)?.access_token : null;
+    const hdrs  = token ? { 'Authorization': 'Bearer ' + token } : {};
+    fetch(url, { headers: hdrs })
+      .then(r => r.blob())
+      .then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+      });
+  }
+</script>
 </body>
 </html>

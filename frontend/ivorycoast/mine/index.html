@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MineWatch - InsightsAfrica Nigeria</title>
+  <title>MineWatch — InsightsAfrica Côte d'Ivoire</title>
   <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
@@ -22,8 +22,8 @@
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
     .status-text { font-size: 0.75rem; color: #64748b; }
     .main { display: flex; flex: 1; overflow: hidden; }
-    .sidebar { width: 320px; background: #0d1527; border-right: 1px solid #1e3a5f; display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
-    .sidebar-section { padding: 1.5rem; border-bottom: 1px solid #1e2d45; }
+    .sidebar { width: 280px; background: #0d1527; border-right: 1px solid #1e3a5f; display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+    .sidebar-section { padding: 1.25rem; border-bottom: 1px solid #1e2d45; }
     .section-label { font-size: 0.65rem; font-weight: 700; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.75rem; }
     .stat-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
     .stat-label { font-size: 0.78rem; color: #94a3b8; }
@@ -102,11 +102,11 @@
       <div class="brand-logo"></div>
       <div>
         <div class="brand-name">MineWatch</div>
-        <div class="brand-sub">InsightsAfrica - Nigeria - Mining &amp; Oil/Gas Intelligence</div>
+        <div class="brand-sub">InsightsAfrica · Côte d'Ivoire · Gold Mining Intelligence</div>
       </div>
     </div>
     <div class="header-right">
-      <a href="/nigeria/hub.html" class="back-link">&#8592; Nigeria Hub</a>
+      <a href="/ivorycoast/hub.html" class="back-link">&#8592; Côte d'Ivoire Hub</a>
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
       <div class="status-dot"></div>
       <span class="status-text" id="status-text">Loading...</span>
@@ -116,17 +116,13 @@
   <div class="main">
     <aside class="sidebar">
       <div class="sidebar-section">
-        <div class="section-label">Category</div>
-        <div class="tab-row">
-          <button class="tab-btn tab-active" id="tab-artisanal" onclick="setTab('artisanal')">Artisanal Mining</button>
-          <button class="tab-btn" id="tab-oil_gas" onclick="setTab('oil_gas')">Oil/Gas Impact</button>
-        </div>
-        <div style="font-size:0.72rem; color:#475569;" id="tab-desc">5 artisanal mining sites - northern Nigeria</div>
+        <div class="section-label">Mining Type</div>
+        <div style="font-size:0.72rem; color:#fb923c; font-weight:600;" id="tab-desc">5 industrial gold mining sites — Côte d'Ivoire</div>
       </div>
       <div class="sidebar-section">
         <div class="section-label">Active Site</div>
         <div class="stat-row"><span class="stat-label">Location</span><span class="stat-value highlight" id="site-name">-</span></div>
-        <div class="stat-row"><span class="stat-label">State</span><span class="stat-value" id="site-region">-</span></div>
+        <div class="stat-row"><span class="stat-label">Region</span><span class="stat-value" id="site-region">-</span></div>
         <div class="stat-row"><span class="stat-label" id="label-ndvi">NDVI change</span><span class="stat-value" id="site-ndvi">-</span></div>
         <div class="stat-row"><span class="stat-label" id="label-ndwi">NDWI change</span><span class="stat-value" id="site-ndwi">-</span></div>
         <div class="stat-row"><span class="stat-label">Period</span><span class="stat-value" id="site-period">-</span></div>
@@ -154,13 +150,13 @@
       </div>
       <div class="sidebar-section">
         <div class="section-label">About</div>
-        <div class="info-box">Sentinel-2 optical imagery (10m resolution). NDVI tracks vegetation health - loss indicates land clearing or oil spill damage. NDWI tracks water body changes - decline indicates contamination or diversion. Data from ESA Copernicus (free).</div>
+        <div class="info-box">Sentinel-2 optical imagery (10m resolution). NDVI tracks vegetation health around industrial gold mine concessions. NDWI tracks water body changes near processing areas. Data from ESA Copernicus (free). Sites: Tongon (Barrick), Ity, Agbaou, Bonikro (Endeavour), Séguéla (Fortuna).</div>
       </div>
 
       <div class="sidebar-section">
         <div class="section-label">Download Data</div>
         <div class="download-buttons">
-          <button class="dl-btn" onclick="dlCsv('/api/nigeria/mine/download/csv', 'insightsafrica_nigeria_mine_sites.csv')">CSV — Mining Sites</button>
+          <button class="dl-btn" onclick="dlCsv('/api/ivorycoast/mine/download/csv', 'insightsafrica_ivorycoast_mine_sites.csv')">CSV — Mining Sites</button>
         </div>
       </div>
 
@@ -170,36 +166,26 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const map = L.map('map', { center: [9.0, 8.0], zoom: 6 });
+    const map = L.map('map', { center: [7.5, -5.5], zoom: 6 });
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       attribution: '\u00a9 OpenStreetMap \u00a9 CARTO', subdomains: 'abcd', maxZoom: 20,
     }).addTo(map);
 
-    let allSites = [], filteredSites = [], activeTab = 'artisanal';
+    let allSites = [], filteredSites = [], activeTab = 'industrial';
     let currentOverlay = null, currentIndex = 'ndvi', activeSite = null;
     const markerLayer = L.layerGroup().addTo(map);
 
     function setStatus(t) { document.getElementById('status-text').textContent = t; }
 
-    const TAB_DESC  = { artisanal: '5 artisanal mining sites - northern Nigeria', oil_gas: '5 oil/gas impact sites - Niger Delta' };
-    const NDVI_LABEL = { artisanal: 'NDVI change', oil_gas: 'Vegetation loss' };
-    const NDWI_LABEL = { artisanal: 'NDWI change', oil_gas: 'Water contamination' };
-    const CHART_TITLE_TEXT = { artisanal: 'Vegetation & Water Change Index', oil_gas: 'Vegetation Loss & Water Contamination' };
+    const TAB_DESC  = { industrial: "5 gold mining sites — Côte d'Ivoire" };
+    const NDVI_LABEL = { industrial: 'NDVI change' };
+    const NDWI_LABEL = { industrial: 'NDWI change' };
+    const CHART_TITLE_TEXT = { industrial: 'Vegetation & Water Change Index' };
 
-    function setTab(tab) {
-      activeTab = tab;
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
-      document.getElementById('tab-' + tab).classList.add('tab-active');
-      document.getElementById('tab-desc').textContent = TAB_DESC[tab];
-      document.getElementById('label-ndvi').textContent = NDVI_LABEL[tab];
-      document.getElementById('label-ndwi').textContent = NDWI_LABEL[tab];
-      document.getElementById('chart-title').textContent = CHART_TITLE_TEXT[tab];
-      document.getElementById('sites-label').textContent = tab === 'artisanal' ? 'Artisanal Mining Sites' : 'Oil/Gas Impact Sites';
-      renderForTab();
-    }
+    function setTab(tab) { activeTab = tab; renderForTab(); }
 
     function renderForTab() {
-      filteredSites = allSites.filter(s => s.category === activeTab);
+      filteredSites = allSites.filter(s => s.category === activeTab || activeTab === 'industrial');
       markerLayer.clearLayers();
       ['site-name','site-region','site-ndvi','site-ndwi','site-period'].forEach(id => { document.getElementById(id).textContent = '-'; });
       if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
@@ -229,7 +215,7 @@
       if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
       const imgKey = currentIndex + '_png';
       if (site[imgKey]) {
-        currentOverlay = L.imageOverlay('/ng-tiles/' + site[imgKey], site.leaflet_bounds, { opacity: 0.85 });
+        currentOverlay = L.imageOverlay('/ic-tiles/' + site[imgKey], site.leaflet_bounds, { opacity: 0.85 });
         currentOverlay.addTo(map);
         map.fitBounds(site.leaflet_bounds, { padding: [40, 40] });
       } else {
@@ -254,7 +240,7 @@
         btn.appendChild(document.createTextNode(site.name));
         const regionSpan = document.createElement('span');
         regionSpan.className = 'site-region';
-        regionSpan.textContent = site.region + ' State';
+        regionSpan.textContent = site.region;
         btn.appendChild(regionSpan);
         btn.addEventListener('click', () => {
           document.querySelectorAll('.site-btn').forEach(b => b.classList.remove('active'));
@@ -264,10 +250,10 @@
         container.appendChild(btn);
 
         const hasData  = site.ndvi_change != null;
-        const tip = [site.name, site.region + ' State', '',
+        const tip = [site.name, site.region, '',
           hasData ? NDVI_LABEL[activeTab] + ': ' + (site.ndvi_change > 0 ? '+' : '') + site.ndvi_change.toFixed(3) : 'No change data',
           hasData ? 'Period: ' + site.period : 'Click to view imagery'].join('\n');
-        const markerColor = site.category === 'oil_gas' ? '#ef4444' : '#f59e0b';
+        const markerColor = '#fb923c';
         const marker = L.circleMarker([site.centre[1], site.centre[0]], {
           radius: 9, fillColor: hasData ? markerColor : '#475569', color: '#fff', weight: 1.5, fillOpacity: 0.85,
         }).addTo(markerLayer);
@@ -335,7 +321,7 @@
 
     async function loadSites() {
       try {
-        const res = await fetch('/api/nigeria/mine/sites');
+        const res = await fetch('/api/ivorycoast/mine/sites');
         if (!res.ok) throw new Error('no data');
         allSites = await res.json();
         renderForTab();
@@ -344,7 +330,7 @@
         document.getElementById('site-list').textContent = '';
         const p = document.createElement('p');
         p.className = 'sidebar-message';
-        p.textContent = 'No data yet - run fetch_sentinel2.py --country nigeria first.';
+        p.textContent = 'No data yet - run fetch_sentinel2.py --country ivorycoast first.';
         document.getElementById('site-list').appendChild(p);
         setStatus('Pending data');
       }

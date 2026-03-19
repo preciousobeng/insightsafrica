@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HeatWatch — InsightsAfrica Ghana</title>
+  <title>HeatWatch — InsightsAfrica Côte d'Ivoire</title>
   <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
@@ -20,7 +20,7 @@
       overflow: hidden;
     }
 
-    /* ── Header ── */
+    /* -- Header -- */
     header {
       background: #0d1527;
       border-bottom: 1px solid #1e3a5f;
@@ -56,10 +56,10 @@
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
     .status-text { font-size: 0.75rem; color: #64748b; }
 
-    /* ── Layout ── */
+    /* -- Layout -- */
     .main { display: flex; flex: 1; overflow: hidden; }
 
-    /* ── Sidebar ── */
+    /* -- Sidebar -- */
     .sidebar {
       width: 320px;
       background: #0d1527;
@@ -181,7 +181,7 @@
 
     .sidebar-message { font-size: 0.78rem; color: #475569; line-height: 1.5; padding: 0.25rem 0; }
 
-    /* ── Map ── */
+    /* -- Map -- */
     #map { flex: 1; }
     .leaflet-container { background: #0a0f1e; }
 
@@ -197,7 +197,7 @@
     }
     .heat-tooltip::before { display: none; }
 
-    /* ── Theme toggle ── */
+    /* -- Theme toggle -- */
     .theme-toggle {
       background: none; border: 1px solid #1e3a5f; border-radius: 6px;
       color: #475569; cursor: pointer; font-size: 0.85rem;
@@ -206,7 +206,7 @@
     }
     .theme-toggle:hover { border-color: #ef4444; color: #e2e8f0; }
 
-    /* ── Light theme ── */
+    /* -- Light theme -- */
     [data-theme="light"] body { background: #f8f5f0; color: #1e293b; }
     [data-theme="light"] header { background: #ffffff; border-bottom-color: #e2e8f0; }
     [data-theme="light"] .brand-name { color: #0f172a; }
@@ -238,12 +238,12 @@
     [data-theme="light"] .leaflet-container { background: #f8f5f0; }
     [data-theme="light"] .heat-tooltip { background: rgba(255,255,255,0.96); border-color: rgba(239,68,68,0.3); color: #0f172a; }
 
-    /* ── Heat chart ── */
+    /* -- Heat chart -- */
     #heat-chart-section { display: block; }
     @media (max-width: 767px) { #heat-chart-section { display: none; } }
 
-    /* ── Player controls (heat accent: red) ── */
-    .player-year-row { display: flex; gap: 0.35rem; margin-bottom: 0.65rem; }
+    /* -- Player controls (heat accent: red) -- */
+    .player-year-row { display: flex; gap: 0.35rem; margin-bottom: 0.65rem; flex-wrap: wrap; }
     .city-filter-btn {
       flex: 1; padding: 0.3rem 0; font-size: 0.68rem; font-weight: 600;
       background: #1a1520; border: 1px solid #3f2020; border-radius: 6px;
@@ -304,7 +304,7 @@
     [data-theme="light"] .speed-btn-heat { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
     [data-theme="light"] .speed-btn-heat.active { background: #fff5f5; border-color: #ef4444; color: #dc2626; }
 
-    /* ── Mobile layout ── */
+    /* -- Mobile layout -- */
     @media (max-width: 767px) {
       header { padding: 0 0.85rem; }
       .brand-sub { display: none; }
@@ -366,11 +366,11 @@
       <div class="brand-logo"></div>
       <div>
         <div class="brand-name">HeatWatch</div>
-        <div class="brand-sub">InsightsAfrica &middot; Ghana &middot; Urban Heat Islands</div>
+        <div class="brand-sub">InsightsAfrica &middot; Côte d'Ivoire &middot; Urban Heat Islands</div>
       </div>
     </div>
     <div class="header-right">
-      <a href="/hub.html" class="back-link">&#8592; Ghana Hub</a>
+      <a href="/ivorycoast/hub.html" class="back-link">&#8592; Côte d'Ivoire Hub</a>
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
       <div class="status-dot pending" id="status-dot"></div>
       <span class="status-text" id="status-text">Loading&hellip;</span>
@@ -389,7 +389,7 @@
           <span class="stat-value highlight" id="city-name">&mdash;</span>
         </div>
         <div class="stat-row">
-          <span class="stat-label">Region</span>
+          <span class="stat-label">State</span>
           <span class="stat-value" id="city-region">&mdash;</span>
         </div>
         <div class="stat-row">
@@ -411,10 +411,10 @@
         <div class="section-label">City Tour Player</div>
 
         <div class="player-year-row">
-          <button class="city-filter-btn active" id="cf-all"    onclick="setCityFilter('all')">All cities</button>
-          <button class="city-filter-btn"        id="cf-accra"  onclick="setCityFilter('accra')">Accra</button>
-          <button class="city-filter-btn"        id="cf-kumasi" onclick="setCityFilter('kumasi')">Kumasi</button>
-          <button class="city-filter-btn"        id="cf-tamale" onclick="setCityFilter('tamale')">Tamale</button>
+          <button class="city-filter-btn active" id="cf-all"   onclick="setCityFilter('all')">All cities</button>
+          <button class="city-filter-btn"        id="cf-abidjan" onclick="setCityFilter('abidjan')">Abidjan</button>
+          <button class="city-filter-btn"        id="cf-bouake"  onclick="setCityFilter('bouake')">Bouaké</button>
+          <button class="city-filter-btn"        id="cf-korhogo" onclick="setCityFilter('korhogo')">Korhogo</button>
         </div>
 
         <button class="play-btn-heat" id="heat-play-btn" onclick="toggleHeatPlay()">&#x25B6;  Play</button>
@@ -505,7 +505,7 @@
             <label>To</label>
             <input type="month" id="dl-to" value="2025-12" min="2024-01" max="2025-12">
           </div>
-          <button class="dl-btn" onclick="dlCsv('/api/heat/download/csv', 'insightsafrica_ghana_heat.csv')">CSV — LST Scenes</button>
+          <button class="dl-btn" onclick="dlCsv('/api/ivorycoast/heat/download/csv', 'insightsafrica_ivorycoast_heat.csv')">CSV — LST Scenes</button>
         </div>
       </div>
 
@@ -519,7 +519,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const map = L.map('map', { center: [7.5, -1.0], zoom: 7 });
+    const map = L.map('map', { center: [7.5, -5.5], zoom: 6 });
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       attribution: '\u00a9 OpenStreetMap \u00a9 CARTO',
@@ -527,14 +527,14 @@
       maxZoom: 20,
     }).addTo(map);
 
-    // City definitions (fallback if API unavailable)
+    // City definitions
     const CITY_DEFS = [
-      { id: 'accra',  name: 'Accra',  region: 'Greater Accra', centre: [5.6037, -0.1870],  zoom: 11 },
-      { id: 'kumasi', name: 'Kumasi', region: 'Ashanti',        centre: [6.6885, -1.6244],  zoom: 11 },
-      { id: 'tamale', name: 'Tamale', region: 'Northern',       centre: [9.4034, -0.8424],  zoom: 11 },
+      { id: 'abidjan', name: 'Abidjan', region: 'Lagunes', centre: [5.3600, -4.0083], zoom: 11 },
+      { id: 'bouake',  name: 'Bouak\u00e9',  region: 'Vall\u00e9e du Bandama', centre: [7.6900, -5.0302], zoom: 11 },
+      { id: 'korhogo', name: 'Korhogo', region: 'Savanes', centre: [9.4580, -5.6296], zoom: 11 },
     ];
 
-    let layersByCity = {};   // city_id → array of layer objects (sorted newest first)
+    let layersByCity = {};   // city_id -> array of layer objects (sorted newest first)
     let currentOverlay = null;
     let activeCity = null;
 
@@ -595,16 +595,16 @@
 
         if (layer.png) {
           const bounds = layer.leaflet_bounds; // [[south,west],[north,east]]
-          currentOverlay = L.imageOverlay('/tiles/' + layer.png, bounds, { opacity: 0.80 });
+          currentOverlay = L.imageOverlay('/ic-tiles/' + layer.png, bounds, { opacity: 0.80 });
           currentOverlay.addTo(map);
           map.fitBounds(bounds, { padding: [30, 30] });
         } else {
-          // No PNG yet — zoom to city centre
+          // No PNG yet -- zoom to city centre
           const def = CITY_DEFS.find(c => c.id === cityId);
           if (def) map.setView(def.centre, def.zoom);
         }
       } else {
-        // No data for this city yet — zoom to centre
+        // No data for this city yet -- zoom to centre
         const def = CITY_DEFS.find(c => c.id === cityId);
         if (def) map.setView(def.centre, def.zoom);
 
@@ -613,7 +613,7 @@
           document.getElementById(id).textContent = '\u2014';
         });
         document.getElementById('uhi-container').style.display = 'none';
-        document.getElementById('city-name').textContent = def ? def.name : '\u2014';
+        document.getElementById('city-name').textContent   = def ? def.name   : '\u2014';
         document.getElementById('city-region').textContent = def ? def.region : '\u2014';
       }
     }
@@ -630,7 +630,7 @@
         const layers = layersByCity[def.id];
         const latest = layers && layers[0];
 
-        // City name + region
+        // City name
         const nameText = document.createTextNode(def.name);
         btn.appendChild(nameText);
 
@@ -644,7 +644,7 @@
 
         const regionSpan = document.createElement('span');
         regionSpan.className = 'city-region';
-        regionSpan.textContent = def.region + ' Region' + (latest ? ' \u2014 ' + latest.date : '');
+        regionSpan.textContent = def.region + (latest ? ' \u2014 ' + latest.date : '');
         btn.appendChild(regionSpan);
 
         btn.addEventListener('click', () => displayCity(def.id));
@@ -654,7 +654,7 @@
         const hasCity = !!(latest && latest.stats);
         const tip = hasCity
           ? [
-              def.name + ' \u2014 ' + def.region + ' Region',
+              def.name + ' \u2014 ' + def.region,
               '',
               'Mean LST: ' + formatTemp(latest.stats.mean_lst_c),
               'Peak LST: ' + formatTemp(latest.stats.max_lst_c),
@@ -663,7 +663,7 @@
                 : '',
               'Source: ' + (latest.source || 'Landsat'),
             ].filter(Boolean).join('\n')
-          : def.name + '\n' + def.region + ' Region\n\nData pending';
+          : def.name + '\n' + def.region + '\n\nData pending';
 
         L.circleMarker(def.centre, {
           radius: 10,
@@ -677,12 +677,12 @@
       });
     }
 
-    // ── Heat chart ──
+    // -- Heat chart --
     let heatChart = null;
     const CITY_COLOURS = {
-      accra:  { bar: 'rgba(239,68,68,0.75)',   border: 'rgba(239,68,68,1)'   },
-      kumasi: { bar: 'rgba(249,115,22,0.75)',  border: 'rgba(249,115,22,1)'  },
-      tamale: { bar: 'rgba(245,158,11,0.75)',  border: 'rgba(245,158,11,1)'  },
+      lagos: { bar: 'rgba(239,68,68,0.75)',   border: 'rgba(239,68,68,1)'   },
+      kano:  { bar: 'rgba(249,115,22,0.75)',  border: 'rgba(249,115,22,1)'  },
+      abuja: { bar: 'rgba(245,158,11,0.75)',  border: 'rgba(245,158,11,1)'  },
     };
 
     function buildHeatChart(allLayers) {
@@ -698,10 +698,10 @@
         return l.city_name.slice(0, 3) + ' ' + mon + ' \'' + String(d.getUTCFullYear()).slice(2);
       });
 
-      const lstData  = scenes.map(l => l.stats ? l.stats.mean_lst_c  : null);
-      const uhiData  = scenes.map(l => l.stats ? l.stats.uhi_intensity_c : null);
-      const barBg    = scenes.map(l => (CITY_COLOURS[l.city_id] || CITY_COLOURS.accra).bar);
-      const barBd    = scenes.map(l => (CITY_COLOURS[l.city_id] || CITY_COLOURS.accra).border);
+      const lstData = scenes.map(l => l.stats ? l.stats.mean_lst_c      : null);
+      const uhiData = scenes.map(l => l.stats ? l.stats.uhi_intensity_c : null);
+      const barBg   = scenes.map(l => (CITY_COLOURS[l.city_id] || CITY_COLOURS.lagos).bar);
+      const barBd   = scenes.map(l => (CITY_COLOURS[l.city_id] || CITY_COLOURS.lagos).border);
 
       const ctx = document.getElementById('heat-chart').getContext('2d');
       if (heatChart) heatChart.destroy();
@@ -712,7 +712,7 @@
           labels,
           datasets: [
             {
-              label: 'Mean LST (°C)',
+              label: 'Mean LST (\u00b0C)',
               data: lstData,
               backgroundColor: barBg,
               borderColor: barBd,
@@ -721,7 +721,7 @@
               yAxisID: 'y',
             },
             {
-              label: 'UHI intensity (°C)',
+              label: 'UHI intensity (\u00b0C)',
               data: uhiData,
               type: 'line',
               borderColor: 'rgba(148,163,184,0.85)',
@@ -752,15 +752,15 @@
               borderColor: '#1e3a5f', borderWidth: 1,
               titleColor: '#ef4444', bodyColor: '#94a3b8', padding: 9,
               callbacks: {
-                title: (items) => scenes[items[0].dataIndex].city_name + ' — ' + scenes[items[0].dataIndex].date,
+                title: (items) => scenes[items[0].dataIndex].city_name + ' \u2014 ' + scenes[items[0].dataIndex].date,
                 label: (item) => {
                   const s = scenes[item.dataIndex].stats || {};
                   if (item.datasetIndex === 0) return [
-                    'Mean LST: ' + (s.mean_lst_c||0).toFixed(1) + '°C',
-                    'Urban: '   + (s.urban_mean_c||0).toFixed(1) + '°C',
-                    'Rural: '   + (s.rural_mean_c||0).toFixed(1) + '°C',
+                    'Mean LST: ' + (s.mean_lst_c||0).toFixed(1) + '\u00b0C',
+                    'Urban: '   + (s.urban_mean_c||0).toFixed(1) + '\u00b0C',
+                    'Rural: '   + (s.rural_mean_c||0).toFixed(1) + '\u00b0C',
                   ];
-                  return 'UHI: ' + (s.uhi_intensity_c||0).toFixed(2) + '°C';
+                  return 'UHI: ' + (s.uhi_intensity_c||0).toFixed(2) + '\u00b0C';
                 },
               },
             },
@@ -773,7 +773,7 @@
             y: {
               position: 'left',
               grid: { color: 'rgba(255,255,255,0.06)' },
-              ticks: { color: '#64748b', font: { size: 9 }, callback: v => v + '°C' },
+              ticks: { color: '#64748b', font: { size: 9 }, callback: v => v + '\u00b0C' },
               title: { display: false },
             },
             y2: {
@@ -786,19 +786,19 @@
       });
     }
 
-    // ── City tour player ──
-    let allScenes      = [];   // flat sorted list of all heat layers
-    let playerScenes   = [];   // filtered subset
-    let heatPlayerIdx  = 0;
-    let heatTimer      = null;
-    let heatSpeedMs    = 1200;
-    let cityFilter     = 'all';
+    // -- City tour player --
+    let allScenes     = [];   // flat sorted list of all heat layers
+    let playerScenes  = [];   // filtered subset
+    let heatPlayerIdx = 0;
+    let heatTimer     = null;
+    let heatSpeedMs   = 1200;
+    let cityFilter    = 'all';
 
     function displayScene(scene) {
       // Show a specific heat scene on the map (used by player)
       if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
       if (scene.png) {
-        currentOverlay = L.imageOverlay('/tiles/' + scene.png, scene.leaflet_bounds, { opacity: 0.80 });
+        currentOverlay = L.imageOverlay('/ic-tiles/' + scene.png, scene.leaflet_bounds, { opacity: 0.80 });
         currentOverlay.addTo(map);
         map.fitBounds(scene.leaflet_bounds, { padding: [30, 30] });
       }
@@ -815,7 +815,7 @@
     function setCityFilter(cid) {
       cityFilter = cid;
       document.querySelectorAll('.city-filter-btn').forEach(b => b.classList.remove('active'));
-      const idMap = { all: 'cf-all', accra: 'cf-accra', kumasi: 'cf-kumasi', tamale: 'cf-tamale' };
+      const idMap = { all: 'cf-all', abidjan: 'cf-abidjan', bouake: 'cf-bouake', korhogo: 'cf-korhogo' };
       if (idMap[cid]) document.getElementById(idMap[cid]).classList.add('active');
       rebuildHeatPlayer();
     }
@@ -885,7 +885,7 @@
 
     async function loadLayers() {
       try {
-        const res = await fetch('/api/heat/layers');
+        const res = await fetch('/api/ivorycoast/heat/layers');
         if (!res.ok) throw new Error('no data');
         const layers = await res.json();
 
@@ -901,10 +901,10 @@
         });
 
         renderCityList(true);
-        displayCity('accra');
+        displayCity('lagos');
         buildHeatChart(layers);
 
-        // Initialise city tour player — sorted by date ascending
+        // Initialise city tour player -- sorted by date ascending
         allScenes = layers.slice().sort((a, b) => a.date.localeCompare(b.date));
         document.getElementById('heat-player-section').style.display = 'block';
         rebuildHeatPlayer();
@@ -912,15 +912,15 @@
         setStatus('Live', true);
 
       } catch (_) {
-        // No data yet — show placeholder city markers
+        // No data yet -- show placeholder city markers
         renderCityList(false);
-        displayCity('accra');
+        displayCity('lagos');
 
         const container = document.getElementById('city-list');
         const note = document.createElement('p');
         note.className = 'sidebar-message';
         note.style.marginTop = '0.5rem';
-        note.textContent = 'No data yet \u2014 run fetch_landsat.py to download imagery.';
+        note.textContent = 'No data yet \u2014 run fetch_landsat.py --country nigeria to download imagery.';
         container.appendChild(note);
 
         setStatus('Pending data', false);

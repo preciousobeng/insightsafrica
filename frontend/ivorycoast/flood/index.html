@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FloodWatch — InsightsAfrica Nigeria</title>
+  <title>FloodWatch — InsightsAfrica Côte d'Ivoire</title>
   <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
 
   <!-- Leaflet CSS -->
@@ -387,11 +387,11 @@
       <div class="brand-logo"></div>
       <div>
         <div class="brand-name">FloodWatch</div>
-        <div class="brand-sub">InsightsAfrica · Nigeria · Rainfall Intelligence</div>
+        <div class="brand-sub">InsightsAfrica · Côte d'Ivoire · Rainfall Intelligence</div>
       </div>
     </div>
     <div class="header-right">
-      <a href="/nigeria/hub.html" class="back-link">&#8592; Nigeria Hub</a>
+      <a href="/ivorycoast/hub.html" class="back-link">&#8592; Côte d'Ivoire Hub</a>
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
       <div class="status-dot"></div>
       <span class="status-text" id="status-text">Loading data…</span>
@@ -445,11 +445,11 @@
       <div class="sidebar-section">
         <div class="section-label">Boundaries</div>
         <div style="display:flex; flex-direction:column; gap:0.4rem;">
-          <button class="layer-btn active" id="btn-states" onclick="toggleBoundary('states')">
-            States (37)
+          <button class="layer-btn active" id="btn-districts" onclick="toggleBoundary('districts')">
+            Districts (14)
           </button>
-          <button class="layer-btn" id="btn-lgas" onclick="toggleBoundary('lgas')">
-            LGAs (774)
+          <button class="layer-btn" id="btn-regions" onclick="toggleBoundary('regions')">
+            Regions (31)
           </button>
         </div>
       </div>
@@ -490,8 +490,8 @@
         <div class="section-label">About</div>
         <div class="info-box">
           Rainfall data from CHIRPS v2.0 (Climate Hazards Group, UC Santa Barbara).
-          Monthly totals at ~5km resolution. Covering Nigeria's major flood corridors:
-          Lagos, Niger Delta, and the North-Central flood plains.
+          Monthly totals at ~5km resolution. Covering Côte d'Ivoire's flood-prone zones:
+          the coastal south, central basins, and the northern savanna plains.
         </div>
       </div>
 
@@ -505,10 +505,9 @@
             <label>To</label>
             <input type="month" id="dl-to" value="2025-12" min="2024-01" max="2025-12">
           </div>
-          <button class="dl-btn" onclick="dlCsv('/api/nigeria/flood/download/csv?level=states', 'insightsafrica_nigeria_flood_states.csv')">CSV — States</button>
-          <button class="dl-btn" onclick="dlCsv('/api/nigeria/flood/download/csv?level=lgas', 'insightsafrica_nigeria_flood_lgas.csv')">CSV — LGAs</button>
-          <a class="dl-btn" href="/api/nigeria/flood/download/states.geojson" download>GeoJSON — State boundaries</a>
-          <a class="dl-btn" href="/api/nigeria/flood/download/lgas.geojson" download>GeoJSON — LGA boundaries</a>
+          <button class="dl-btn" onclick="dlCsv('/api/ivorycoast/flood/download/csv?level=districts', 'insightsafrica_ivorycoast_flood_districts.csv')">CSV — Districts</button>
+          <button class="dl-btn" onclick="dlCsv('/api/ivorycoast/flood/download/csv?level=regions', 'insightsafrica_ivorycoast_flood_regions.csv')">CSV — Regions</button>
+          <a class="dl-btn" href="/api/ivorycoast/flood/download/districts.geojson" download>GeoJSON — District boundaries</a>
         </div>
       </div>
 
@@ -525,7 +524,7 @@
   <script>
     // Map setup
     const map = L.map('map', {
-      center: [9.0, 8.0],
+      center: [7.5, -5.5],
       zoom: 6,
       zoomControl: true,
     });
@@ -540,8 +539,8 @@
     let layers = [];
 
     // Boundary layers
-    const boundaryLayers = { states: null, lgas: null };
-    const boundaryVisible = { states: true, lgas: false };
+    const boundaryLayers = { districts: null, regions: null };
+    const boundaryVisible = { districts: true, regions: false };
     const boundaryCache = {};
     let activeLayerStats = {};   // zonal_stats from the current rainfall layer
 
@@ -562,7 +561,7 @@
 
     async function loadBoundary(level) {
       if (boundaryCache[level]) return boundaryCache[level];
-      const endpointMap = { states: '/api/nigeria/boundaries/states', lgas: '/api/nigeria/boundaries/lgas' };
+      const endpointMap = { states: '/api/ivorycoast/boundaries/districts', lgas: '/api/ivorycoast/boundaries/regions' };
       const res = await fetch(endpointMap[level]);
       if (!res.ok) throw new Error('Failed to load ' + level);
       const geojson = await res.json();
@@ -575,14 +574,14 @@
       const stats = activeLayerStats[level] || {};
 
       // Build lookup key matching Python output
-      const key = (level === 'lgas' && p.state)
-        ? p.name + '|' + p.state
+      const key = (level === 'regions' && p.district)
+        ? p.name + '|' + p.district
         : p.name;
 
       const areaStats = stats[key];
-      const header = level === 'lgas'
-        ? p.name + '\n' + p.state + ' State'
-        : p.name + ' State';
+      const header = level === 'regions'
+        ? p.name + '\n' + p.district + ' District'
+        : p.name + ' District';
 
       if (!areaStats || areaStats.mean === null) {
         return header + '\n\nNo data';
@@ -748,7 +747,7 @@
         currentOverlay = null;
       }
 
-      const imgUrl = '/ng-tiles/' + layer.png;
+      const imgUrl = '/ic-tiles/' + layer.png;
       const bounds = layer.leaflet_bounds; // [[south, west], [north, east]]
 
       currentOverlay = L.imageOverlay(imgUrl, bounds, { opacity: 0.8 });
@@ -994,7 +993,7 @@
     async function loadLayers() {
       showLayerMessage('Loading layers\u2026');
       try {
-        const res = await fetch('/api/nigeria/flood/layers');
+        const res = await fetch('/api/ivorycoast/flood/layers');
         if (!res.ok) throw new Error('API error');
         layers = await res.json();
 

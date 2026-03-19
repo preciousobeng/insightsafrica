@@ -160,7 +160,6 @@
     /* Product grid */
     .products-section {
       padding: 2rem;
-      flex: 1;
     }
 
     .section-heading {
@@ -255,7 +254,29 @@
 
     .status-live    { background: rgba(34,197,94,0.15);  color: #22c55e; }
     .status-beta    { background: rgba(245,158,11,0.15); color: #f59e0b; }
-    .status-soon    { background: rgba(71,85,105,0.3);   color: #64748b; }
+
+    /* Featured profile card */
+    .profile-card {
+      background: linear-gradient(135deg, #0d1527 0%, #0f2040 100%);
+      border-color: #2d5a8f !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 1.5rem !important;
+      margin-bottom: 1.25rem;
+    }
+    .profile-card .card-title { color: #f1f5f9; }
+    .profile-card .card-desc  { color: #64748b; }
+    [data-theme="light"] .profile-card {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border-color: #93c5fd !important;
+    }
+    [data-theme="light"] .profile-card .card-title { color: #0f172a; }
+    [data-theme="light"] .profile-card .card-desc  { color: #475569; }
+    [data-theme="light"] .profile-card .card-label { color: #3b82f6; }
+    @media (max-width: 540px) {
+      .profile-card { flex-direction: column !important; gap: 0.75rem !important; }
+    }
+        .status-soon    { background: rgba(71,85,105,0.3);   color: #64748b; }
 
     .card-arrow {
       font-size: 0.85rem;
@@ -315,6 +336,219 @@
     [data-theme="light"] .footer-brand { color: #475569; }
     [data-theme="light"] .footer-note { color: #64748b; }
 
+    /* ── KPI strip ── */
+    .kpi-strip {
+      background: #0d1221;
+      border-top: 1px solid #1e2d45;
+      border-bottom: 1px solid #1e2d45;
+      display: flex;
+      align-items: stretch;
+    }
+    .kpi-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 1.25rem;
+      gap: 0.2rem;
+      border-right: 1px solid #1e2d45;
+    }
+    .kpi-item:last-child { border-right: none; }
+    .kpi-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #475569; }
+    .kpi-value { font-size: 1.35rem; font-weight: 800; color: #3b82f6; letter-spacing: -0.03em; line-height: 1; }
+    .kpi-sub   { font-size: 0.65rem; color: #64748b; text-align: center; }
+    .kpi-loading .kpi-value { color: #2d3a50; animation: kpi-pulse 1.2s ease-in-out infinite; }
+    @keyframes kpi-pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+    @media (max-width: 560px) {
+      .kpi-strip { flex-wrap: wrap; }
+      .kpi-item  { flex: 1 1 50%; border-bottom: 1px solid #1e2d45; }
+      .kpi-item:nth-child(odd)  { border-right: 1px solid #1e2d45; }
+      .kpi-item:nth-child(even) { border-right: none; }
+      .kpi-item:nth-last-child(-n+2) { border-bottom: none; }
+    }
+    .flex-spacer { flex: 1; }
+
+    [data-theme="light"] .kpi-strip          { background: #f8fafc; border-color: #e2e8f0; }
+    [data-theme="light"] .kpi-item           { border-right-color: #e2e8f0; }
+    [data-theme="light"] .kpi-label          { color: #94a3b8; }
+    [data-theme="light"] .kpi-sub            { color: #94a3b8; }
+    [data-theme="light"] .kpi-loading .kpi-value { color: #cbd5e1; }
+    @media (max-width: 560px) {
+      [data-theme="light"] .kpi-item { border-bottom-color: #e2e8f0; }
+    }
+
+    /* ── API Keys section ── */
+    .keys-section {
+      padding: 0 2rem 2rem;
+    }
+    .keys-desc {
+      font-size: 0.82rem;
+      color: #64748b;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+    .keys-desc code {
+      background: #0d1527;
+      color: #38bdf8;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+    .key-create-row {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .key-name-input {
+      flex: 1;
+      background: #0d1527;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 0.85rem;
+      padding: 0.5rem 0.85rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .key-name-input:focus { border-color: #3b82f6; }
+    .key-name-input::placeholder { color: #334155; }
+    .btn-generate {
+      background: #1d4ed8;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.5rem 1.1rem;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .btn-generate:hover { background: #2563eb; }
+    .btn-generate:disabled { background: #1e3a5f; color: #475569; cursor: default; }
+
+    .key-reveal {
+      background: #0a1628;
+      border: 1px solid #1e4a2f;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .key-reveal-warn {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #f59e0b;
+      margin-bottom: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .key-reveal-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .key-reveal-value {
+      flex: 1;
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: #34d399;
+      word-break: break-all;
+      background: #0d1527;
+      border: 1px solid #1e3a5f;
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      user-select: all;
+    }
+    .btn-copy {
+      background: none;
+      border: 1px solid #1e3a5f;
+      border-radius: 6px;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.75rem;
+      transition: border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .btn-copy:hover { border-color: #3b82f6; color: #e2e8f0; }
+
+    .key-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .key-row {
+      background: #0d1527;
+      border: 1px solid #1e3a5f;
+      border-radius: 10px;
+      padding: 0.85rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .key-row-info { flex: 1; min-width: 0; }
+    .key-row-name { font-size: 0.88rem; font-weight: 600; color: #e2e8f0; }
+    .key-row-meta { font-size: 0.72rem; color: #475569; margin-top: 0.2rem; }
+    .key-row-usage {
+      font-size: 0.72rem;
+      color: #475569;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .key-usage-bar-wrap {
+      width: 80px;
+      height: 4px;
+      background: #1e3a5f;
+      border-radius: 99px;
+      margin-top: 0.35rem;
+      margin-left: auto;
+    }
+    .key-usage-bar {
+      height: 100%;
+      border-radius: 99px;
+      background: #3b82f6;
+      transition: width 0.3s;
+    }
+    .btn-revoke {
+      background: none;
+      border: 1px solid #3f1e1e;
+      border-radius: 6px;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 0.72rem;
+      padding: 0.3rem 0.6rem;
+      transition: border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .btn-revoke:hover { border-color: #ef4444; color: #ef4444; }
+
+    .key-tier-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 99px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .tier-free    { background: rgba(71,85,105,0.3);   color: #94a3b8; }
+    .tier-premium { background: rgba(245,158,11,0.15); color: #f59e0b; }
+
+    .keys-empty {
+      font-size: 0.82rem;
+      color: #334155;
+      padding: 1rem 0;
+    }
+
+    [data-theme="light"] .keys-desc code { background: #f1f5f9; color: #0369a1; }
+    [data-theme="light"] .key-name-input { background: #fff; border-color: #e2e8f0; color: #0f172a; }
+    [data-theme="light"] .key-name-input::placeholder { color: #94a3b8; }
+    [data-theme="light"] .key-reveal { background: #fefce8; border-color: #fde68a; }
+    [data-theme="light"] .key-reveal-value { background: #f8fafc; border-color: #e2e8f0; color: #059669; }
+    [data-theme="light"] .btn-copy { border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .key-row { background: #fff; border-color: #e2e8f0; }
+    [data-theme="light"] .key-row-name { color: #0f172a; }
+    [data-theme="light"] .key-row-meta { color: #94a3b8; }
+    [data-theme="light"] .key-row-usage { color: #94a3b8; }
+    [data-theme="light"] .key-usage-bar-wrap { background: #e2e8f0; }
+    [data-theme="light"] .keys-empty { color: #94a3b8; }
+
     /* ── Mobile ── */
     @media (max-width: 767px) {
       header { padding: 0 1rem; }
@@ -355,6 +589,8 @@
         <span class="cs-item active">&#127468;&#127469; Ghana</span>
         <span class="cs-divider">&#124;</span>
         <a class="cs-item link" href="/nigeria/hub.html">&#127475;&#127468; Nigeria</a>
+        <span class="cs-divider">&#124;</span>
+        <a class="cs-item link" href="/ivorycoast/hub.html">&#127464;&#127470; Côte d'Ivoire</a>
       </div>
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
     </div>
@@ -370,8 +606,42 @@
     </p>
   </div>
 
+  <div class="kpi-strip">
+    <div class="kpi-item kpi-loading" id="kpi-flood">
+      <span class="kpi-label">Peak rainfall</span>
+      <span class="kpi-value">—</span>
+      <span class="kpi-sub">loading…</span>
+    </div>
+    <div class="kpi-item kpi-loading" id="kpi-crop">
+      <span class="kpi-label">Peak crop stress</span>
+      <span class="kpi-value">—</span>
+      <span class="kpi-sub">loading…</span>
+    </div>
+    <div class="kpi-item kpi-loading" id="kpi-heat">
+      <span class="kpi-label">Urban heat · Accra</span>
+      <span class="kpi-value">—</span>
+      <span class="kpi-sub">loading…</span>
+    </div>
+    <div class="kpi-item kpi-loading" id="kpi-mine">
+      <span class="kpi-label">Galamsey sites</span>
+      <span class="kpi-value">—</span>
+      <span class="kpi-sub">loading…</span>
+    </div>
+  </div>
+
   <section class="products-section">
     <div class="section-heading">Available Products</div>
+
+    <!-- Country Profile — featured full-width card -->
+    <a href="/profile/" class="product-card profile-card">
+      <div class="card-icon blue" style="flex-shrink:0;width:48px;height:48px;font-size:1.5rem">&#127760;</div>
+      <div style="flex:1">
+        <div class="card-label">Intelligence Briefing</div>
+        <div class="card-title">Ghana Country Profile</div>
+        <p class="card-desc" style="margin-top:0.35rem">All five data products unified — satellite intelligence and socioeconomic indicators combined into a single country risk briefing.</p>
+      </div>
+      <span class="card-arrow" style="font-size:1.1rem;flex-shrink:0">&#8594;</span>
+    </a>
 
     <div class="product-grid">
 
@@ -439,8 +709,52 @@
         </div>
       </a>
 
+      <a href="/human/" class="product-card">
+        <div class="card-icon" style="background:rgba(168,85,247,0.15)">&#128101;</div>
+        <div>
+          <div class="card-label">Human Development</div>
+          <div class="card-title">HumanWatch</div>
+        </div>
+        <p class="card-desc">
+          Key socioeconomic indicators — child mortality, poverty, health expenditure,
+          literacy, and life expectancy — sourced from the World Bank Open Data API.
+        </p>
+        <div class="card-footer">
+          <span class="card-status status-live">Live</span>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+      </a>
+
     </div>
   </section>
+
+  <!-- API Keys — only shown when logged in (populated by JS) -->
+  <section class="keys-section" id="keys-section" style="display:none">
+    <div class="section-heading">API Access</div>
+    <p class="keys-desc">
+      Use API keys to access InsightsAfrica data programmatically.
+      Pass your key as an <code>X-API-Key</code> header on any download endpoint.
+      Free keys: 500 requests/day. Premium keys: unlimited.
+    </p>
+
+    <div class="key-create-row">
+      <input class="key-name-input" id="key-name-input" type="text"
+             placeholder="Key name (e.g. my-analysis-script)" maxlength="60" />
+      <button class="btn-generate" id="btn-generate" onclick="generateKey()">Generate key</button>
+    </div>
+
+    <div class="key-reveal" id="key-reveal" style="display:none">
+      <div class="key-reveal-warn">Copy this key now — it will not be shown again.</div>
+      <div class="key-reveal-row">
+        <span class="key-reveal-value" id="key-reveal-value"></span>
+        <button class="btn-copy" onclick="copyKey()">Copy</button>
+      </div>
+    </div>
+
+    <div class="key-list" id="key-list"></div>
+  </section>
+
+  <div class="flex-spacer"></div>
 
   <footer>
     <div class="footer-brand">InsightsAfrica &mdash; Ghana</div>
@@ -449,22 +763,177 @@
     </div>
   </footer>
 
+  <script>
+  (async function () {
+    function set(id, value, sub) {
+      const el = document.getElementById(id);
+      el.classList.remove('kpi-loading');
+      el.querySelector('.kpi-value').textContent = value;
+      el.querySelector('.kpi-sub').textContent   = sub;
+    }
+    const [floodRes, cropRes, heatRes, mineRes] = await Promise.allSettled([
+      fetch('/api/flood/layers').then(r => r.json()),
+      fetch('/api/crop/layers').then(r => r.json()),
+      fetch('/api/heat/layers').then(r => r.json()),
+      fetch('/api/mine/sites').then(r => r.json()),
+    ]);
+    if (floodRes.status === 'fulfilled') {
+      const peak = floodRes.value.reduce((a, b) => b.rainfall_mm.mean > a.rainfall_mm.mean ? b : a);
+      set('kpi-flood', `${Math.round(peak.rainfall_mm.mean)}mm`, `${peak.label} · national mean`);
+    } else { set('kpi-flood', '—', 'unavailable'); }
+
+    if (cropRes.status === 'fulfilled') {
+      const worst = cropRes.value.reduce((a, b) => b.stress_score.severe_stress > a.stress_score.severe_stress ? b : a);
+      set('kpi-crop', `${Math.round(worst.stress_score.severe_stress)}%`, `${worst.label} · severe stress`);
+    } else { set('kpi-crop', '—', 'unavailable'); }
+
+    if (heatRes.status === 'fulfilled') {
+      const layers = heatRes.value.filter(l => l.city_id === 'accra' && !l.demo);
+      const best   = layers.length ? layers.reduce((a, b) => b.stats.uhi_intensity_c > a.stats.uhi_intensity_c ? b : a) : null;
+      if (best) {
+        const [y, m] = best.date.split('-');
+        const mon = new Date(+y, +m - 1).toLocaleString('en-GB', { month: 'short' });
+        set('kpi-heat', `+${best.stats.uhi_intensity_c.toFixed(1)}°C`, `${mon} ${y} · UHI intensity`);
+      } else { set('kpi-heat', '—', 'no data'); }
+    } else { set('kpi-heat', '—', 'unavailable'); }
+
+    if (mineRes.status === 'fulfilled') {
+      const sites = mineRes.value;
+      set('kpi-mine', `${sites.length}`, `galamsey sites monitored`);
+    } else { set('kpi-mine', '—', 'unavailable'); }
+  })();
+  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Show logged-in user name if available (no hard gate — content is public)
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://ajkpbpiqmsmahzetfxzc.supabase.co',
+      'sb_publishable_yGiG6-hzI0EIY5SCnyR2vw_PTpJ5tLy'
+    );
+
+    let _session = null;
+
+    // ── Init ──────────────────────────────────────────────────────────────────
     (async () => {
-      const { createClient } = supabase;
-      const sb = createClient(
-        'https://ajkpbpiqmsmahzetfxzc.supabase.co',
-        'sb_publishable_yGiG6-hzI0EIY5SCnyR2vw_PTpJ5tLy'
-      );
       const { data: { session } } = await sb.auth.getSession();
-      const el = document.querySelector('.header-right span');
-      if (session && el) {
-        const name = session.user.user_metadata?.full_name || session.user.email;
-        el.textContent = name;
+      _session = session;
+      if (session) {
+        // Show user name in header
+        const el = document.querySelector('.header-right span');
+        if (el) {
+          const name = session.user.user_metadata?.full_name || session.user.email;
+          el.textContent = name;
+        }
+        // Show API keys section and load keys
+        document.getElementById('keys-section').style.display = '';
+        await loadKeys();
       }
     })();
+
+    // ── Key list ──────────────────────────────────────────────────────────────
+    async function loadKeys() {
+      const r = await fetch('/api/keys', {
+        headers: { 'Authorization': 'Bearer ' + _session.access_token }
+      });
+      const keys = r.ok ? await r.json() : [];
+      renderKeys(keys);
+    }
+
+    function renderKeys(keys) {
+      const list = document.getElementById('key-list');
+      if (!keys.length) {
+        list.innerHTML = '<div class="keys-empty">No API keys yet. Generate one above.</div>';
+        return;
+      }
+      list.innerHTML = keys.map(k => {
+        const used   = k.requests_today || 0;
+        const limit  = k.tier === 'premium' ? null : 500;
+        const pct    = limit ? Math.min(100, Math.round(used / limit * 100)) : 0;
+        const barW   = limit ? pct + '%' : '0%';
+        const usageLabel = limit
+          ? `${used} / ${limit} req today`
+          : `${used} req today · unlimited`;
+        const created = new Date(k.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+        return `
+          <div class="key-row" id="keyrow-${k.id}">
+            <div class="key-row-info">
+              <div class="key-row-name">${escHtml(k.name || 'Unnamed key')}</div>
+              <div class="key-row-meta">Created ${created}</div>
+            </div>
+            <span class="key-tier-pill tier-${k.tier}">${k.tier}</span>
+            <div class="key-row-usage">
+              ${usageLabel}
+              <div class="key-usage-bar-wrap" ${!limit ? 'style="display:none"' : ''}>
+                <div class="key-usage-bar" style="width:${barW}"></div>
+              </div>
+            </div>
+            <button class="btn-revoke" onclick="revokeKey('${k.id}')">Revoke</button>
+          </div>`;
+      }).join('');
+    }
+
+    // ── Generate ──────────────────────────────────────────────────────────────
+    async function generateKey() {
+      const name = document.getElementById('key-name-input').value.trim() || 'My API key';
+      const btn  = document.getElementById('btn-generate');
+      btn.disabled = true;
+      btn.textContent = 'Generating…';
+
+      const r = await fetch('/api/keys', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + _session.access_token,
+          'Content-Type':  'application/json',
+        },
+        body: JSON.stringify({ name }),
+      });
+
+      btn.disabled = false;
+      btn.textContent = 'Generate key';
+
+      if (!r.ok) { alert('Failed to generate key. Please try again.'); return; }
+
+      const data = await r.json();
+      document.getElementById('key-reveal-value').textContent = data.key;
+      document.getElementById('key-reveal').style.display = '';
+      document.getElementById('key-name-input').value = '';
+      await loadKeys();
+    }
+
+    // ── Copy ──────────────────────────────────────────────────────────────────
+    function copyKey() {
+      const val = document.getElementById('key-reveal-value').textContent;
+      navigator.clipboard.writeText(val).then(() => {
+        const btn = document.querySelector('.btn-copy');
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 2000);
+      });
+    }
+
+    // ── Revoke ────────────────────────────────────────────────────────────────
+    async function revokeKey(id) {
+      if (!confirm('Revoke this key? Any scripts using it will stop working immediately.')) return;
+      const r = await fetch('/api/keys/' + id, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + _session.access_token },
+      });
+      if (r.ok) {
+        document.getElementById('keyrow-' + id)?.remove();
+        // If list is now empty, re-render
+        if (!document.querySelector('.key-row')) {
+          document.getElementById('key-list').innerHTML =
+            '<div class="keys-empty">No API keys yet. Generate one above.</div>';
+        }
+      } else {
+        alert('Failed to revoke key. Please try again.');
+      }
+    }
+
+    // ── Util ──────────────────────────────────────────────────────────────────
+    function escHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
 
     function toggleTheme() {
       var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';

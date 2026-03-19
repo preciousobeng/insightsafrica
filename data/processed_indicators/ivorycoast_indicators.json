@@ -1,0 +1,611 @@
+{
+  "country": "Côte d'Ivoire",
+  "country_key": "ivorycoast",
+  "country_code": "CIV",
+  "wb_code": "CI",
+  "updated": "2026-03-19",
+  "source": "World Bank Open Data API (api.worldbank.org)",
+  "indicators": {
+    "child_mortality": {
+      "label": "Child mortality (under-5)",
+      "unit": "per 1,000 live births",
+      "source": "World Bank / UNICEF",
+      "wb_indicator": "SH.DYN.MORT",
+      "higher_is_better": false,
+      "current": {
+        "year": 2023,
+        "value": 67.1
+      },
+      "trend": [
+        {
+          "year": 2009,
+          "value": 105.8
+        },
+        {
+          "year": 2010,
+          "value": 102.2
+        },
+        {
+          "year": 2011,
+          "value": 99.1
+        },
+        {
+          "year": 2012,
+          "value": 96.0
+        },
+        {
+          "year": 2013,
+          "value": 92.7
+        },
+        {
+          "year": 2014,
+          "value": 89.2
+        },
+        {
+          "year": 2015,
+          "value": 86.1
+        },
+        {
+          "year": 2016,
+          "value": 83.6
+        },
+        {
+          "year": 2017,
+          "value": 81.1
+        },
+        {
+          "year": 2018,
+          "value": 78.5
+        },
+        {
+          "year": 2019,
+          "value": 75.9
+        },
+        {
+          "year": 2020,
+          "value": 73.7
+        },
+        {
+          "year": 2021,
+          "value": 71.4
+        },
+        {
+          "year": 2022,
+          "value": 69.2
+        },
+        {
+          "year": 2023,
+          "value": 67.1
+        }
+      ]
+    },
+    "maternal_mortality": {
+      "label": "Maternal mortality ratio",
+      "unit": "per 100,000 live births",
+      "source": "World Bank / WHO",
+      "wb_indicator": "SH.STA.MMRT",
+      "higher_is_better": false,
+      "current": {
+        "year": 2023,
+        "value": 359.0
+      },
+      "trend": [
+        {
+          "year": 2009,
+          "value": 588.0
+        },
+        {
+          "year": 2010,
+          "value": 592.0
+        },
+        {
+          "year": 2011,
+          "value": 569.0
+        },
+        {
+          "year": 2012,
+          "value": 566.0
+        },
+        {
+          "year": 2013,
+          "value": 544.0
+        },
+        {
+          "year": 2014,
+          "value": 522.0
+        },
+        {
+          "year": 2015,
+          "value": 505.0
+        },
+        {
+          "year": 2016,
+          "value": 488.0
+        },
+        {
+          "year": 2017,
+          "value": 465.0
+        },
+        {
+          "year": 2018,
+          "value": 449.0
+        },
+        {
+          "year": 2019,
+          "value": 429.0
+        },
+        {
+          "year": 2020,
+          "value": 447.0
+        },
+        {
+          "year": 2021,
+          "value": 459.0
+        },
+        {
+          "year": 2022,
+          "value": 409.0
+        },
+        {
+          "year": 2023,
+          "value": 359.0
+        }
+      ]
+    },
+    "poverty_215": {
+      "label": "Poverty headcount (<$2.15/day)",
+      "unit": "% of population",
+      "source": "World Bank PovcalNet",
+      "wb_indicator": "SI.POV.DDAY",
+      "higher_is_better": false,
+      "current": {
+        "year": 2021,
+        "value": 20.9
+      },
+      "trend": [
+        {
+          "year": 1985,
+          "value": 14.0
+        },
+        {
+          "year": 1986,
+          "value": 10.4
+        },
+        {
+          "year": 1987,
+          "value": 16.2
+        },
+        {
+          "year": 1988,
+          "value": 23.8
+        },
+        {
+          "year": 1992,
+          "value": 39.6
+        },
+        {
+          "year": 1995,
+          "value": 40.9
+        },
+        {
+          "year": 1998,
+          "value": 44.1
+        },
+        {
+          "year": 2002,
+          "value": 44.7
+        },
+        {
+          "year": 2008,
+          "value": 47.9
+        },
+        {
+          "year": 2015,
+          "value": 47.5
+        },
+        {
+          "year": 2018,
+          "value": 22.7
+        },
+        {
+          "year": 2021,
+          "value": 20.9
+        }
+      ]
+    },
+    "gini": {
+      "label": "Gini inequality index",
+      "unit": "0–100 scale",
+      "source": "World Bank",
+      "wb_indicator": "SI.POV.GINI",
+      "higher_is_better": false,
+      "current": {
+        "year": 2021,
+        "value": 35.3
+      },
+      "trend": [
+        {
+          "year": 1985,
+          "value": 45.5
+        },
+        {
+          "year": 1986,
+          "value": 38.0
+        },
+        {
+          "year": 1987,
+          "value": 40.5
+        },
+        {
+          "year": 1988,
+          "value": 36.9
+        },
+        {
+          "year": 1992,
+          "value": 39.4
+        },
+        {
+          "year": 1995,
+          "value": 40.6
+        },
+        {
+          "year": 1998,
+          "value": 39.0
+        },
+        {
+          "year": 2002,
+          "value": 41.3
+        },
+        {
+          "year": 2008,
+          "value": 43.2
+        },
+        {
+          "year": 2015,
+          "value": 41.5
+        },
+        {
+          "year": 2018,
+          "value": 37.2
+        },
+        {
+          "year": 2021,
+          "value": 35.3
+        }
+      ]
+    },
+    "health_expenditure": {
+      "label": "Health expenditure per capita",
+      "unit": "USD",
+      "source": "World Bank / WHO",
+      "wb_indicator": "SH.XPD.CHEX.PC.CD",
+      "higher_is_better": true,
+      "current": {
+        "year": 2023,
+        "value": 87.68
+      },
+      "trend": [
+        {
+          "year": 2009,
+          "value": 71.06
+        },
+        {
+          "year": 2010,
+          "value": 70.05
+        },
+        {
+          "year": 2011,
+          "value": 67.98
+        },
+        {
+          "year": 2012,
+          "value": 69.86
+        },
+        {
+          "year": 2013,
+          "value": 67.13
+        },
+        {
+          "year": 2014,
+          "value": 74.36
+        },
+        {
+          "year": 2015,
+          "value": 58.43
+        },
+        {
+          "year": 2016,
+          "value": 61.86
+        },
+        {
+          "year": 2017,
+          "value": 63.78
+        },
+        {
+          "year": 2018,
+          "value": 65.88
+        },
+        {
+          "year": 2019,
+          "value": 68.3
+        },
+        {
+          "year": 2020,
+          "value": 78.98
+        },
+        {
+          "year": 2021,
+          "value": 92.4
+        },
+        {
+          "year": 2022,
+          "value": 84.9
+        },
+        {
+          "year": 2023,
+          "value": 87.68
+        }
+      ]
+    },
+    "clean_water": {
+      "label": "Access to clean water",
+      "unit": "% of population",
+      "source": "WHO / UNICEF JMP",
+      "wb_indicator": "SH.H2O.BASW.ZS",
+      "higher_is_better": true,
+      "current": {
+        "year": 2024,
+        "value": 77.25
+      },
+      "trend": [
+        {
+          "year": 2010,
+          "value": 72.53
+        },
+        {
+          "year": 2011,
+          "value": 72.88
+        },
+        {
+          "year": 2012,
+          "value": 73.24
+        },
+        {
+          "year": 2013,
+          "value": 73.59
+        },
+        {
+          "year": 2014,
+          "value": 73.93
+        },
+        {
+          "year": 2015,
+          "value": 74.28
+        },
+        {
+          "year": 2016,
+          "value": 74.62
+        },
+        {
+          "year": 2017,
+          "value": 74.97
+        },
+        {
+          "year": 2018,
+          "value": 75.31
+        },
+        {
+          "year": 2019,
+          "value": 75.65
+        },
+        {
+          "year": 2020,
+          "value": 75.99
+        },
+        {
+          "year": 2021,
+          "value": 76.32
+        },
+        {
+          "year": 2022,
+          "value": 76.66
+        },
+        {
+          "year": 2023,
+          "value": 76.99
+        },
+        {
+          "year": 2024,
+          "value": 77.25
+        }
+      ]
+    },
+    "literacy": {
+      "label": "Adult literacy rate",
+      "unit": "% of people aged 15+",
+      "source": "UNESCO / World Bank",
+      "wb_indicator": "SE.ADT.LITR.ZS",
+      "higher_is_better": true,
+      "current": {
+        "year": 2021,
+        "value": 50.0
+      },
+      "trend": [
+        {
+          "year": 1988,
+          "value": 34.14
+        },
+        {
+          "year": 1998,
+          "value": 36.35
+        },
+        {
+          "year": 2000,
+          "value": 48.74
+        },
+        {
+          "year": 2014,
+          "value": 43.91
+        },
+        {
+          "year": 2016,
+          "value": 50.04
+        },
+        {
+          "year": 2019,
+          "value": 56.98
+        },
+        {
+          "year": 2021,
+          "value": 50.0
+        }
+      ]
+    },
+    "school_enrollment": {
+      "label": "Primary school enrollment",
+      "unit": "% gross",
+      "source": "UNESCO / World Bank",
+      "wb_indicator": "SE.PRM.ENRR",
+      "higher_is_better": true,
+      "current": {
+        "year": 2024,
+        "value": 93.3
+      },
+      "trend": [
+        {
+          "year": 2009,
+          "value": 63.08
+        },
+        {
+          "year": 2011,
+          "value": 73.56
+        },
+        {
+          "year": 2012,
+          "value": 78.29
+        },
+        {
+          "year": 2013,
+          "value": 80.75
+        },
+        {
+          "year": 2014,
+          "value": 83.75
+        },
+        {
+          "year": 2015,
+          "value": 85.26
+        },
+        {
+          "year": 2016,
+          "value": 87.97
+        },
+        {
+          "year": 2017,
+          "value": 88.21
+        },
+        {
+          "year": 2018,
+          "value": 88.21
+        },
+        {
+          "year": 2019,
+          "value": 88.47
+        },
+        {
+          "year": 2020,
+          "value": 88.63
+        },
+        {
+          "year": 2021,
+          "value": 85.83
+        },
+        {
+          "year": 2022,
+          "value": 86.45
+        },
+        {
+          "year": 2023,
+          "value": 91.81
+        },
+        {
+          "year": 2024,
+          "value": 93.3
+        }
+      ]
+    },
+    "life_expectancy": {
+      "label": "Life expectancy at birth",
+      "unit": "years",
+      "source": "World Bank / UN",
+      "wb_indicator": "SP.DYN.LE00.IN",
+      "higher_is_better": true,
+      "current": {
+        "year": 2023,
+        "value": 61.94
+      },
+      "trend": [
+        {
+          "year": 2009,
+          "value": 54.74
+        },
+        {
+          "year": 2010,
+          "value": 55.28
+        },
+        {
+          "year": 2011,
+          "value": 55.97
+        },
+        {
+          "year": 2012,
+          "value": 56.57
+        },
+        {
+          "year": 2013,
+          "value": 57.06
+        },
+        {
+          "year": 2014,
+          "value": 57.77
+        },
+        {
+          "year": 2015,
+          "value": 58.28
+        },
+        {
+          "year": 2016,
+          "value": 58.81
+        },
+        {
+          "year": 2017,
+          "value": 59.31
+        },
+        {
+          "year": 2018,
+          "value": 59.8
+        },
+        {
+          "year": 2019,
+          "value": 60.27
+        },
+        {
+          "year": 2020,
+          "value": 60.14
+        },
+        {
+          "year": 2021,
+          "value": 60.29
+        },
+        {
+          "year": 2022,
+          "value": 61.56
+        },
+        {
+          "year": 2023,
+          "value": 61.94
+        }
+      ]
+    }
+  }
+}

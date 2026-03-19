@@ -115,7 +115,6 @@
 
     .products-section {
       padding: 2rem;
-      flex: 1;
     }
 
     .section-heading {
@@ -206,6 +205,27 @@
     .status-beta { background: rgba(245,158,11,0.15); color: #f59e0b; }
     .status-soon { background: rgba(71,85,105,0.3);   color: #64748b; }
 
+    .profile-card {
+      background: linear-gradient(135deg, #0d1527 0%, #0f2040 100%);
+      border-color: #166534 !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 1.5rem !important;
+      margin-bottom: 1.25rem;
+    }
+    .profile-card .card-title { color: #f1f5f9; }
+    .profile-card .card-desc  { color: #64748b; }
+    [data-theme="light"] .profile-card {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border-color: #86efac !important;
+    }
+    [data-theme="light"] .profile-card .card-title { color: #0f172a; }
+    [data-theme="light"] .profile-card .card-desc  { color: #475569; }
+    [data-theme="light"] .profile-card .card-label { color: #16a34a; }
+    @media (max-width: 540px) {
+      .profile-card { flex-direction: column !important; gap: 0.75rem !important; }
+    }
+    
     .card-arrow { font-size: 0.85rem; color: #3b82f6; }
 
     footer {
@@ -293,6 +313,48 @@
     [data-theme="light"] .footer-brand { color: #475569; }
     [data-theme="light"] .footer-note { color: #64748b; }
 
+    /* ── KPI strip ── */
+    .kpi-strip {
+      background: #0d1221;
+      border-top: 1px solid #1e2d45;
+      border-bottom: 1px solid #1e2d45;
+      display: flex;
+      align-items: stretch;
+    }
+    .kpi-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 1.25rem;
+      gap: 0.2rem;
+      border-right: 1px solid #1e2d45;
+    }
+    .kpi-item:last-child { border-right: none; }
+    .kpi-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #475569; }
+    .kpi-value { font-size: 1.35rem; font-weight: 800; color: #4ade80; letter-spacing: -0.03em; line-height: 1; }
+    .kpi-sub   { font-size: 0.65rem; color: #64748b; text-align: center; }
+    .kpi-loading .kpi-value { color: #2d3a50; animation: kpi-pulse 1.2s ease-in-out infinite; }
+    @keyframes kpi-pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+    @media (max-width: 560px) {
+      .kpi-strip { flex-wrap: wrap; }
+      .kpi-item  { flex: 1 1 50%; border-bottom: 1px solid #1e2d45; }
+      .kpi-item:nth-child(odd)  { border-right: 1px solid #1e2d45; }
+      .kpi-item:nth-child(even) { border-right: none; }
+      .kpi-item:nth-last-child(-n+2) { border-bottom: none; }
+    }
+    .flex-spacer { flex: 1; }
+
+    [data-theme="light"] .kpi-strip          { background: #f8fafc; border-color: #e2e8f0; }
+    [data-theme="light"] .kpi-item           { border-right-color: #e2e8f0; }
+    [data-theme="light"] .kpi-label          { color: #94a3b8; }
+    [data-theme="light"] .kpi-sub            { color: #94a3b8; }
+    [data-theme="light"] .kpi-loading .kpi-value { color: #cbd5e1; }
+    @media (max-width: 560px) {
+      [data-theme="light"] .kpi-item { border-bottom-color: #e2e8f0; }
+    }
+
     @media (max-width: 767px) {
       header { padding: 0 1rem; }
       .brand-tagline { display: none; }
@@ -320,6 +382,8 @@
         <a class="cs-item link" href="/hub.html">&#127468;&#127469; Ghana</a>
         <span class="cs-divider">&#124;</span>
         <span class="cs-item active">&#127475;&#127468; Nigeria</span>
+        <span class="cs-divider">&#124;</span>
+        <a class="cs-item link" href="/ivorycoast/hub.html">&#127464;&#127470; Côte d'Ivoire</a>
       </div>
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
     </div>
@@ -335,8 +399,42 @@
     </p>
   </div>
 
+  <div class="kpi-strip">
+    <div class="kpi-item kpi-loading" id="kpi-flood">
+      <span class="kpi-label">Peak rainfall</span>
+      <span class="kpi-value">—</span>
+      <span class="kpi-sub">loading…</span>
+    </div>
+    <div class="kpi-item kpi-loading" id="kpi-crop">
+      <span class="kpi-label">Peak crop stress</span>
+      <span class="kpi-value">—</span>
+      <span class="kpi-sub">loading…</span>
+    </div>
+    <div class="kpi-item kpi-loading" id="kpi-heat">
+      <span class="kpi-label">Urban heat · Lagos</span>
+      <span class="kpi-value">—</span>
+      <span class="kpi-sub">loading…</span>
+    </div>
+    <div class="kpi-item kpi-loading" id="kpi-mine">
+      <span class="kpi-label">Mining sites</span>
+      <span class="kpi-value">—</span>
+      <span class="kpi-sub">loading…</span>
+    </div>
+  </div>
+
   <section class="products-section">
     <div class="section-heading">Available Products</div>
+
+    <!-- Country Profile — featured full-width card -->
+    <a href="/nigeria/profile/" class="product-card profile-card">
+      <div class="card-icon green" style="flex-shrink:0;width:48px;height:48px;font-size:1.5rem">&#127760;</div>
+      <div style="flex:1">
+        <div class="card-label">Intelligence Briefing</div>
+        <div class="card-title">Nigeria Country Profile</div>
+        <p class="card-desc" style="margin-top:0.35rem">All five data products unified — satellite intelligence and socioeconomic indicators combined into a single country risk briefing.</p>
+      </div>
+      <span class="card-arrow" style="font-size:1.1rem;flex-shrink:0">&#8594;</span>
+    </a>
 
     <div class="product-grid">
 
@@ -404,8 +502,26 @@
         </div>
       </a>
 
+      <a href="/nigeria/human/" class="product-card">
+        <div class="card-icon" style="background:rgba(168,85,247,0.15)">&#128101;</div>
+        <div>
+          <div class="card-label">Human Development</div>
+          <div class="card-title">HumanWatch</div>
+        </div>
+        <p class="card-desc">
+          Key socioeconomic indicators — child mortality, poverty, health expenditure,
+          literacy, and life expectancy — sourced from the World Bank Open Data API.
+        </p>
+        <div class="card-footer">
+          <span class="card-status status-live">Live</span>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+      </a>
+
     </div>
   </section>
+
+  <div class="flex-spacer"></div>
 
   <footer>
     <div class="footer-brand">InsightsAfrica &mdash; Nigeria</div>
@@ -413,6 +529,46 @@
       Data: CHIRPS, Sentinel-2, MODIS, Landsat &mdash; all open source
     </div>
   </footer>
+
+  <script>
+  (async function () {
+    function set(id, value, sub) {
+      const el = document.getElementById(id);
+      el.classList.remove('kpi-loading');
+      el.querySelector('.kpi-value').textContent = value;
+      el.querySelector('.kpi-sub').textContent   = sub;
+    }
+    const [floodRes, cropRes, heatRes, mineRes] = await Promise.allSettled([
+      fetch('/api/nigeria/flood/layers').then(r => r.json()),
+      fetch('/api/nigeria/crop/layers').then(r => r.json()),
+      fetch('/api/nigeria/heat/layers').then(r => r.json()),
+      fetch('/api/nigeria/mine/sites').then(r => r.json()),
+    ]);
+    if (floodRes.status === 'fulfilled') {
+      const peak = floodRes.value.reduce((a, b) => b.rainfall_mm.mean > a.rainfall_mm.mean ? b : a);
+      set('kpi-flood', `${Math.round(peak.rainfall_mm.mean)}mm`, `${peak.label} · national mean`);
+    } else { set('kpi-flood', '—', 'unavailable'); }
+
+    if (cropRes.status === 'fulfilled') {
+      const worst = cropRes.value.reduce((a, b) => b.stress_score.severe_stress > a.stress_score.severe_stress ? b : a);
+      set('kpi-crop', `${Math.round(worst.stress_score.severe_stress)}%`, `${worst.label} · severe stress`);
+    } else { set('kpi-crop', '—', 'unavailable'); }
+
+    if (heatRes.status === 'fulfilled') {
+      const layers = heatRes.value.filter(l => l.city_id === 'lagos' && !l.demo);
+      const best   = layers.length ? layers.reduce((a, b) => b.stats.uhi_intensity_c > a.stats.uhi_intensity_c ? b : a) : null;
+      if (best) {
+        const [y, m] = best.date.split('-');
+        const mon = new Date(+y, +m - 1).toLocaleString('en-GB', { month: 'short' });
+        set('kpi-heat', `+${best.stats.uhi_intensity_c.toFixed(1)}°C`, `${mon} ${y} · UHI intensity`);
+      } else { set('kpi-heat', '—', 'no data'); }
+    } else { set('kpi-heat', '—', 'unavailable'); }
+
+    if (mineRes.status === 'fulfilled') {
+      set('kpi-mine', `${mineRes.value.length}`, `sites monitored`);
+    } else { set('kpi-mine', '—', 'unavailable'); }
+  })();
+  </script>
 
   <script>
     function toggleTheme() {
