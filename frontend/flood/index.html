@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FloodWatch — InsightsAfrica Ghana</title>
+  <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0f1e;
+      color: #e2e8f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background: #0d1527;
+      border-bottom: 1px solid #1e3a5f;
+      padding: 0 1.5rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 1000;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+
+    .brand-logo {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      border-radius: 6px;
+    }
+
+    .brand-name { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; letter-spacing: -0.02em; }
+    .brand-sub  { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+    .back-link  { font-size: 0.72rem; color: #475569; text-decoration: none; }
+    .back-link:hover { color: #38bdf8; }
+
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    .status-text { font-size: 0.75rem; color: #64748b; }
+
+    /* Layout */
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 320px;
+      background: #0d1527;
+      border-right: 1px solid #1e3a5f;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .sidebar-section {
+      padding: 1.5rem;
+      border-bottom: 1px solid #1e2d45;
+    }
+
+    .sidebar-section:last-child { border-bottom: none; }
+
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #3b82f6;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.75rem;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label  { font-size: 0.78rem; color: #94a3b8; }
+    .stat-value  { font-size: 0.9rem; font-weight: 600; color: #f1f5f9; }
+    .stat-value.highlight { color: #38bdf8; }
+
+    .legend-bar {
+      height: 12px;
+      border-radius: 6px;
+      background: linear-gradient(to right,
+        #ffffcc, #c7e9b4, #7fcdbb, #41b6c4, #1d91c0, #225ea8, #0c2c84
+      );
+      margin-bottom: 0.4rem;
+    }
+
+    .legend-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: #64748b;
+    }
+
+    .layer-btn {
+      width: 100%;
+      text-align: left;
+      background: #1a2540;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      cursor: pointer;
+      margin-bottom: 0.3rem;
+      transition: all 0.15s;
+    }
+
+    .layer-btn:hover, .layer-btn.active {
+      background: #1e3a5f;
+      border-color: #3b82f6;
+      color: #f1f5f9;
+    }
+
+    .layer-date {
+      display: block;
+      font-size: 0.7rem;
+      color: #475569;
+      margin-top: 0.1rem;
+    }
+
+    /* Year accordion */
+    .year-group { margin-bottom: 0.5rem; }
+
+    .year-header {
+      width: 100%;
+      text-align: left;
+      background: #0d1527;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem;
+      color: #38bdf8;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.15s;
+      letter-spacing: 0.04em;
+    }
+
+    .year-header:hover { background: #1a2540; }
+
+    .year-chevron {
+      font-size: 0.6rem;
+      transition: transform 0.2s;
+    }
+
+    .year-months {
+      padding-top: 0.35rem;
+      overflow: hidden;
+    }
+
+    .year-months.collapsed { display: none; }
+
+    .sidebar-message {
+      font-size: 0.78rem;
+      color: #475569;
+      line-height: 1.5;
+      padding: 0.5rem 0;
+    }
+
+    .info-box {
+      background: #1a2540;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    /* Map */
+    #map { flex: 1; }
+
+    .leaflet-container { background: #0a0f1e; }
+
+    .boundary-tooltip {
+      background: rgba(13, 21, 39, 0.92);
+      border: 1px solid #1e3a5f;
+      color: #e2e8f0;
+      font-size: 0.75rem;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      white-space: pre-line;
+    }
+
+    .boundary-tooltip::before { display: none; }
+
+    /* ── Theme toggle ── */
+    .theme-toggle {
+      background: none; border: 1px solid #1e3a5f; border-radius: 6px;
+      color: #475569; cursor: pointer; font-size: 0.85rem;
+      padding: 0.2rem 0.5rem; line-height: 1;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-toggle:hover { border-color: #3b82f6; color: #e2e8f0; }
+
+    /* ── Light theme ── */
+    [data-theme="light"] body { background: #f1f5f9; color: #1e293b; }
+    [data-theme="light"] header { background: #ffffff; border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .brand-name { color: #0f172a; }
+    [data-theme="light"] .brand-sub { color: #64748b; }
+    [data-theme="light"] .back-link { color: #64748b; }
+    [data-theme="light"] .back-link:hover { color: #3b82f6; }
+    [data-theme="light"] .status-text { color: #64748b; }
+    [data-theme="light"] .theme-toggle { border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .theme-toggle:hover { border-color: #3b82f6; color: #0f172a; }
+    [data-theme="light"] .sidebar { background: #ffffff; border-right-color: #e2e8f0; }
+    [data-theme="light"] .sidebar-section { border-bottom-color: #f1f5f9; }
+    [data-theme="light"] .section-label { color: #2563eb; }
+    [data-theme="light"] .stat-label { color: #64748b; }
+    [data-theme="light"] .stat-value { color: #0f172a; }
+    [data-theme="light"] .stat-value.highlight { color: #2563eb; }
+    [data-theme="light"] .year-header { background: #f8fafc; border-color: #e2e8f0; color: #334155; }
+    [data-theme="light"] .year-header:hover,
+    [data-theme="light"] .year-header.open { background: #eff6ff; border-color: #93c5fd; color: #1e40af; }
+    [data-theme="light"] .layer-btn { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .layer-btn:hover,
+    [data-theme="light"] .layer-btn.active { background: #eff6ff; border-color: #3b82f6; color: #0f172a; }
+    [data-theme="light"] .layer-sub { color: #94a3b8; }
+    [data-theme="light"] .legend-text { color: #475569; }
+    [data-theme="light"] .info-box { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .sidebar-message { color: #94a3b8; }
+    [data-theme="light"] .leaflet-container { background: #f1f5f9; }
+    [data-theme="light"] .flood-tooltip { background: rgba(255,255,255,0.96); border-color: rgba(59,130,246,0.35); color: #0f172a; }
+    [data-theme="light"] .boundary-tooltip { background: rgba(255,255,255,0.96); border-color: rgba(59,130,246,0.35); color: #0f172a; }
+
+    /* ── Player controls ── */
+    .player-year-row { display: flex; gap: 0.35rem; margin-bottom: 0.65rem; }
+    .year-btn {
+      flex: 1; padding: 0.3rem 0; font-size: 0.7rem; font-weight: 600;
+      background: #1a2540; border: 1px solid #1e3a5f; border-radius: 6px;
+      color: #64748b; cursor: pointer; transition: all 0.15s;
+    }
+    .year-btn:hover { border-color: #3b82f6; color: #e2e8f0; }
+    .year-btn.active { background: rgba(59,130,246,0.15); border-color: #3b82f6; color: #38bdf8; }
+
+    .play-btn {
+      width: 100%; padding: 0.5rem; font-size: 0.8rem; font-weight: 600;
+      background: #3b82f6; border: none; border-radius: 8px;
+      color: #fff; cursor: pointer; margin-bottom: 0.6rem;
+      transition: background 0.15s;
+    }
+    .play-btn:hover { background: #2563eb; }
+
+    .player-info {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 0.4rem;
+    }
+    .player-frame   { font-size: 0.78rem; color: #94a3b8; font-weight: 500; }
+    .player-counter { font-size: 0.7rem; color: #475569; }
+
+    .progress-track {
+      height: 6px; background: #1e3a5f; border-radius: 3px;
+      cursor: pointer; margin-bottom: 0.5rem; position: relative;
+    }
+    .progress-fill {
+      height: 100%; background: #3b82f6; border-radius: 3px;
+      transition: width 0.15s linear; pointer-events: none;
+    }
+
+    .speed-row { display: flex; gap: 0.3rem; }
+    .speed-btn {
+      flex: 1; padding: 0.25rem 0; font-size: 0.68rem; font-weight: 600;
+      background: #1a2540; border: 1px solid #1e3a5f; border-radius: 5px;
+      color: #64748b; cursor: pointer; transition: all 0.15s;
+    }
+    .speed-btn:hover { border-color: #3b82f6; color: #e2e8f0; }
+    .speed-btn.active { background: rgba(59,130,246,0.15); border-color: #3b82f6; color: #38bdf8; }
+
+    /* Map date badge */
+    .map-wrap { flex: 1; position: relative; }
+    .map-date-badge {
+      display: none; position: absolute; top: 12px; left: 50%;
+      transform: translateX(-50%); z-index: 800;
+      background: rgba(13,21,39,0.88); border: 1px solid rgba(59,130,246,0.5);
+      border-radius: 20px; padding: 0.3rem 1rem;
+      font-size: 0.82rem; font-weight: 600; color: #38bdf8;
+      backdrop-filter: blur(4px); pointer-events: none;
+      white-space: nowrap;
+    }
+    #map { width: 100%; height: 100%; }
+
+    /* Light theme for player */
+    [data-theme="light"] .year-btn { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .year-btn.active { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; }
+    [data-theme="light"] .play-btn { background: #3b82f6; }
+    [data-theme="light"] .progress-track { background: #e2e8f0; }
+    [data-theme="light"] .speed-btn { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .speed-btn.active { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; }
+
+    /* ── Mobile layout ── */
+    @media (max-width: 767px) {
+      header { padding: 0 0.85rem; gap: 0.5rem; }
+      .brand-sub { display: none; }
+      .back-link { margin-right: 0.4rem; }
+      .header-right { gap: 0.6rem; }
+
+      .main { flex-direction: column; overflow: hidden; }
+
+      .sidebar {
+        width: 100%;
+        order: 2;
+        border-right: none;
+        border-top: 1px solid #1e3a5f;
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      /* Hide chart on mobile — too cramped to interact with */
+      #chart-section { display: none; }
+      #player-section { display: none; }
+
+      .map-wrap { order: 1; height: 52vh; flex: none; }
+      #map { height: 100%; }
+    }
+
+    @media (max-width: 767px) {
+      [data-theme="light"] .sidebar { border-top-color: #e2e8f0; }
+    }
+  
+    /* ── Download buttons ── */
+    .download-buttons { display: flex; flex-direction: column; gap: 6px; }
+    .dl-btn {
+      display: block; padding: 7px 12px;
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 6px; color: #10b981; font-size: 12px;
+      text-decoration: none; text-align: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .dl-btn:hover { background: rgba(16,185,129,0.2); border-color: #10b981; }
+    [data-theme="light"] .dl-btn { background: #f0fdf4; border-color: #bbf7d0; color: #059669; }
+    [data-theme="light"] .dl-btn:hover { background: #dcfce7; border-color: #6ee7b7; }
+
+    .dl-date-range {
+      display: grid; grid-template-columns: auto 1fr; gap: 6px 8px;
+      align-items: center; margin-bottom: 8px;
+    }
+    .dl-date-range label { font-size: 11px; color: #94a3b8; white-space: nowrap; }
+    .dl-date-range input[type=month] {
+      flex: 1; min-width: 120px; padding: 4px 6px; border-radius: 5px;
+      border: 1px solid rgba(148,163,184,0.3); background: rgba(255,255,255,0.05);
+      color: inherit; font-size: 12px; cursor: pointer;
+    }
+    [data-theme="light"] .dl-date-range input[type=month] {
+      background: #f8fafc; border-color: #e2e8f0; color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo"></div>
+      <div>
+        <div class="brand-name">FloodWatch</div>
+        <div class="brand-sub">InsightsAfrica · Ghana · Rainfall Intelligence</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="/" class="back-link">&#8592; Ghana Hub</a>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
+      <div class="status-dot"></div>
+      <span class="status-text" id="status-text">Loading data…</span>
+    </div>
+  </header>
+
+  <div class="main">
+
+    <aside class="sidebar">
+
+      <div class="sidebar-section">
+        <div class="section-label">Active Layer</div>
+        <div class="stat-row">
+          <span class="stat-label">Period</span>
+          <span class="stat-value highlight" id="layer-label">—</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Min rainfall</span>
+          <span class="stat-value" id="rain-min">—</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Max rainfall</span>
+          <span class="stat-value" id="rain-max">—</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Mean rainfall</span>
+          <span class="stat-value" id="rain-mean">—</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-label">Rainfall Scale (mm)</div>
+        <div class="legend-bar"></div>
+        <div class="legend-labels">
+          <span>0</span>
+          <span id="legend-mid">—</span>
+          <span id="legend-max">—</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section" id="chart-section" style="display:none;">
+        <div class="section-label">Year-on-Year Rainfall</div>
+        <div style="font-size:0.68rem; color:#475569; margin-bottom:0.6rem;">
+          Mean mm/month — click a bar to load that layer
+        </div>
+        <div style="position:relative; height:140px; width:100%;">
+          <canvas id="rainfall-chart"></canvas>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-label">Boundaries</div>
+        <div style="display:flex; flex-direction:column; gap:0.4rem;">
+          <button class="layer-btn active" id="btn-regions" onclick="toggleBoundary('regions')">
+            Regions (16)
+          </button>
+          <button class="layer-btn" id="btn-districts" onclick="toggleBoundary('districts')">
+            Districts (260)
+          </button>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-label">Available Layers</div>
+        <div id="layer-list"></div>
+      </div>
+
+      <!-- Time-lapse Player -->
+      <div class="sidebar-section" id="player-section" style="display:none;">
+        <div class="section-label">Time-lapse Player</div>
+
+        <div class="player-year-row">
+          <button class="year-btn active" id="yr-all"  onclick="setYear('all')">2024+2025</button>
+          <button class="year-btn"        id="yr-2024" onclick="setYear('2024')">2024</button>
+          <button class="year-btn"        id="yr-2025" onclick="setYear('2025')">2025</button>
+        </div>
+
+        <button class="play-btn" id="play-btn" onclick="togglePlay()">&#x25B6;  Play</button>
+
+        <div class="player-info">
+          <span class="player-frame" id="player-frame">---</span>
+          <span class="player-counter" id="player-counter">0 / 0</span>
+        </div>
+        <div class="progress-track" id="progress-track" onclick="scrubTo(event)">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+
+        <div class="speed-row">
+          <button class="speed-btn"        id="spd-slow"   onclick="setSpeed(1200)">Slow</button>
+          <button class="speed-btn active" id="spd-normal" onclick="setSpeed(700)">Normal</button>
+          <button class="speed-btn"        id="spd-fast"   onclick="setSpeed(300)">Fast</button>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-label">About</div>
+        <div class="info-box">
+          Rainfall data from CHIRPS v2.0 (Climate Hazards Group, UC Santa Barbara).
+          Monthly totals at ~5km resolution. Covering Ghana's major flood corridors:
+          Accra, Volta River Basin, and Northern Region.
+        </div>
+      </div>
+
+
+      <div class="sidebar-section">
+        <div class="section-label">Download Data</div>
+        <div class="download-buttons">
+          <div class="dl-date-range">
+            <label>From</label>
+            <input type="month" id="dl-from" value="2024-01" min="2024-01" max="2025-12">
+            <label>To</label>
+            <input type="month" id="dl-to" value="2025-12" min="2024-01" max="2025-12">
+          </div>
+          <button class="dl-btn" onclick="dlCsv('/api/flood/download/csv?level=districts', 'insightsafrica_ghana_flood_districts.csv')">CSV — Districts</button>
+          <button class="dl-btn" onclick="dlCsv('/api/flood/download/csv?level=regions', 'insightsafrica_ghana_flood_regions.csv')">CSV — Regions</button>
+          <a class="dl-btn" href="/api/flood/download/districts.geojson" download>GeoJSON — District boundaries</a>
+          <a class="dl-btn" href="/api/flood/download/regions.geojson" download>GeoJSON — Region boundaries</a>
+        </div>
+      </div>
+
+        </aside>
+
+    <div class="map-wrap">
+      <div class="map-date-badge" id="map-date-badge"></div>
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    // Map setup
+    const map = L.map('map', {
+      center: [7.9, -1.0],
+      zoom: 7,
+      zoomControl: true,
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '\u00a9 OpenStreetMap \u00a9 CARTO',
+      subdomains: 'abcd',
+      maxZoom: 20,
+    }).addTo(map);
+
+    let currentOverlay = null;
+    let layers = [];
+
+    // Boundary layers
+    const boundaryLayers = { regions: null, districts: null };
+    const boundaryVisible = { regions: true, districts: false };
+    const boundaryCache = {};
+    let activeLayerStats = {};   // zonal_stats from the current rainfall layer
+
+    const BOUNDARY_STYLES = {
+      regions: {
+        color: '#ffffff',
+        weight: 1.8,
+        opacity: 0.7,
+        fillOpacity: 0,
+      },
+      districts: {
+        color: '#cbd5e1',
+        weight: 0.8,
+        opacity: 0.5,
+        fillOpacity: 0,
+      },
+    };
+
+    async function loadBoundary(level) {
+      if (boundaryCache[level]) return boundaryCache[level];
+      const res = await fetch('/api/boundaries/' + level);
+      if (!res.ok) throw new Error('Failed to load ' + level);
+      const geojson = await res.json();
+      boundaryCache[level] = geojson;
+      return geojson;
+    }
+
+    function buildTooltipContent(feature, level, periodLabel) {
+      const p = feature.properties;
+      const stats = activeLayerStats[level] || {};
+
+      // Build lookup key matching Python output
+      const key = (level === 'districts' && p.region)
+        ? p.name + '|' + p.region
+        : p.name;
+
+      const areaStats = stats[key];
+      const header = level === 'districts'
+        ? p.name + '\n' + p.region + ' Region'
+        : p.name + ' Region';
+
+      if (!areaStats || areaStats.mean === null) {
+        return header + '\n\nNo data';
+      }
+
+      return (
+        header +
+        '\n\n' + periodLabel +
+        '\nMean: ' + areaStats.mean + ' mm' +
+        '\nMax:  ' + areaStats.max  + ' mm' +
+        '\nMin:  ' + areaStats.min  + ' mm'
+      );
+    }
+
+    function refreshTooltips(level, periodLabel) {
+      if (!boundaryLayers[level]) return;
+      boundaryLayers[level].eachLayer((layer) => {
+        const content = buildTooltipContent(layer.feature, level, periodLabel);
+        layer.setTooltipContent(content);
+      });
+    }
+
+    async function showBoundary(level, periodLabel) {
+      if (boundaryLayers[level]) return;
+      try {
+        const geojson = await loadBoundary(level);
+        boundaryLayers[level] = L.geoJSON(geojson, {
+          style: BOUNDARY_STYLES[level],
+          onEachFeature: (feature, featureLayer) => {
+            const content = buildTooltipContent(feature, level, periodLabel || '');
+            featureLayer.bindTooltip(content, {
+              sticky: true,
+              className: 'boundary-tooltip',
+            });
+          },
+        }).addTo(map);
+      } catch (err) {
+        console.error('Boundary load failed:', err);
+      }
+    }
+
+    function hideBoundary(level) {
+      if (boundaryLayers[level]) {
+        map.removeLayer(boundaryLayers[level]);
+        boundaryLayers[level] = null;
+      }
+    }
+
+    async function toggleBoundary(level) {
+      boundaryVisible[level] = !boundaryVisible[level];
+      const btn = document.getElementById('btn-' + level);
+      if (boundaryVisible[level]) {
+        btn.classList.add('active');
+        const label = document.getElementById('layer-label').textContent;
+        await showBoundary(level, label);
+      } else {
+        btn.classList.remove('active');
+        hideBoundary(level);
+      }
+    }
+
+    // Load regions on startup
+    showBoundary('regions', '');
+
+    function setStatus(text) {
+      document.getElementById('status-text').textContent = text;
+    }
+
+    function showLayerMessage(text) {
+      const container = document.getElementById('layer-list');
+      container.textContent = '';
+      const p = document.createElement('p');
+      p.className = 'sidebar-message';
+      p.textContent = text;
+      container.appendChild(p);
+    }
+
+    function renderLayerList() {
+      const container = document.getElementById('layer-list');
+      container.textContent = '';
+
+      // Group layers by year
+      const byYear = {};
+      layers.forEach((layer, i) => {
+        const y = layer.year || 'Unknown';
+        if (!byYear[y]) byYear[y] = [];
+        byYear[y].push({ layer, i });
+      });
+
+      // Most recent year expanded, others collapsed
+      const years = Object.keys(byYear).sort((a, b) => b - a);
+      const mostRecent = years[0];
+
+      years.forEach(year => {
+        const group = document.createElement('div');
+        group.className = 'year-group';
+
+        // Year header
+        const header = document.createElement('button');
+        header.className = 'year-header';
+
+        const yearText = document.createTextNode(year);
+        header.appendChild(yearText);
+
+        const chevron = document.createElement('span');
+        chevron.className = 'year-chevron';
+        chevron.textContent = year === mostRecent ? '\u25BC' : '\u25B6';
+        header.appendChild(chevron);
+
+        // Month list
+        const monthList = document.createElement('div');
+        monthList.className = 'year-months' + (year === mostRecent ? '' : ' collapsed');
+
+        header.addEventListener('click', () => {
+          const collapsed = monthList.classList.toggle('collapsed');
+          chevron.textContent = collapsed ? '\u25B6' : '\u25BC';
+        });
+
+        byYear[year].forEach(({ layer, i }) => {
+          const btn = document.createElement('button');
+          btn.className = 'layer-btn';
+          btn.dataset.index = String(i);
+
+          const labelText = document.createTextNode(layer.label);
+          btn.appendChild(labelText);
+
+          const dateSpan = document.createElement('span');
+          dateSpan.className = 'layer-date';
+          dateSpan.textContent = layer.rainfall_mm.min + '\u2013' + layer.rainfall_mm.max + ' mm';
+          btn.appendChild(dateSpan);
+
+          btn.addEventListener('click', () => {
+            pause();
+            hideMapBadge();
+            document.querySelectorAll('.layer-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            displayLayer(layer, false);
+          });
+
+          monthList.appendChild(btn);
+        });
+
+        group.appendChild(header);
+        group.appendChild(monthList);
+        container.appendChild(group);
+      });
+
+      // Activate the most recent layer's button
+      const lastBtn = container.querySelector('.layer-btn:last-of-type');
+      if (lastBtn) {
+        // Find and activate the correct button
+        const lastLayer = layers[layers.length - 1];
+        container.querySelectorAll('.layer-btn').forEach(btn => {
+          const idx = parseInt(btn.dataset.index, 10);
+          if (layers[idx] === lastLayer) btn.classList.add('active');
+        });
+      }
+    }
+
+    function displayLayer(layer, fromPlayer) {
+      if (currentOverlay) {
+        map.removeLayer(currentOverlay);
+        currentOverlay = null;
+      }
+
+      const imgUrl = '/tiles/' + layer.png;
+      const bounds = layer.leaflet_bounds; // [[south, west], [north, east]]
+
+      currentOverlay = L.imageOverlay(imgUrl, bounds, { opacity: 0.8 });
+      currentOverlay.addTo(map);
+
+      document.getElementById('layer-label').textContent = layer.label;
+      document.getElementById('rain-min').textContent  = layer.rainfall_mm.min + ' mm';
+      document.getElementById('rain-max').textContent  = layer.rainfall_mm.max + ' mm';
+      document.getElementById('rain-mean').textContent = layer.rainfall_mm.mean + ' mm';
+
+      const cap = layer.rainfall_mm.colorscale_cap;
+      document.getElementById('legend-max').textContent = cap + ' mm';
+      document.getElementById('legend-mid').textContent = Math.round(cap / 2) + ' mm';
+
+      // Update zonal stats and refresh all visible boundary tooltips
+      activeLayerStats = layer.zonal_stats || {};
+      refreshTooltips('regions', layer.label);
+      refreshTooltips('districts', layer.label);
+
+      if (!fromPlayer) map.fitBounds(bounds, { padding: [20, 20] });
+      if (fromPlayer) showMapBadge(layer.label);
+
+      // Sync layer list highlight
+      document.querySelectorAll('.layer-btn[data-index]').forEach(btn => {
+        const idx = parseInt(btn.dataset.index, 10);
+        btn.classList.toggle('active', layers[idx] === layer);
+      });
+    }
+
+    function showMapBadge(text) {
+      const badge = document.getElementById('map-date-badge');
+      badge.textContent = text;
+      badge.style.display = 'block';
+    }
+
+    function hideMapBadge() {
+      document.getElementById('map-date-badge').style.display = 'none';
+    }
+
+    // ── Time-lapse Player ──
+    let playerLayers = [];
+    let playerIndex  = 0;
+    let playerTimer  = null;
+    let speedMs      = 700;
+    let yearFilter   = 'all';
+
+    function setYear(yr) {
+      yearFilter = yr;
+      document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('active'));
+      const map2 = { all: 'yr-all', '2024': 'yr-2024', '2025': 'yr-2025' };
+      document.getElementById(map2[yr]).classList.add('active');
+      rebuildPlayerLayers();
+    }
+
+    function rebuildPlayerLayers() {
+      if (yearFilter === 'all') {
+        playerLayers = layers.slice();
+      } else {
+        playerLayers = layers.filter(l => l.label && l.label.includes(yearFilter));
+      }
+      playerIndex = 0;
+      updatePlayerUI();
+    }
+
+    function updatePlayerUI() {
+      const total = playerLayers.length;
+      const cur   = total ? playerIndex + 1 : 0;
+      const layer = playerLayers[playerIndex];
+      document.getElementById('player-frame').textContent   = layer ? layer.label : '---';
+      document.getElementById('player-counter').textContent = cur + ' / ' + total;
+      updateProgressBar();
+    }
+
+    function updateProgressBar() {
+      const total = playerLayers.length;
+      const pct   = total > 1 ? (playerIndex / (total - 1)) * 100 : 0;
+      document.getElementById('progress-fill').style.width = pct + '%';
+    }
+
+    function setSpeed(ms) {
+      speedMs = ms;
+      document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+      const ids = { 1200: 'spd-slow', 700: 'spd-normal', 300: 'spd-fast' };
+      if (ids[ms]) document.getElementById(ids[ms]).classList.add('active');
+      if (playerTimer) { pause(); play(); }
+    }
+
+    function play() {
+      if (!playerLayers.length) return;
+      const btn = document.getElementById('play-btn');
+      btn.textContent = '\u23F8  Pause';
+      playerTimer = setInterval(() => {
+        playerIndex = (playerIndex + 1) % playerLayers.length;
+        displayLayer(playerLayers[playerIndex], true);
+        updatePlayerUI();
+      }, speedMs);
+      displayLayer(playerLayers[playerIndex], true);
+      updatePlayerUI();
+    }
+
+    function pause() {
+      if (playerTimer) { clearInterval(playerTimer); playerTimer = null; }
+      const btn = document.getElementById('play-btn');
+      if (btn) btn.textContent = '\u25B6  Play';
+    }
+
+    function togglePlay() {
+      if (playerTimer) { pause(); hideMapBadge(); }
+      else              { play(); }
+    }
+
+    function scrubTo(event) {
+      if (!playerLayers.length) return;
+      const track = document.getElementById('progress-track');
+      const rect  = track.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+      playerIndex = Math.round(ratio * (playerLayers.length - 1));
+      displayLayer(playerLayers[playerIndex], !!playerTimer);
+      updatePlayerUI();
+    }
+
+    // ── Bar chart ──
+    let rainfallChart = null;
+    const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    const YEAR_COLOURS = {
+      2024: { bar: 'rgba(59,130,246,0.75)',  border: 'rgba(59,130,246,1)'  },
+      2025: { bar: 'rgba(6,182,212,0.75)',   border: 'rgba(6,182,212,1)'   },
+      2026: { bar: 'rgba(168,85,247,0.75)',  border: 'rgba(168,85,247,1)'  },
+    };
+
+    function buildChart(layerData) {
+      // Group by year, each year gets 12 monthly slots
+      const byYear = {};
+      layerData.forEach(l => {
+        const y = l.year;
+        if (!byYear[y]) byYear[y] = Array(12).fill(null);
+        byYear[y][(l.month || 1) - 1] = l;
+      });
+
+      const years = Object.keys(byYear).sort();
+      const labels = MONTH_SHORT;
+
+      const datasets = years.map(year => {
+        const colour = YEAR_COLOURS[year] || { bar: 'rgba(148,163,184,0.7)', border: '#94a3b8' };
+        return {
+          label: String(year),
+          data: byYear[year].map(l => l ? l.rainfall_mm.mean : null),
+          backgroundColor: colour.bar,
+          borderColor: colour.border,
+          borderWidth: 1,
+          borderRadius: 3,
+          borderSkipped: false,
+        };
+      });
+
+      const ctx = document.getElementById('rainfall-chart').getContext('2d');
+      if (rainfallChart) rainfallChart.destroy();
+
+      rainfallChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          onClick: (event, elements) => {
+            if (!elements.length) return;
+            const el = elements[0];
+            const monthIdx = el.index;
+            const year = parseInt(years[el.datasetIndex], 10);
+            const match = layers.find(l => l.year === year && l.month === monthIdx + 1);
+            if (match) {
+              pause();
+              hideMapBadge();
+              displayLayer(match, false);
+              document.querySelectorAll('.layer-btn[data-index]').forEach(b => {
+                b.classList.toggle('active', layers[parseInt(b.dataset.index, 10)] === match);
+              });
+              // Expand the clicked year's accordion if collapsed
+              const yearGroups = document.querySelectorAll('.year-header');
+              yearGroups.forEach(header => {
+                if (header.firstChild.textContent === String(year)) {
+                  const monthList = header.nextElementSibling;
+                  if (monthList.classList.contains('collapsed')) {
+                    monthList.classList.remove('collapsed');
+                    header.lastChild.textContent = '\u25BC';
+                  }
+                }
+              });
+            }
+          },
+          plugins: {
+            legend: {
+              display: true,
+              labels: {
+                color: '#64748b',
+                font: { size: 10 },
+                boxWidth: 12,
+                padding: 10,
+              },
+            },
+            tooltip: {
+              backgroundColor: 'rgba(13,21,39,0.95)',
+              borderColor: '#1e3a5f',
+              borderWidth: 1,
+              titleColor: '#38bdf8',
+              bodyColor: '#94a3b8',
+              padding: 10,
+              callbacks: {
+                title: (items) => MONTH_SHORT[items[0].dataIndex],
+                label: (item) => {
+                  const year = years[item.datasetIndex];
+                  const monthIdx = item.dataIndex;
+                  const l = byYear[year][monthIdx];
+                  if (!l) return item.dataset.label + ': no data';
+                  return [
+                    year + ' mean: ' + l.rainfall_mm.mean.toFixed(1) + ' mm',
+                    year + ' max:  ' + l.rainfall_mm.max.toFixed(1) + ' mm',
+                  ];
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.04)' },
+              ticks: { color: '#64748b', font: { size: 9 } },
+            },
+            y: {
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              ticks: {
+                color: '#64748b',
+                font: { size: 9 },
+                callback: (v) => v + ' mm',
+              },
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    }
+
+    async function loadLayers() {
+      showLayerMessage('Loading layers\u2026');
+      try {
+        const res = await fetch('/api/flood/layers');
+        if (!res.ok) throw new Error('API error');
+        layers = await res.json();
+
+        if (layers.length === 0) {
+          showLayerMessage('No layers yet. Run process_rainfall.py first.');
+          setStatus('No data');
+          return;
+        }
+
+        renderLayerList();
+        buildChart(layers);
+        document.getElementById('chart-section').style.display = 'block';
+        displayLayer(layers[layers.length - 1], false);
+        setStatus('Live');
+
+        // Show player
+        document.getElementById('player-section').style.display = 'block';
+        rebuildPlayerLayers();
+
+      } catch (err) {
+        showLayerMessage('Could not reach API. Is the server running?');
+        setStatus('API offline');
+      }
+    }
+
+    loadLayers();
+  </script>
+
+  <script>
+    function toggleTheme() {
+      var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ia-theme', next);
+      document.getElementById('theme-toggle').textContent = next === 'dark' ? '\u2600' : '\u263e';
+    }
+    document.getElementById('theme-toggle').textContent =
+      document.documentElement.getAttribute('data-theme') === 'dark' ? '\u2600' : '\u263e';
+  </script>
+<script>
+  function dlCsv(baseUrl, filename) {
+    const from = document.getElementById('dl-from')?.value;
+    const to   = document.getElementById('dl-to')?.value;
+    let url = baseUrl;
+    if (from) url += (url.includes('?') ? '&' : '?') + 'from=' + from;
+    if (to)   url += (url.includes('?') ? '&' : '?') + 'to='   + to;
+    const raw   = localStorage.getItem('sb-ajkpbpiqmsmahzetfxzc-auth-token');
+    const token = raw ? JSON.parse(raw)?.access_token : null;
+    const hdrs  = token ? { 'Authorization': 'Bearer ' + token } : {};
+    fetch(url, { headers: hdrs })
+      .then(r => r.blob())
+      .then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+      });
+  }
+</script>
+</body>
+</html>

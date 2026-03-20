@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MineWatch — InsightsAfrica Côte d'Ivoire</title>
+  <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0a0f1e; color: #e2e8f0; height: 100vh; display: flex; flex-direction: column; }
+    header { background: #0d1527; border-bottom: 1px solid #1e3a5f; padding: 0 1.5rem; height: 56px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .brand-logo { width: 28px; height: 28px; background: linear-gradient(135deg, #f59e0b, #ef4444); border-radius: 6px; }
+    .brand-name { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; }
+    .brand-sub  { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+    .back-link  { font-size: 0.72rem; color: #475569; text-decoration: none; margin-right: 1rem; }
+    .back-link:hover { color: #f59e0b; }
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .status-text { font-size: 0.75rem; color: #64748b; }
+    .main { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 280px; background: #0d1527; border-right: 1px solid #1e3a5f; display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+    .sidebar-section { padding: 1.25rem; border-bottom: 1px solid #1e2d45; }
+    .section-label { font-size: 0.65rem; font-weight: 700; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.75rem; }
+    .stat-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+    .stat-label { font-size: 0.78rem; color: #94a3b8; }
+    .stat-value { font-size: 0.9rem; font-weight: 600; color: #f1f5f9; }
+    .stat-value.highlight { color: #f59e0b; }
+    .tab-row { display: flex; gap: 0.4rem; margin-bottom: 0.85rem; }
+    .tab-btn { flex: 1; padding: 0.45rem; background: #1a2540; border: 1px solid #1e3a5f; border-radius: 7px; color: #64748b; font-size: 0.7rem; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.05em; }
+    .tab-btn:hover { border-color: #f59e0b; color: #e2e8f0; }
+    .tab-btn.tab-active { background: #2d1f0a; border-color: #f59e0b; color: #f59e0b; }
+    .site-btn { width: 100%; text-align: left; background: #1a2540; border: 1px solid #1e3a5f; border-radius: 8px; padding: 0.6rem 0.8rem; color: #94a3b8; font-size: 0.8rem; cursor: pointer; margin-bottom: 0.4rem; transition: all 0.15s; }
+    .site-btn:hover, .site-btn.active { background: #2d1f0a; border-color: #f59e0b; color: #f1f5f9; }
+    .site-region { display: block; font-size: 0.7rem; color: #475569; margin-top: 0.1rem; }
+    .legend-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; }
+    .legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+    .legend-text { font-size: 0.75rem; color: #94a3b8; }
+    .toggle-row { display: flex; gap: 0.4rem; margin-bottom: 0.5rem; }
+    .toggle-btn { flex: 1; padding: 0.45rem; background: #1a2540; border: 1px solid #1e3a5f; border-radius: 7px; color: #64748b; font-size: 0.72rem; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.15s; }
+    .toggle-btn.active { background: #2d1f0a; border-color: #f59e0b; color: #f59e0b; }
+    .info-box { background: #1a2540; border: 1px solid #1e3a5f; border-radius: 8px; padding: 0.75rem; font-size: 0.78rem; color: #94a3b8; line-height: 1.5; }
+    .sidebar-message { font-size: 0.78rem; color: #475569; line-height: 1.5; padding: 0.5rem 0; }
+    #map { flex: 1; }
+    .leaflet-container { background: #0a0f1e; }
+    .mine-tooltip { background: rgba(13,21,39,0.92); border: 1px solid rgba(245,158,11,0.27); color: #e2e8f0; font-size: 0.75rem; font-family: 'Segoe UI', system-ui, sans-serif; padding: 0.3rem 0.6rem; border-radius: 6px; white-space: pre-line; }
+    .mine-tooltip::before { display: none; }
+    .theme-toggle { background: none; border: 1px solid #1e3a5f; border-radius: 6px; color: #475569; cursor: pointer; font-size: 0.85rem; padding: 0.2rem 0.5rem; line-height: 1; transition: border-color 0.15s, color 0.15s; }
+    .theme-toggle:hover { border-color: #f59e0b; color: #e2e8f0; }
+    [data-theme="light"] body { background: #f1f5f9; color: #1e293b; }
+    [data-theme="light"] header { background: #ffffff; border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .brand-name { color: #0f172a; }
+    [data-theme="light"] .back-link { color: #64748b; }
+    [data-theme="light"] .back-link:hover { color: #d97706; }
+    [data-theme="light"] .theme-toggle { border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .sidebar { background: #ffffff; border-right-color: #e2e8f0; }
+    [data-theme="light"] .sidebar-section { border-bottom-color: #f1f5f9; }
+    [data-theme="light"] .section-label { color: #b45309; }
+    [data-theme="light"] .stat-value.highlight { color: #b45309; }
+    [data-theme="light"] .tab-btn { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .tab-btn.tab-active { background: #fffbeb; border-color: #f59e0b; color: #b45309; }
+    [data-theme="light"] .site-btn { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .site-btn:hover, [data-theme="light"] .site-btn.active { background: #fffbeb; border-color: #f59e0b; color: #0f172a; }
+    [data-theme="light"] .toggle-btn { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .toggle-btn.active { background: #fffbeb; border-color: #f59e0b; color: #b45309; }
+    [data-theme="light"] .info-box { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .leaflet-container { background: #f1f5f9; }
+    [data-theme="light"] .mine-tooltip { background: rgba(255,255,255,0.96); border-color: rgba(245,158,11,0.35); color: #0f172a; }
+    #change-chart-section { display: block; }
+    @media (max-width: 767px) {
+      #change-chart-section { display: none; }
+      header { padding: 0 0.85rem; }
+      .brand-sub { display: none; }
+      .back-link { margin-right: 0.4rem; }
+      .header-right { gap: 0.6rem; }
+      .main { flex-direction: column; overflow: hidden; }
+      .sidebar { width: 100%; order: 2; border-right: none; border-top: 1px solid #1e3a5f; flex: 1; overflow-y: auto; }
+      #map { order: 1; height: 52vh; flex: none; }
+    }
+    @media (max-width: 767px) { [data-theme="light"] .sidebar { border-top-color: #e2e8f0; } }
+  
+    /* ── Download buttons ── */
+    .download-buttons { display: flex; flex-direction: column; gap: 6px; }
+    .dl-btn {
+      display: block; padding: 7px 12px;
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 6px; color: #10b981; font-size: 12px;
+      text-decoration: none; text-align: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .dl-btn:hover { background: rgba(16,185,129,0.2); border-color: #10b981; }
+    [data-theme="light"] .dl-btn { background: #f0fdf4; border-color: #bbf7d0; color: #059669; }
+    [data-theme="light"] .dl-btn:hover { background: #dcfce7; border-color: #6ee7b7; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-logo"></div>
+      <div>
+        <div class="brand-name">MineWatch</div>
+        <div class="brand-sub">InsightsAfrica · Côte d'Ivoire · Gold Mining Intelligence</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="/ivorycoast/hub.html" class="back-link">&#8592; Côte d'Ivoire Hub</a>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
+      <div class="status-dot"></div>
+      <span class="status-text" id="status-text">Loading...</span>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="section-label">Mining Type</div>
+        <div style="font-size:0.72rem; color:#fb923c; font-weight:600;" id="tab-desc">5 industrial gold mining sites — Côte d'Ivoire</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">Active Site</div>
+        <div class="stat-row"><span class="stat-label">Location</span><span class="stat-value highlight" id="site-name">-</span></div>
+        <div class="stat-row"><span class="stat-label">Region</span><span class="stat-value" id="site-region">-</span></div>
+        <div class="stat-row"><span class="stat-label" id="label-ndvi">NDVI change</span><span class="stat-value" id="site-ndvi">-</span></div>
+        <div class="stat-row"><span class="stat-label" id="label-ndwi">NDWI change</span><span class="stat-value" id="site-ndwi">-</span></div>
+        <div class="stat-row"><span class="stat-label">Period</span><span class="stat-value" id="site-period">-</span></div>
+      </div>
+      <div class="sidebar-section" id="change-chart-section" style="display:none;">
+        <div class="section-label" id="chart-title">Vegetation &amp; Water Change Index</div>
+        <div style="position:relative; height:140px; width:100%;"><canvas id="change-chart"></canvas></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">Index View</div>
+        <div class="toggle-row">
+          <button class="toggle-btn active" id="btn-ndvi" onclick="switchIndex('ndvi')">NDVI</button>
+          <button class="toggle-btn" id="btn-ndwi" onclick="switchIndex('ndwi')">NDWI</button>
+          <button class="toggle-btn" id="btn-change" onclick="switchIndex('change')">Change</button>
+        </div>
+        <div class="legend-row"><div class="legend-swatch" style="background:#d73027"></div><span class="legend-text">Severe loss / degradation</span></div>
+        <div class="legend-row"><div class="legend-swatch" style="background:#fc8d59"></div><span class="legend-text">Moderate loss</span></div>
+        <div class="legend-row"><div class="legend-swatch" style="background:#fee08b"></div><span class="legend-text">Low activity</span></div>
+        <div class="legend-row"><div class="legend-swatch" style="background:#d9ef8b"></div><span class="legend-text">Stable / recovery</span></div>
+        <div class="legend-row"><div class="legend-swatch" style="background:#1a9850"></div><span class="legend-text">Healthy vegetation</span></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label" id="sites-label">Artisanal Mining Sites</div>
+        <div id="site-list"><p class="sidebar-message">Loading sites...</p></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">About</div>
+        <div class="info-box">Sentinel-2 optical imagery (10m resolution). NDVI tracks vegetation health around industrial gold mine concessions. NDWI tracks water body changes near processing areas. Data from ESA Copernicus (free). Sites: Tongon (Barrick), Ity, Agbaou, Bonikro (Endeavour), Séguéla (Fortuna).</div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-label">Download Data</div>
+        <div class="download-buttons">
+          <button class="dl-btn" onclick="dlCsv('/api/ivorycoast/mine/download/csv', 'insightsafrica_ivorycoast_mine_sites.csv')">CSV — Mining Sites</button>
+        </div>
+      </div>
+
+        </aside>
+    <div id="map"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map', { center: [7.5, -5.5], zoom: 6 });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '\u00a9 OpenStreetMap \u00a9 CARTO', subdomains: 'abcd', maxZoom: 20,
+    }).addTo(map);
+
+    let allSites = [], filteredSites = [], activeTab = 'industrial';
+    let currentOverlay = null, currentIndex = 'ndvi', activeSite = null;
+    const markerLayer = L.layerGroup().addTo(map);
+
+    function setStatus(t) { document.getElementById('status-text').textContent = t; }
+
+    const TAB_DESC  = { industrial: "5 gold mining sites — Côte d'Ivoire" };
+    const NDVI_LABEL = { industrial: 'NDVI change' };
+    const NDWI_LABEL = { industrial: 'NDWI change' };
+    const CHART_TITLE_TEXT = { industrial: 'Vegetation & Water Change Index' };
+
+    function setTab(tab) { activeTab = tab; renderForTab(); }
+
+    function renderForTab() {
+      filteredSites = allSites.filter(s => s.category === activeTab || activeTab === 'industrial');
+      markerLayer.clearLayers();
+      ['site-name','site-region','site-ndvi','site-ndwi','site-period'].forEach(id => { document.getElementById(id).textContent = '-'; });
+      if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
+      activeSite = null;
+      renderSiteList(filteredSites);
+      buildChangeChart(filteredSites);
+      if (filteredSites.length) displaySite(filteredSites[0]);
+    }
+
+    function switchIndex(idx) {
+      currentIndex = idx;
+      ['ndvi','ndwi','change'].forEach(k => { document.getElementById('btn-' + k).classList.toggle('active', k === idx); });
+      if (activeSite) displaySite(activeSite);
+    }
+
+    function updateSiteInfo(site) {
+      document.getElementById('site-name').textContent   = site.name;
+      document.getElementById('site-region').textContent = site.region;
+      document.getElementById('site-ndvi').textContent   = site.ndvi_change != null ? (site.ndvi_change > 0 ? '+' : '') + site.ndvi_change.toFixed(3) : 'Pending';
+      document.getElementById('site-ndwi').textContent   = site.ndwi_change != null ? (site.ndwi_change > 0 ? '+' : '') + site.ndwi_change.toFixed(3) : 'Pending';
+      document.getElementById('site-period').textContent = site.period || 'Pending';
+    }
+
+    function displaySite(site) {
+      activeSite = site;
+      updateSiteInfo(site);
+      if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
+      const imgKey = currentIndex + '_png';
+      if (site[imgKey]) {
+        currentOverlay = L.imageOverlay('/ic-tiles/' + site[imgKey], site.leaflet_bounds, { opacity: 0.85 });
+        currentOverlay.addTo(map);
+        map.fitBounds(site.leaflet_bounds, { padding: [40, 40] });
+      } else {
+        map.setView([site.centre[1], site.centre[0]], 11);
+      }
+    }
+
+    function renderSiteList(sites) {
+      const container = document.getElementById('site-list');
+      container.textContent = '';
+      if (!sites.length) {
+        const p = document.createElement('p');
+        p.className = 'sidebar-message';
+        p.textContent = 'No sites in this category.';
+        container.appendChild(p);
+        return;
+      }
+      sites.forEach((site, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'site-btn' + (i === 0 ? ' active' : '');
+        btn.dataset.siteId = site.id;
+        btn.appendChild(document.createTextNode(site.name));
+        const regionSpan = document.createElement('span');
+        regionSpan.className = 'site-region';
+        regionSpan.textContent = site.region;
+        btn.appendChild(regionSpan);
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.site-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          displaySite(site);
+        });
+        container.appendChild(btn);
+
+        const hasData  = site.ndvi_change != null;
+        const tip = [site.name, site.region, '',
+          hasData ? NDVI_LABEL[activeTab] + ': ' + (site.ndvi_change > 0 ? '+' : '') + site.ndvi_change.toFixed(3) : 'No change data',
+          hasData ? 'Period: ' + site.period : 'Click to view imagery'].join('\n');
+        const markerColor = '#fb923c';
+        const marker = L.circleMarker([site.centre[1], site.centre[0]], {
+          radius: 9, fillColor: hasData ? markerColor : '#475569', color: '#fff', weight: 1.5, fillOpacity: 0.85,
+        }).addTo(markerLayer);
+        marker.bindTooltip(tip, { sticky: true, className: 'mine-tooltip' });
+        marker.on('click', () => {
+          document.querySelectorAll('.site-btn').forEach(b => b.classList.remove('active'));
+          const matchBtn = document.querySelector('[data-site-id="' + site.id + '"]');
+          if (matchBtn) matchBtn.classList.add('active');
+          displaySite(site);
+        });
+      });
+    }
+
+    let changeChart = null;
+    function buildChangeChart(siteData) {
+      const withData = siteData.filter(s => s.ndvi_change != null);
+      if (!withData.length) { document.getElementById('change-chart-section').style.display = 'none'; return; }
+      document.getElementById('change-chart-section').style.display = 'block';
+      const ndviLabel = NDVI_LABEL[activeTab], ndwiLabel = NDWI_LABEL[activeTab];
+      const labels = withData.map(s => s.name.split(/[,\s]+/)[0]);
+      const ndviVals = withData.map(s => s.ndvi_change);
+      const ndwiVals = withData.map(s => s.ndwi_change);
+      const ctx = document.getElementById('change-chart').getContext('2d');
+      if (changeChart) changeChart.destroy();
+      changeChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels, datasets: [
+          { label: ndviLabel, data: ndviVals,
+            backgroundColor: ndviVals.map(v => v >= 0 ? 'rgba(34,197,94,0.75)' : 'rgba(239,68,68,0.75)'),
+            borderColor: ndviVals.map(v => v >= 0 ? 'rgba(34,197,94,1)' : 'rgba(239,68,68,1)'), borderWidth: 1, borderRadius: 3 },
+          { label: ndwiLabel, data: ndwiVals,
+            backgroundColor: ndwiVals.map(v => v >= 0 ? 'rgba(56,189,248,0.75)' : 'rgba(245,158,11,0.75)'),
+            borderColor: ndwiVals.map(v => v >= 0 ? 'rgba(56,189,248,1)' : 'rgba(245,158,11,1)'), borderWidth: 1, borderRadius: 3 },
+        ]},
+        options: {
+          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+          onClick: (event, elements) => {
+            if (!elements.length) return;
+            const site = withData[elements[0].index];
+            if (site) { displaySite(site); document.querySelectorAll('.site-btn').forEach(b => { b.classList.toggle('active', b.dataset.siteId === site.id); }); }
+          },
+          plugins: {
+            legend: { display: true, labels: { color: '#64748b', font: { size: 9 }, boxWidth: 10, padding: 8 } },
+            tooltip: {
+              backgroundColor: 'rgba(13,21,39,0.95)', borderColor: '#1e3a5f', borderWidth: 1,
+              titleColor: '#f59e0b', bodyColor: '#94a3b8', padding: 9,
+              callbacks: {
+                title: (items) => withData[items[0].dataIndex].name,
+                label: (item) => {
+                  const s = withData[item.dataIndex];
+                  const v = item.datasetIndex === 0 ? s.ndvi_change : s.ndwi_change;
+                  const key = item.datasetIndex === 0 ? ndviLabel : ndwiLabel;
+                  return key + ': ' + (v > 0 ? '+' : '') + v.toFixed(4);
+                },
+              },
+            },
+          },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b', font: { size: 9 }, callback: v => v.toFixed(2) } },
+            y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#94a3b8', font: { size: 8.5 } } },
+          },
+        },
+      });
+    }
+
+    async function loadSites() {
+      try {
+        const res = await fetch('/api/ivorycoast/mine/sites');
+        if (!res.ok) throw new Error('no data');
+        allSites = await res.json();
+        renderForTab();
+        setStatus('Live');
+      } catch (_) {
+        document.getElementById('site-list').textContent = '';
+        const p = document.createElement('p');
+        p.className = 'sidebar-message';
+        p.textContent = 'No data yet - run fetch_sentinel2.py --country ivorycoast first.';
+        document.getElementById('site-list').appendChild(p);
+        setStatus('Pending data');
+      }
+    }
+    loadSites();
+  </script>
+  <script>
+  function dlCsv(baseUrl, filename) {
+    const raw   = localStorage.getItem('sb-ajkpbpiqmsmahzetfxzc-auth-token');
+    const token = raw ? JSON.parse(raw)?.access_token : null;
+    const hdrs  = token ? { 'Authorization': 'Bearer ' + token } : {};
+    fetch(baseUrl, { headers: hdrs })
+      .then(r => r.blob())
+      .then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+      });
+  }
+  </script>
+  <script>
+    function toggleTheme() {
+      var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ia-theme', next);
+      document.getElementById('theme-toggle').textContent = next === 'dark' ? '\u2600' : '\u263e';
+    }
+    document.getElementById('theme-toggle').textContent =
+      document.documentElement.getAttribute('data-theme') === 'dark' ? '\u2600' : '\u263e';
+  </script>
+</body>
+</html>

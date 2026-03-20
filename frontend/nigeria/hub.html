@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InsightsAfrica — Nigeria Intelligence Hub</title>
+  <meta name="description" content="Explore Nigeria's environmental data — FloodWatch across 37 states, oil/gas MineWatch, CropWatch, and HeatWatch for Lagos, Kano, and Abuja — powered by satellite imagery." />
+  <link rel="canonical" href="https://insightsafrica.org/nigeria/hub.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://insightsafrica.org/nigeria/hub.html" />
+  <meta property="og:title" content="InsightsAfrica — Nigeria Intelligence Hub" />
+  <meta property="og:description" content="Nigeria satellite intelligence — flood risk across 37 states, oil and artisanal mining watch, crop health, and urban heat for Lagos, Kano, and Abuja." />
+  <meta property="og:image" content="https://insightsafrica.org/static/og-image.png" />
+  <meta property="og:site_name" content="InsightsAfrica" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="InsightsAfrica — Nigeria Intelligence Hub" />
+  <meta name="twitter:description" content="Nigeria satellite intelligence — flood risk across 37 states, oil and artisanal mining watch, crop health, and urban heat for Lagos, Kano, and Abuja." />
+  <meta name="twitter:image" content="https://insightsafrica.org/static/og-image.png" />
+
+  <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0f1e;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #0d1527;
+      border-bottom: 1px solid #1e3a5f;
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.85rem; text-decoration: none; }
+
+    .brand-logo {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      border-radius: 8px;
+    }
+
+    .brand-name {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #f1f5f9;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-tagline {
+      font-size: 0.65rem;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .header-right {
+      font-size: 0.75rem;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .country-banner {
+      background: linear-gradient(135deg, #0d1527 0%, #0f2040 100%);
+      border-bottom: 1px solid #1e3a5f;
+      padding: 2.5rem 2rem 2rem;
+    }
+
+    .country-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #1a2f1a;
+      border: 1px solid #2d5a2d;
+      border-radius: 99px;
+      padding: 0.3rem 0.85rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #4ade80;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .country-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #f1f5f9;
+      letter-spacing: -0.04em;
+      margin-bottom: 0.5rem;
+    }
+
+    .country-title span { color: #4ade80; }
+
+    .country-desc {
+      font-size: 0.9rem;
+      color: #64748b;
+      max-width: 560px;
+      line-height: 1.6;
+    }
+
+    .products-section {
+      padding: 2rem;
+    }
+
+    .section-heading {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #3b82f6;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 1.25rem;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .product-card {
+      background: #0d1527;
+      border: 1px solid #1e3a5f;
+      border-radius: 14px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s, transform 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .product-card:hover {
+      border-color: #3b82f6;
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .card-icon.blue  { background: rgba(59,130,246,0.15); }
+    .card-icon.amber { background: rgba(245,158,11,0.15); }
+    .card-icon.green { background: rgba(34,197,94,0.15); }
+    .card-icon.red   { background: rgba(239,68,68,0.15); }
+
+    .card-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #475569;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: -0.02em;
+    }
+
+    .card-desc {
+      font-size: 0.82rem;
+      color: #64748b;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.75rem;
+      border-top: 1px solid #1e2d45;
+    }
+
+    .card-status {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 99px;
+    }
+
+    .status-live { background: rgba(34,197,94,0.15);  color: #22c55e; }
+    .status-beta { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .status-soon { background: rgba(71,85,105,0.3);   color: #64748b; }
+
+    .profile-card {
+      background: linear-gradient(135deg, #0d1527 0%, #0f2040 100%);
+      border-color: #166534 !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 1.5rem !important;
+      margin-bottom: 1.25rem;
+    }
+    .profile-card .card-title { color: #f1f5f9; }
+    .profile-card .card-desc  { color: #64748b; }
+    [data-theme="light"] .profile-card {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border-color: #86efac !important;
+    }
+    [data-theme="light"] .profile-card .card-title { color: #0f172a; }
+    [data-theme="light"] .profile-card .card-desc  { color: #475569; }
+    [data-theme="light"] .profile-card .card-label { color: #16a34a; }
+    @media (max-width: 540px) {
+      .profile-card { flex-direction: column !important; gap: 0.75rem !important; }
+    }
+    
+    .card-arrow { font-size: 0.85rem; color: #3b82f6; }
+
+    footer {
+      border-top: 1px solid #1e2d45;
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-brand { font-size: 0.78rem; font-weight: 700; color: #475569; }
+    .footer-note  { font-size: 0.7rem; color: #334155; }
+
+    .theme-toggle {
+      background: none; border: 1px solid #1e3a5f; border-radius: 6px;
+      color: #475569; cursor: pointer; font-size: 0.85rem;
+      padding: 0.2rem 0.5rem; line-height: 1;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-toggle:hover { border-color: #3b82f6; color: #e2e8f0; }
+
+    /* ── Country switcher pill ── */
+    .country-switcher {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      background: #0a0f1e;
+      border: 1px solid #1e3a5f;
+      border-radius: 99px;
+      overflow: hidden;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .cs-item {
+      padding: 0.28rem 0.75rem;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .cs-item.active {
+      background: #1a2f1a;
+      color: #4ade80;
+      cursor: default;
+    }
+    .cs-item.link {
+      color: #475569;
+    }
+    .cs-item.link:hover {
+      background: rgba(59,130,246,0.1);
+      color: #94a3b8;
+    }
+    .cs-divider {
+      color: #1e3a5f;
+      font-size: 0.9rem;
+      line-height: 1;
+      user-select: none;
+    }
+    [data-theme="light"] .country-switcher { background: #f8fafc; border-color: #e2e8f0; }
+    [data-theme="light"] .cs-item.active   { background: #dcfce7; color: #16a34a; }
+    [data-theme="light"] .cs-item.link     { color: #64748b; }
+    [data-theme="light"] .cs-item.link:hover { background: rgba(37,99,235,0.07); color: #1e293b; }
+    [data-theme="light"] .cs-divider       { color: #cbd5e1; }
+
+    /* ── Light theme ── */
+    [data-theme="light"] body { background: #f1f5f9; color: #1e293b; }
+    [data-theme="light"] header { background: #ffffff; border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .brand-name { color: #0f172a; }
+    [data-theme="light"] .brand-tagline { color: #64748b; }
+    [data-theme="light"] .header-right { color: #64748b; }
+    [data-theme="light"] .theme-toggle { border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .theme-toggle:hover { border-color: #3b82f6; color: #0f172a; }
+    [data-theme="light"] .country-banner { background: linear-gradient(135deg,#ffffff 0%,#f0fdf4 100%); border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .country-pill { background: #dcfce7; border-color: #86efac; color: #16a34a; }
+    [data-theme="light"] .country-title { color: #0f172a; }
+    [data-theme="light"] .country-title span { color: #16a34a; }
+    [data-theme="light"] .country-desc { color: #475569; }
+    [data-theme="light"] .section-heading { color: #2563eb; }
+    [data-theme="light"] .product-card { background: #ffffff; border-color: #e2e8f0; }
+    [data-theme="light"] .product-card:hover { border-color: #3b82f6; }
+    [data-theme="light"] .card-label { color: #64748b; }
+    [data-theme="light"] .card-title { color: #0f172a; }
+    [data-theme="light"] .card-desc { color: #475569; }
+    [data-theme="light"] .card-footer { border-top-color: #e2e8f0; }
+    [data-theme="light"] footer { border-top-color: #e2e8f0; }
+    [data-theme="light"] .footer-brand { color: #475569; }
+    [data-theme="light"] .footer-note { color: #64748b; }
+
+    /* ── KPI strip ── */
+    .kpi-strip {
+      background: #0d1221;
+      border-top: 1px solid #1e2d45;
+      border-bottom: 1px solid #1e2d45;
+      display: flex;
+      align-items: stretch;
+    }
+    .kpi-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 1.25rem;
+      gap: 0.2rem;
+      border-right: 1px solid #1e2d45;
+    }
+    .kpi-item:last-child { border-right: none; }
+    .kpi-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #475569; }
+    .kpi-value { font-size: 1.35rem; font-weight: 800; color: #4ade80; letter-spacing: -0.03em; line-height: 1; }
+    .kpi-sub   { font-size: 0.65rem; color: #64748b; text-align: center; }
+    .kpi-loading .kpi-value { color: #2d3a50; animation: kpi-pulse 1.2s ease-in-out infinite; }
+    @keyframes kpi-pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+    @media (max-width: 560px) {
+      .kpi-strip { flex-wrap: wrap; }
+      .kpi-item  { flex: 1 1 50%; border-bottom: 1px solid #1e2d45; }
+      .kpi-item:nth-child(odd)  { border-right: 1px solid #1e2d45; }
+      .kpi-item:nth-child(even) { border-right: none; }
+      .kpi-item:nth-last-child(-n+2) { border-bottom: none; }
+    }
+    .flex-spacer { flex: 1; }
+
+    [data-theme="light"] .kpi-strip          { background: #f8fafc; border-color: #e2e8f0; }
+    [data-theme="light"] .kpi-item           { border-right-color: #e2e8f0; }
+    [data-theme="light"] .kpi-label          { color: #94a3b8; }
+    [data-theme="light"] .kpi-sub            { color: #94a3b8; }
+    [data-theme="light"] .kpi-loading .kpi-value { color: #cbd5e1; }
+    @media (max-width: 560px) {
+      [data-theme="light"] .kpi-item { border-bottom-color: #e2e8f0; }
+    }
+
+    @media (max-width: 767px) {
+      header { padding: 0 1rem; }
+      .brand-tagline { display: none; }
+      .country-banner { padding: 1.5rem 1rem 1.25rem; }
+      .country-title  { font-size: 1.6rem; }
+      .products-section { padding: 1.25rem 1rem; }
+      .product-grid { grid-template-columns: 1fr; gap: 0.85rem; }
+      footer { flex-direction: column; gap: 0.35rem; padding: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand">
+      <div class="brand-logo"></div>
+      <div>
+        <div class="brand-name">InsightsAfrica</div>
+        <div class="brand-tagline">Satellite Intelligence Platform</div>
+      </div>
+    </a>
+    <div class="header-right">
+      <a href="/" style="font-size:0.75rem;color:#475569;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#475569'">&larr; Home</a>
+      <a href="https://monitor.insightsafrica.org" target="_blank" rel="noopener" style="font-size:0.75rem;color:#38bdf8;text-decoration:none;font-weight:500;">Monitor ↗</a>
+      <div class="country-switcher" title="Switch country hub">
+        <a class="cs-item link" href="/hub.html">&#127468;&#127469; Ghana</a>
+        <span class="cs-divider">&#124;</span>
+        <span class="cs-item active">&#127475;&#127468; Nigeria</span>
+        <span class="cs-divider">&#124;</span>
+        <a class="cs-item link" href="/ivorycoast/hub.html">&#127464;&#127470; Côte d'Ivoire</a>
+        <span class="cs-divider">&#124;</span>
+        <a class="cs-item link" href="/senegal/hub.html">&#127480;&#127475; Senegal</a>
+      </div>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
+    </div>
+  </header>
+
+  <div class="country-banner">
+    <div class="country-pill">&#127475;&#127468; Nigeria</div>
+    <h1 class="country-title">Nigeria <span>Intelligence Hub</span></h1>
+    <p class="country-desc">
+      Satellite intelligence for Nigeria's most pressing environmental and economic challenges —
+      flood exposure, artisanal mining, oil/gas impact, crop stress, and urban heat.
+      Built on open data, actionable at federal and state level.
+    </p>
+  </div>
+
+  <div class="kpi-strip">
+    <div class="kpi-item kpi-loading" id="kpi-flood">
+      <span class="kpi-label">Peak rainfall</span>
+      <span class="kpi-value">—</span>
+      <span class="kpi-sub">loading…</span>
+    </div>
+    <div class="kpi-item kpi-loading" id="kpi-crop">
+      <span class="kpi-label">Peak crop stress</span>
+      <span class="kpi-value">—</span>
+      <span class="kpi-sub">loading…</span>
+    </div>
+    <div class="kpi-item kpi-loading" id="kpi-heat">
+      <span class="kpi-label">Urban heat · Lagos</span>
+      <span class="kpi-value">—</span>
+      <span class="kpi-sub">loading…</span>
+    </div>
+    <div class="kpi-item kpi-loading" id="kpi-mine">
+      <span class="kpi-label">Mining sites</span>
+      <span class="kpi-value">—</span>
+      <span class="kpi-sub">loading…</span>
+    </div>
+  </div>
+
+  <section class="products-section">
+    <div class="section-heading">Available Products</div>
+
+    <!-- Country Profile — featured full-width card -->
+    <a href="/nigeria/profile/" class="product-card profile-card">
+      <div class="card-icon green" style="flex-shrink:0;width:48px;height:48px;font-size:1.5rem">&#127760;</div>
+      <div style="flex:1">
+        <div class="card-label">Intelligence Briefing</div>
+        <div class="card-title">Nigeria Country Profile</div>
+        <p class="card-desc" style="margin-top:0.35rem">All five data products unified — satellite intelligence and socioeconomic indicators combined into a single country risk briefing.</p>
+      </div>
+      <span class="card-arrow" style="font-size:1.1rem;flex-shrink:0">&#8594;</span>
+    </a>
+
+    <div class="product-grid">
+
+      <a href="/nigeria/flood/" class="product-card">
+        <div class="card-icon blue">&#127783;</div>
+        <div>
+          <div class="card-label">Hydrology</div>
+          <div class="card-title">FloodWatch</div>
+        </div>
+        <p class="card-desc">
+          Monthly rainfall intelligence across all 37 states and 774 LGAs.
+          CHIRPS satellite data, year-on-year comparison, zonal statistics per boundary.
+        </p>
+        <div class="card-footer">
+          <span class="card-status status-live">Live &mdash; 2024&ndash;2025</span>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+      </a>
+
+      <a href="/nigeria/mine/" class="product-card">
+        <div class="card-icon amber">&#9889;</div>
+        <div>
+          <div class="card-label">Mining &amp; Oil/Gas</div>
+          <div class="card-title">MineWatch</div>
+        </div>
+        <p class="card-desc">
+          Sentinel-2 change detection across artisanal mining sites (north)
+          and oil/gas impact zones (Niger Delta). NDVI and NDWI shift analysis.
+        </p>
+        <div class="card-footer">
+          <span class="card-status status-live">Live &mdash; 2024&ndash;2026</span>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+      </a>
+
+      <a href="/nigeria/crop/" class="product-card">
+        <div class="card-icon green">&#127807;</div>
+        <div>
+          <div class="card-label">Agriculture</div>
+          <div class="card-title">CropWatch</div>
+        </div>
+        <p class="card-desc">
+          MODIS 250m NDVI 16-day composites for crop stress monitoring across
+          Kano Plains, Middle Belt, Sokoto Basin, Niger Valley, and Cross River.
+        </p>
+        <div class="card-footer">
+          <span class="card-status status-beta">In Development</span>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+      </a>
+
+      <a href="/nigeria/heat/" class="product-card">
+        <div class="card-icon red">&#127774;</div>
+        <div>
+          <div class="card-label">Urban Climate</div>
+          <div class="card-title">HeatWatch</div>
+        </div>
+        <p class="card-desc">
+          Urban heat island mapping using Landsat thermal bands.
+          Targeting Lagos, Kano, and Abuja for city planning and public health use.
+        </p>
+        <div class="card-footer">
+          <span class="card-status status-beta">In Development</span>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+      </a>
+
+      <a href="/nigeria/human/" class="product-card">
+        <div class="card-icon" style="background:rgba(168,85,247,0.15)">&#128101;</div>
+        <div>
+          <div class="card-label">Human Development</div>
+          <div class="card-title">HumanWatch</div>
+        </div>
+        <p class="card-desc">
+          Key socioeconomic indicators — child mortality, poverty, health expenditure,
+          literacy, and life expectancy — sourced from the World Bank Open Data API.
+        </p>
+        <div class="card-footer">
+          <span class="card-status status-live">Live</span>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <div class="flex-spacer"></div>
+
+  <footer>
+    <div class="footer-brand">InsightsAfrica &mdash; Nigeria</div>
+    <div class="footer-note">
+      Data: CHIRPS, Sentinel-2, MODIS, Landsat &mdash; all open source
+    </div>
+  </footer>
+
+  <script>
+  (async function () {
+    function set(id, value, sub) {
+      const el = document.getElementById(id);
+      el.classList.remove('kpi-loading');
+      el.querySelector('.kpi-value').textContent = value;
+      el.querySelector('.kpi-sub').textContent   = sub;
+    }
+    const [floodRes, cropRes, heatRes, mineRes] = await Promise.allSettled([
+      fetch('/api/nigeria/flood/layers').then(r => r.json()),
+      fetch('/api/nigeria/crop/layers').then(r => r.json()),
+      fetch('/api/nigeria/heat/layers').then(r => r.json()),
+      fetch('/api/nigeria/mine/sites').then(r => r.json()),
+    ]);
+    if (floodRes.status === 'fulfilled') {
+      const peak = floodRes.value.reduce((a, b) => b.rainfall_mm.mean > a.rainfall_mm.mean ? b : a);
+      set('kpi-flood', `${Math.round(peak.rainfall_mm.mean)}mm`, `${peak.label} · national mean`);
+    } else { set('kpi-flood', '—', 'unavailable'); }
+
+    if (cropRes.status === 'fulfilled') {
+      const worst = cropRes.value.reduce((a, b) => b.stress_score.severe_stress > a.stress_score.severe_stress ? b : a);
+      set('kpi-crop', `${Math.round(worst.stress_score.severe_stress)}%`, `${worst.label} · severe stress`);
+    } else { set('kpi-crop', '—', 'unavailable'); }
+
+    if (heatRes.status === 'fulfilled') {
+      const layers = heatRes.value.filter(l => l.city_id === 'lagos' && !l.demo);
+      const best   = layers.length ? layers.reduce((a, b) => b.stats.uhi_intensity_c > a.stats.uhi_intensity_c ? b : a) : null;
+      if (best) {
+        const [y, m] = best.date.split('-');
+        const mon = new Date(+y, +m - 1).toLocaleString('en-GB', { month: 'short' });
+        set('kpi-heat', `+${best.stats.uhi_intensity_c.toFixed(1)}°C`, `${mon} ${y} · UHI intensity`);
+      } else { set('kpi-heat', '—', 'no data'); }
+    } else { set('kpi-heat', '—', 'unavailable'); }
+
+    if (mineRes.status === 'fulfilled') {
+      set('kpi-mine', `${mineRes.value.length}`, `sites monitored`);
+    } else { set('kpi-mine', '—', 'unavailable'); }
+  })();
+  </script>
+
+  <script>
+    function toggleTheme() {
+      var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ia-theme', next);
+      document.getElementById('theme-toggle').textContent = next === 'dark' ? '\u2600' : '\u263e';
+    }
+    document.getElementById('theme-toggle').textContent =
+      document.documentElement.getAttribute('data-theme') === 'dark' ? '\u2600' : '\u263e';
+  </script>
+</body>
+</html>

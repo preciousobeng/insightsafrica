@@ -1,0 +1,38 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.env
+
+# Data — raw and processed (large binary files, not for git)
+data/raw/
+data/processed/
+data/processed_nigeria/
+data/processed_ivorycoast/
+data/processed_senegal/
+data/processed_indicators/
+data/cache/
+data/downloads.jsonl
+
+# Notebooks output
+notebooks/.ipynb_checkpoints/
+notebooks/**/.ipynb_checkpoints/
+
+# OS
+.DS_Store
+*.swp
+*.swo
+
+# Logs
+*.log
+nohup.out
+
+# Secrets
+*.key
+*.pem

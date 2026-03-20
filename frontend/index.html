@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InsightsAfrica — Satellite Intelligence Platform for Africa</title>
+  <meta name="description" content="InsightsAfrica delivers satellite-powered environmental intelligence for Africa — flood risk, illegal mining, crop health, and urban heat — starting with Ghana and Nigeria." />
+  <link rel="canonical" href="https://insightsafrica.org/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://insightsafrica.org/" />
+  <meta property="og:title" content="InsightsAfrica — Satellite Intelligence Platform for Africa" />
+  <meta property="og:description" content="Satellite-powered environmental intelligence for Africa. Track flood risk, illegal mining, crop health, and urban heat across Ghana and Nigeria." />
+  <meta property="og:image" content="https://insightsafrica.org/static/og-image.png" />
+  <meta property="og:site_name" content="InsightsAfrica" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://insightsafrica.org/" />
+  <meta name="twitter:title" content="InsightsAfrica — Satellite Intelligence Platform for Africa" />
+  <meta name="twitter:description" content="Satellite-powered environmental intelligence for Africa. Track flood risk, illegal mining, crop health, and urban heat across Ghana and Nigeria." />
+  <meta name="twitter:image" content="https://insightsafrica.org/static/og-image.png" />
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "InsightsAfrica",
+    "url": "https://insightsafrica.org",
+    "description": "Satellite-powered environmental intelligence platform covering flood risk, illegal mining, crop health, and urban heat across Africa.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://insightsafrica.org/hub.html"
+    }
+  }
+  </script>
+
+  <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --bg:          #0a0f1e;
+      --bg-card:     #0d1527;
+      --border:      #1e3a5f;
+      --border-dim:  #1e2d45;
+      --accent:      #3b82f6;
+      --accent-2:    #06b6d4;
+      --accent-glow: rgba(59,130,246,0.12);
+      --green:       #22c55e;
+      --amber:       #f59e0b;
+      --red:         #ef4444;
+      --text-1:      #f1f5f9;
+      --text-2:      #94a3b8;
+      --text-3:      #475569;
+      --text-4:      #334155;
+      --font-display:'Syne', system-ui, sans-serif;
+      --font-mono:   'DM Mono', 'Courier New', monospace;
+      --font-body:   'Segoe UI', system-ui, sans-serif;
+      --radius:      14px;
+    }
+
+    [data-theme="light"] {
+      --bg:          #f1f5f9;
+      --bg-card:     #ffffff;
+      --border:      #e2e8f0;
+      --border-dim:  #f1f5f9;
+      --accent:      #2563eb;
+      --accent-2:    #0891b2;
+      --accent-glow: rgba(37,99,235,0.08);
+      --text-1:      #0f172a;
+      --text-2:      #475569;
+      --text-3:      #64748b;
+      --text-4:      #94a3b8;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-1);
+      min-height: 100vh;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 64px;
+      background: rgba(10,15,30,0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 2rem; gap: 1rem;
+      transition: background 0.25s;
+    }
+    [data-theme="light"] nav { background: rgba(241,245,249,0.9); }
+
+    .nav-brand { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; flex-shrink: 0; }
+
+    .nav-logo {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-logo svg { width: 16px; height: 20px; fill: white; }
+
+    .nav-name {
+      font-family: var(--font-display);
+      font-size: 1rem; font-weight: 800;
+      color: var(--text-1); letter-spacing: -0.02em; line-height: 1.1;
+    }
+    .nav-tagline {
+      font-size: 0.58rem; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.12em;
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 0.1rem; margin-left: 1.5rem; }
+    .nav-links a {
+      font-size: 0.84rem; font-weight: 500; color: var(--text-2);
+      text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover { color: var(--text-1); background: var(--accent-glow); }
+
+    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 0.65rem; }
+
+    .theme-btn {
+      background: none; border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text-3); cursor: pointer; padding: 0.28rem 0.55rem;
+      font-size: 0.88rem; line-height: 1; transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-btn:hover { border-color: var(--accent); color: var(--text-1); }
+
+    .nav-signin {
+      font-size: 0.82rem; font-weight: 500; color: var(--text-2);
+      text-decoration: none; padding: 0.45rem 0.85rem;
+      border: 1px solid var(--border); border-radius: 6px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .nav-signin:hover { color: var(--text-1); border-color: var(--accent); }
+
+    .nav-cta {
+      font-size: 0.82rem; font-weight: 600; background: var(--accent);
+      color: white; text-decoration: none; padding: 0.45rem 1.05rem;
+      border-radius: 7px; transition: opacity 0.15s, transform 0.15s; white-space: nowrap;
+    }
+    .nav-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .nav-hamburger {
+      display: none; background: none; border: 1px solid var(--border);
+      border-radius: 6px; padding: 0.32rem 0.5rem; cursor: pointer;
+      color: var(--text-2); font-size: 1rem; line-height: 1;
+    }
+
+    .nav-mobile { display: none; position: fixed; top: 64px; left: 0; right: 0;
+      background: var(--bg-card); border-bottom: 1px solid var(--border);
+      padding: 0.75rem; flex-direction: column; gap: 0.2rem; z-index: 99; }
+    .nav-mobile.open { display: flex; }
+    .nav-mobile a {
+      font-size: 0.9rem; color: var(--text-2); text-decoration: none;
+      padding: 0.65rem 0.85rem; border-radius: 8px; transition: background 0.15s, color 0.15s;
+    }
+    .nav-mobile a:hover { background: var(--accent-glow); color: var(--text-1); }
+    .nav-mobile .mob-cta {
+      background: var(--accent); color: white; text-align: center;
+      font-weight: 600; margin-top: 0.35rem;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center;
+      position: relative; overflow: hidden; padding: 120px 2rem 80px;
+    }
+
+    /* Dot grid */
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(59,130,246,0.13) 1px, transparent 1px);
+      background-size: 30px 30px; pointer-events: none;
+    }
+    [data-theme="light"] .hero::before {
+      background-image: radial-gradient(circle, rgba(37,99,235,0.08) 1px, transparent 1px);
+    }
+
+    /* Bottom fade */
+    .hero::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 220px; background: linear-gradient(to bottom, transparent, var(--bg));
+      pointer-events: none;
+    }
+
+    .hero-glow-r {
+      position: absolute; top: -15%; right: -8%; width: 580px; height: 580px;
+      background: radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .hero-glow-l {
+      position: absolute; bottom: 5%; left: -5%; width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(6,182,212,0.05) 0%, transparent 68%);
+      pointer-events: none;
+    }
+
+    .hero-scanline {
+      position: absolute; left: 0; right: 0; height: 2px; top: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,0.5) 35%, rgba(6,182,212,0.5) 65%, transparent 100%);
+      animation: scan 7s ease-in-out infinite; pointer-events: none;
+    }
+    @keyframes scan {
+      0%   { top: 0%;   opacity: 0; }
+      4%   { opacity: 1; }
+      96%  { opacity: 0.6; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    .hero-inner {
+      max-width: 1200px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: center; position: relative; z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.28);
+      border-radius: 99px; padding: 0.28rem 0.9rem;
+      font-size: 0.68rem; font-weight: 600; color: var(--accent-2);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.5rem;
+    }
+    .badge-dot {
+      width: 6px; height: 6px; background: var(--green); border-radius: 50%;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.75)} }
+
+    .hero-headline {
+      font-family: var(--font-display);
+      font-size: clamp(2.1rem, 4.8vw, 3.5rem);
+      font-weight: 800; line-height: 1.07; letter-spacing: -0.03em;
+      color: var(--text-1); margin-bottom: 1.25rem;
+    }
+    .hero-headline em { font-style: normal; color: var(--accent); }
+
+    .hero-sub {
+      font-size: 1.03rem; color: var(--text-2); line-height: 1.68;
+      margin-bottom: 2rem; max-width: 480px;
+    }
+
+    .hero-ctas { display: flex; gap: 0.85rem; flex-wrap: wrap; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: var(--accent); color: white;
+      font-size: 0.9rem; font-weight: 600; padding: 0.75rem 1.5rem;
+      border-radius: 9px; text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(59,130,246,0.32); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: transparent; color: var(--text-2);
+      font-size: 0.9rem; font-weight: 500; padding: 0.75rem 1.5rem;
+      border-radius: 9px; text-decoration: none; border: 1px solid var(--border);
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--text-1); background: var(--accent-glow); }
+
+    /* ── Africa Map Visual ── */
+    .hero-visual { display: flex; align-items: center; justify-content: center; }
+
+    .map-container { position: relative; width: 320px; height: 400px; }
+
+    .map-glow {
+      position: absolute; top: 50%; left: 50%;
+      width: 380px; height: 380px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 68%);
+      transform: translate(-50%, -50%);
+      animation: map-pulse 4s ease-in-out infinite;
+    }
+    @keyframes map-pulse { 0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.7} 50%{transform:translate(-50%,-50%) scale(1.06);opacity:1} }
+
+    /* Orbit rings */
+    .orbit { position: absolute; top: 50%; left: 50%; border-radius: 50%; transform: translate(-50%,-50%); }
+    .orbit-1 { width: 370px; height: 370px; border: 1px solid rgba(59,130,246,0.14); }
+    .orbit-2 { width: 310px; height: 310px; border: 1px dashed rgba(6,182,212,0.1); }
+
+    /* Orbiting satellite */
+    .orbit-wrap {
+      position: absolute; top: 50%; left: 50%;
+      width: 370px; height: 370px;
+      margin: -185px 0 0 -185px;
+      animation: orbit-spin 9s linear infinite;
+    }
+    @keyframes orbit-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+    .sat {
+      position: absolute; top: -4px; left: 50%; margin-left: -4px;
+      width: 8px; height: 8px; background: var(--accent-2); border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-2);
+    }
+
+    .africa-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 18px rgba(59,130,246,0.18)); }
+
+    /* ── STATS ── */
+    .stats {
+      background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 2rem;
+    }
+    .stats-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 2rem;
+    }
+    .stat { text-align: center; }
+    .stat-n {
+      font-family: var(--font-mono); font-size: 2rem; font-weight: 500;
+      color: var(--text-1); letter-spacing: -0.02em; line-height: 1; margin-bottom: 0.4rem;
+    }
+    .stat-n span { color: var(--accent); }
+    .stat-l { font-size: 0.73rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── SECTIONS ── */
+    .section { padding: 5rem 2rem; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .sec-label {
+      font-size: 0.63rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.15em; color: var(--accent); margin-bottom: 0.6rem;
+    }
+    .sec-title {
+      font-family: var(--font-display); font-weight: 800; letter-spacing: -0.03em;
+      font-size: clamp(1.7rem, 3.2vw, 2.3rem); color: var(--text-1); line-height: 1.12; margin-bottom: 0.7rem;
+    }
+    .sec-sub {
+      font-size: 0.93rem; color: var(--text-2); line-height: 1.68; max-width: 520px; margin-bottom: 2.75rem;
+    }
+    .divider { height: 1px; background: var(--border); max-width: 1200px; margin: 0 auto; }
+
+    /* ── PRODUCT CARDS ── */
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px,1fr)); gap: 1.2rem; }
+
+    .pcard {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.5rem; text-decoration: none; color: inherit;
+      display: flex; flex-direction: column; gap: 0.7rem;
+      transition: border-color 0.2s, transform 0.18s, box-shadow 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .pcard::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--ca, var(--accent)); opacity: 0; transition: opacity 0.2s;
+    }
+    .pcard:hover::before { opacity: 1; }
+    .pcard:hover { border-color: var(--ca, var(--accent)); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.28); }
+    .pcard.off { opacity: 0.42; pointer-events: none; cursor: default; }
+
+    .pcard-icon {
+      width: 44px; height: 44px; border-radius: 11px;
+      background: var(--ca-bg, rgba(59,130,246,0.1));
+      display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+    }
+    .pcard-cat { font-size: 0.61rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-3); }
+    .pcard-name { font-family: var(--font-display); font-size: 1.12rem; font-weight: 800; color: var(--text-1); letter-spacing: -0.02em; }
+    .pcard-desc { font-size: 0.81rem; color: var(--text-2); line-height: 1.55; flex: 1; }
+    .pcard-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid var(--border-dim); }
+    .pcard-arrow { font-size: 1rem; color: var(--text-3); transition: transform 0.15s, color 0.15s; }
+    .pcard:hover .pcard-arrow { transform: translateX(4px); color: var(--ca); }
+
+    .badge { font-size: 0.66rem; font-weight: 600; padding: 0.2rem 0.58rem; border-radius: 99px; }
+    .b-live  { background: rgba(34,197,94,0.12);  color: #22c55e; }
+    .b-beta  { background: rgba(245,158,11,0.12); color: #f59e0b; }
+    .b-soon  { background: rgba(71,85,105,0.18);  color: #64748b; }
+
+    .c-blue  { --ca:#3b82f6; --ca-bg:rgba(59,130,246,0.1);  }
+    .c-amber { --ca:#f59e0b; --ca-bg:rgba(245,158,11,0.1);  }
+    .c-green { --ca:#22c55e; --ca-bg:rgba(34,197,94,0.1);   }
+    .c-red   { --ca:#ef4444; --ca-bg:rgba(239,68,68,0.1);   }
+
+    /* ── AUDIENCE ── */
+    .audience-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.2rem; }
+    .acard {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.75rem;
+      transition: border-color 0.2s;
+    }
+    .acard:hover { border-color: rgba(59,130,246,0.35); }
+    .acard-num { font-family: var(--font-mono); font-size: 0.68rem; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 0.9rem; }
+    .acard-title { font-family: var(--font-display); font-size: 1.02rem; font-weight: 800; color: var(--text-1); margin-bottom: 0.65rem; letter-spacing: -0.02em; }
+    .acard-desc { font-size: 0.81rem; color: var(--text-2); line-height: 1.62; }
+    .acard-tags { display: flex; flex-wrap: wrap; gap: 0.38rem; margin-top: 1.15rem; }
+    .atag {
+      font-size: 0.65rem; padding: 0.15rem 0.52rem;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text-3); font-family: var(--font-mono);
+    }
+
+    /* ── DATA SOURCES ── */
+    .data-strip {
+      background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 2.75rem 2rem;
+    }
+    .data-strip-inner { max-width: 1200px; margin: 0 auto; }
+    .data-label {
+      font-size: 0.63rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.15em; color: var(--text-3); text-align: center; margin-bottom: 1.4rem;
+    }
+    .data-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.7rem; }
+    .dbadge {
+      display: flex; align-items: center; gap: 0.45rem;
+      padding: 0.48rem 1rem; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; font-size: 0.77rem; font-family: var(--font-mono);
+      color: var(--text-2); transition: border-color 0.15s, color 0.15s;
+    }
+    .dbadge:hover { border-color: var(--accent); color: var(--text-1); }
+    .dbadge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+    .dbadge.dim { opacity: 0.55; }
+    .dbadge.dim .dbadge-dot { background: var(--text-4); }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); padding: 2rem; }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      align-items: center; gap: 2rem;
+    }
+    .foot-brand { font-family: var(--font-display); font-size: 0.85rem; font-weight: 700; color: var(--text-3); }
+    .foot-mission { font-size: 0.73rem; color: var(--text-4); text-align: center; line-height: 1.6; }
+    .foot-links { display: flex; justify-content: flex-end; gap: 1.2rem; }
+    .foot-links a { font-size: 0.77rem; color: var(--text-3); text-decoration: none; transition: color 0.15s; }
+    .foot-links a:hover { color: var(--accent); }
+    .foot-copy {
+      font-size: 0.68rem; font-family: var(--font-mono); color: var(--text-4);
+      text-align: center; margin-top: 1.25rem; padding-top: 1.25rem;
+      border-top: 1px solid var(--border-dim);
+      max-width: 1200px; margin-left: auto; margin-right: auto;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .hero-visual { display: none; }
+      .audience-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; }
+      .nav-links, .nav-cta, .nav-signin { display: none; }
+      .nav-hamburger { display: flex; }
+      .hero { padding: 80px 1.25rem 48px; min-height: auto; }
+      .section { padding: 3.5rem 1.25rem; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); gap: 1.5rem; }
+      .products-grid, .audience-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; text-align: center; gap: 0.75rem; }
+      .foot-links { justify-content: center; }
+      .hero-ctas { flex-direction: column; align-items: flex-start; }
+
+      /* Show a compact Africa silhouette on mobile, no orbit rings */
+      .hero-visual { display: flex; margin-top: 2rem; }
+      .map-container { width: 180px; height: 220px; }
+      .orbit-1, .orbit-2, .orbit-wrap, .map-glow { display: none; }
+      .africa-svg { filter: drop-shadow(0 0 10px rgba(59,130,246,0.2)); }
+    }
+
+    /* ── CONTACT FORM ── */
+    .contact-wrap {
+      display: grid; grid-template-columns: 1fr 1.65fr; gap: 3.5rem; align-items: start;
+    }
+    .contact-info h3 {
+      font-family: var(--font-display); font-size: 1.05rem; font-weight: 800;
+      color: var(--text-1); letter-spacing: -0.02em; margin-bottom: 0.5rem;
+    }
+    .contact-info p {
+      font-size: 0.85rem; color: var(--text-2); line-height: 1.7; margin-bottom: 1.5rem;
+    }
+    .contact-detail {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.8rem; font-family: var(--font-mono); color: var(--text-2); margin-bottom: 0.5rem;
+    }
+    .contact-detail-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0;
+    }
+    .cform {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2rem; display: flex; flex-direction: column; gap: 1.1rem;
+    }
+    .cform-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .cfield { display: flex; flex-direction: column; gap: 0.4rem; }
+    .cfield label {
+      font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-3);
+    }
+    .cfield input, .cfield select, .cfield textarea {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 0.65rem 0.85rem; font-size: 0.88rem; color: var(--text-1);
+      font-family: var(--font-body); outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .cfield input:focus, .cfield select:focus, .cfield textarea:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .cfield select option { background: var(--bg-card); }
+    .cfield textarea { resize: vertical; min-height: 110px; }
+    .cform-submit {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      background: var(--accent); color: white;
+      font-size: 0.9rem; font-weight: 600; padding: 0.78rem 1.75rem;
+      border-radius: 9px; border: none; cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s; align-self: flex-start;
+    }
+    .cform-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(59,130,246,0.32); }
+    .cform-submit:disabled { opacity: 0.55; cursor: not-allowed; }
+    .cform-msg {
+      font-size: 0.82rem; padding: 0.7rem 1rem; border-radius: 8px; display: none;
+    }
+    .cform-msg.ok  { background: rgba(34,197,94,0.1);  color: #22c55e; border: 1px solid rgba(34,197,94,0.25);  display: block; }
+    .cform-msg.err { background: rgba(239,68,68,0.1);  color: #ef4444; border: 1px solid rgba(239,68,68,0.25);  display: block; }
+    @media (max-width: 768px) {
+      .contact-wrap { grid-template-columns: 1fr; gap: 2rem; }
+      .cform-row { grid-template-columns: 1fr; }
+    }
+
+    /* ── FADE-UP ANIMATION ── */
+    .fu { opacity: 0; transform: translateY(18px); animation: fu 0.65s ease forwards; }
+    @keyframes fu { to { opacity:1; transform:translateY(0); } }
+    .fu:nth-child(1){animation-delay:.08s}
+    .fu:nth-child(2){animation-delay:.18s}
+    .fu:nth-child(3){animation-delay:.28s}
+    .fu:nth-child(4){animation-delay:.38s}
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="/" class="nav-brand">
+    <div class="nav-logo">
+      <svg viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5,1 L9,0 L13,1.5 L15,5 L15.5,9 L15,13 L14,16 L12,18.5 L9,20 L7,19.5 L5,17.5 L3,14 L2,10 L2,6 L3,3 Z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="nav-name">InsightsAfrica</div>
+      <div class="nav-tagline">Satellite Intelligence Platform</div>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#products">Platform</a>
+    <a href="#data">Data</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+    <a href="https://monitor.insightsafrica.org" target="_blank" rel="noopener" style="color:var(--accent);">Monitor ↗</a>
+  </div>
+  <div class="nav-right">
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">☀</button>
+    <a href="login.html" class="nav-signin">Sign In</a>
+    <a href="hub.html" class="nav-cta">Enter Platform</a>
+    <button class="nav-hamburger" onclick="toggleMenu()">☰</button>
+  </div>
+</nav>
+
+<div class="nav-mobile" id="mob-menu">
+  <a href="#products" onclick="toggleMenu()">Platform</a>
+  <a href="#data" onclick="toggleMenu()">Data</a>
+  <a href="#about" onclick="toggleMenu()">About</a>
+  <a href="#contact" onclick="toggleMenu()">Contact</a>
+  <a href="https://monitor.insightsafrica.org" target="_blank" rel="noopener" onclick="toggleMenu()">Monitor ↗</a>
+  <a href="login.html" onclick="toggleMenu()">Sign In</a>
+  <a href="hub.html" class="mob-cta" onclick="toggleMenu()">Enter Platform →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow-r"></div>
+  <div class="hero-glow-l"></div>
+  <div class="hero-scanline"></div>
+
+  <div class="hero-inner">
+    <!-- Copy -->
+    <div>
+      <div class="hero-badge fu">
+        <span class="badge-dot"></span>
+        Live data &middot; 2024&ndash;2025
+      </div>
+      <h1 class="hero-headline fu">
+        Ground truth for Africa's most <em>urgent challenges.</em>
+      </h1>
+      <p class="hero-sub fu">
+        Satellite-powered intelligence on floods, crops, mining, and heat &mdash;
+        built on open data, accessible to all.
+      </p>
+      <div class="hero-ctas fu">
+        <a href="hub.html" class="btn-primary">Explore the Platform &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Map visual -->
+    <div class="hero-visual">
+      <div class="map-container">
+        <div class="map-glow"></div>
+        <div class="orbit orbit-1"></div>
+        <div class="orbit orbit-2"></div>
+        <div class="orbit-wrap"><div class="sat"></div></div>
+
+        <svg class="africa-svg" viewBox="0 0 400 480" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="af-glow" x="-15%" y="-15%" width="130%" height="130%">
+              <feGaussianBlur stdDeviation="2.5" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <linearGradient id="af-grad" x1="0%" y1="0%" x2="70%" y2="100%">
+              <stop offset="0%" style="stop-color:#1e3a5f"/>
+              <stop offset="100%" style="stop-color:#0d1527"/>
+            </linearGradient>
+            <clipPath id="af-clip">
+              <path d="M287.9,253.29 L307.63,266.26 L307.99,269.76 L315.45,275.8 L313.05,283.25 L316.69,288.87 L315.37,298.81 L321.25,309.87 L317.11,313.38 L301.47,318.36 L291.31,317.14 L287.05,304.44 L271.45,297.93 L265.62,286.94 L264.17,274.73 L271.51,267.84 L269.78,254.41 L287.9,253.29 Z"/>
+              <path d="M264.17,274.73 L265.62,286.94 L271.45,297.93 L261.02,299.06 L259.14,318.79 L265.6,321.12 L266.04,327.64 L262.06,327.59 L252.85,317.68 L249.68,319.58 L237.74,313.71 L226.81,314.51 L224.59,291.59 L216.08,289.49 L210.49,295.81 L202.46,296.29 L196.5,283.06 L174.95,282.53 L182.32,274.74 L187.43,277.58 L194.83,268.91 L196.92,258.07 L203.32,250.12 L208.02,222.17 L212.83,217.16 L228.11,223.21 L230.38,219.1 L244.98,215.8 L253.95,215.93 L259.43,221.65 L266.12,219.76 L271.94,226.35 L271.62,233.42 L273.71,234.23 L266.95,243.94 L262.53,264.7 L264.17,274.73 Z"/>
+              <path d="M327.84,257.72 L324.76,252.74 L324.7,230.73 L330.67,221.97 L345.41,217.34 L366.08,190.45 L366.13,178.62 L377.38,174.91 L374.47,191.98 L364.29,215.3 L327.84,257.72 Z"/>
+              <path d="M315.45,275.8 L307.99,269.76 L307.63,266.26 L287.9,253.29 L287.85,246.89 L293.79,236.04 L288.43,221.88 L295.15,214.29 L299.63,220.68 L309.83,225.81 L317.31,226.88 L323.6,221.84 L329.25,223.88 L324.7,230.73 L324.76,252.74 L327.84,257.72 L320.97,263.09 L315.45,275.8 Z"/>
+              <path d="M239.35,197.84 L233.59,193.46 L234.08,186.6 L225.67,171.51 L231.33,152.83 L235.81,153.25 L235.62,126.73 L241.6,126.72 L241.6,114.65 L303.3,114.65 L306.51,135.11 L311.33,138.83 L303.23,145.12 L300.21,165.62 L289.74,183.34 L288.27,195.09 L284.28,173.98 L281.87,173.56 L278.38,175.22 L280.08,180.61 L274.63,188.29 L267.58,185.39 L262.23,190.78 L250.71,190.36 L245.71,184.66 L241.96,185.49 L239.19,193.68 L235.81,195.48 L239.35,197.84 Z"/>
+              <path d="M235.56,129.27 L235.81,153.25 L231.33,152.83 L225.67,171.51 L230.49,180.24 L220.8,190.31 L209.42,193.29 L205.02,199.88 L191.05,202.72 L189.5,194.42 L184.16,189.86 L185.29,187.01 L192.03,187.25 L187.5,167.02 L184.16,166.89 L182.01,160.76 L184.26,152.8 L190.89,147.11 L194.3,124.39 L190.1,118.83 L188.83,109.44 L194.08,106.14 L235.56,129.27 Z"/>
+              <path d="M196.59,420.18 L199.08,417.19 L207.62,423.01 L215.05,419.48 L215.06,397.17 L220.23,409.62 L223.95,409.0 L232.82,400.19 L245.06,401.51 L252.62,389.96 L264.65,381.0 L273.8,381.97 L277.64,394.76 L277.16,403.67 L273.03,402.99 L271.17,409.11 L274.27,412.38 L282.32,409.1 L279.06,421.24 L258.34,445.52 L245.66,452.6 L228.99,452.12 L215.97,457.74 L207.16,453.76 L204.81,444.55 L206.35,438.81 L196.59,420.18 Z"/>
+              <path d="M273.8,381.97 L257.31,377.34 L242.97,354.69 L252.23,355.91 L262.13,344.46 L269.03,341.23 L282.41,348.51 L281.43,370.21 L273.8,381.97 Z"/>
+              <path d="M264.65,381.0 L252.62,389.96 L245.06,401.51 L232.82,400.19 L223.95,409.0 L220.23,409.62 L215.06,397.17 L215.06,379.54 L220.18,379.33 L220.34,357.81 L242.97,354.69 L257.31,377.34 L264.65,381.0 Z"/>
+              <path d="M215.06,397.17 L215.05,419.48 L207.62,423.01 L199.08,417.19 L196.59,420.18 L190.69,411.2 L185.74,381.12 L172.62,352.07 L181.6,350.07 L184.7,352.8 L206.57,352.12 L222.76,355.87 L236.58,352.03 L242.0,353.74 L234.21,357.98 L232.22,355.49 L220.34,357.81 L220.18,379.33 L215.06,379.54 L215.06,397.17 Z"/>
+              <path d="M24.69,165.43 L19.95,158.57 L27.77,148.15 L35.8,147.28 L48.31,159.25 L51.73,172.39 L24.88,172.74 L24.02,168.11 L39.61,165.97 L24.69,165.43 Z"/>
+              <path d="M51.73,172.39 L48.31,159.25 L50.94,154.59 L82.8,153.91 L78.04,96.79 L86.0,96.68 L127.96,128.59 L128.02,132.43 L133.79,131.84 L133.81,145.75 L130.52,153.51 L106.05,157.1 L90.77,166.17 L84.45,176.79 L83.5,184.9 L69.84,185.9 L64.14,173.2 L58.74,176.0 L51.73,172.39 Z"/>
+              <path d="M22.87,120.7 L44.37,118.72 L44.65,106.89 L49.53,106.35 L49.36,90.89 L66.43,91.21 L66.44,82.06 L86.0,96.68 L78.04,96.79 L82.8,153.91 L50.94,154.59 L48.31,159.25 L35.8,147.28 L25.99,150.08 L26.96,126.18 L22.87,120.7 Z"/>
+              <path d="M125.6,209.74 L121.3,210.45 L120.26,192.41 L115.62,184.3 L119.13,177.79 L126.41,173.64 L131.34,182.7 L125.76,196.16 L125.6,209.74 Z"/>
+              <path d="M188.83,109.44 L190.1,118.83 L194.3,124.39 L190.89,147.11 L184.26,152.8 L182.01,160.76 L184.16,166.89 L187.5,167.02 L185.34,172.14 L179.64,165.42 L175.57,168.8 L168.75,166.68 L158.48,170.07 L139.9,163.79 L132.96,165.81 L130.38,177.11 L126.41,173.64 L122.8,175.42 L122.92,171.29 L116.93,169.92 L113.55,157.37 L130.52,153.51 L133.81,145.75 L133.79,131.84 L174.0,105.76 L185.15,111.69 L188.83,109.44 Z"/>
+              <path d="M125.6,209.74 L125.76,196.16 L130.87,186.76 L130.74,171.72 L134.32,164.51 L158.48,170.07 L168.75,166.68 L175.57,168.8 L179.64,165.42 L187.4,174.55 L172.68,205.38 L169.11,207.41 L164.22,205.03 L159.61,208.62 L155.8,218.72 L142.27,221.8 L134.09,209.67 L125.6,209.74 Z"/>
+              <path d="M186.98,169.87 L192.03,187.25 L185.29,187.01 L184.16,189.86 L191.87,201.08 L187.19,209.94 L186.89,218.96 L194.09,229.35 L194.49,237.11 L186.16,234.09 L161.78,233.75 L162.54,228.99 L155.74,220.39 L157.14,214.45 L164.22,205.03 L169.11,207.41 L172.68,205.38 L186.56,177.64 L186.98,169.87 Z"/>
+              <path d="M116.28,181.12 L120.26,192.41 L121.3,210.45 L117.11,211.74 L111.34,182.87 L116.28,181.12 Z"/>
+              <path d="M111.72,180.99 L117.11,211.74 L101.38,219.1 L96.75,217.38 L94.73,209.79 L98.28,197.9 L96.31,181.33 L111.72,180.99 Z"/>
+              <path d="M69.84,185.9 L79.33,183.98 L89.08,189.49 L96.9,189.3 L98.28,197.9 L94.73,209.79 L96.75,217.38 L87.42,216.33 L71.5,221.19 L72.24,213.07 L66.87,208.48 L70.87,195.75 L69.84,185.9 Z"/>
+              <path d="M40.36,171.52 L58.74,176.0 L64.14,173.2 L69.84,185.9 L70.87,195.75 L68.54,201.11 L63.71,203.37 L60.87,195.96 L56.97,197.12 L53.79,186.87 L46.99,188.13 L42.72,193.77 L32.92,180.86 L40.14,176.2 L40.36,171.52 Z"/>
+              <path d="M83.5,184.9 L89.34,167.64 L106.05,157.1 L113.55,157.37 L116.93,169.92 L122.92,171.29 L121.67,177.23 L116.28,181.12 L96.31,181.33 L96.9,189.3 L89.08,189.49 L83.5,184.9 Z"/>
+              <path d="M253.95,215.93 L238.53,216.69 L230.38,219.1 L228.11,223.21 L212.83,217.16 L207.56,226.38 L200.69,225.03 L194.87,233.85 L186.79,214.62 L191.05,202.72 L205.02,199.88 L209.42,193.29 L220.8,190.31 L230.49,180.24 L234.08,186.6 L233.59,193.46 L253.95,215.93 Z"/>
+              <path d="M207.56,226.38 L203.32,250.12 L196.92,258.07 L194.83,268.91 L187.43,277.58 L177.23,274.36 L173.56,277.98 L169.29,271.59 L173.25,268.25 L171.29,264.26 L176.99,259.32 L184.36,262.48 L186.61,255.61 L183.59,247.32 L185.84,240.32 L180.67,239.61 L179.59,233.86 L194.49,237.11 L200.69,225.03 L207.56,226.38 Z"/>
+              <path d="M170.24,233.89 L178.95,233.53 L180.67,239.61 L185.84,240.32 L183.59,247.32 L186.61,255.61 L184.36,262.48 L176.99,259.32 L171.29,264.26 L173.25,268.25 L169.29,271.59 L157.35,254.26 L160.96,241.45 L170.28,241.16 L170.24,233.89 Z"/>
+              <path d="M271.45,297.93 L284.4,306.01 L284.79,322.67 L281.58,330.39 L284.31,331.95 L268.53,336.93 L269.03,341.23 L262.13,344.46 L252.23,355.91 L232.32,353.4 L225.42,344.69 L225.66,325.47 L236.48,325.54 L235.94,313.56 L245.51,318.74 L252.85,317.68 L262.06,327.59 L266.04,327.64 L265.6,321.12 L259.14,318.79 L259.54,302.91 L262.42,298.34 L271.45,297.93 Z"/>
+              <path d="M281.95,303.31 L287.05,304.44 L289.86,308.93 L291.31,329.59 L297.17,335.81 L297.61,343.58 L293.78,349.04 L290.38,345.31 L290.79,335.83 L281.58,330.39 L285.73,311.13 L281.95,303.31 Z"/>
+              <path d="M291.31,317.14 L306.45,317.44 L321.25,309.87 L323.63,336.3 L316.75,348.56 L306.14,353.79 L292.49,367.06 L296.53,380.99 L295.99,393.27 L283.27,400.73 L280.99,402.97 L282.32,409.1 L278.37,409.05 L273.8,381.97 L281.43,370.21 L282.41,348.51 L269.36,343.48 L268.53,336.93 L284.31,331.95 L290.79,335.83 L290.38,345.31 L293.78,349.04 L297.61,343.58 L297.17,335.81 L291.31,329.59 L291.31,317.14 Z"/>
+              <path d="M175.68,284.4 L196.5,283.06 L202.46,296.29 L210.49,295.81 L216.08,289.49 L224.59,291.59 L226.81,314.51 L236.49,315.43 L236.48,325.54 L225.66,325.47 L225.42,344.69 L232.32,353.4 L222.76,355.87 L206.57,352.12 L184.7,352.8 L181.6,350.07 L172.62,352.07 L174.91,334.84 L183.04,315.8 L175.68,284.4 Z"/>
+              <path d="M369.23,322.88 L373.56,342.43 L369.9,342.45 L370.43,349.49 L356.5,398.22 L347.73,402.2 L340.61,398.5 L337.0,385.14 L337.45,376.44 L342.81,364.96 L340.21,352.72 L342.72,345.51 L352.42,342.88 L359.67,335.71 L367.41,320.29 L369.23,322.88 Z"/>
+              <path d="M160.91,64.47 L158.69,53.62 L151.19,46.13 L150.73,41.58 L153.93,38.21 L155.39,24.36 L161.05,21.93 L164.69,22.65 L164.54,25.71 L168.95,23.48 L166.72,27.6 L167.8,37.13 L164.38,40.17 L171.34,47.38 L171.05,52.02 L163.34,58.01 L163.44,63.07 L160.91,64.47 Z"/>
+              <path d="M66.44,82.06 L66.49,73.33 L84.34,66.32 L92.41,60.91 L92.63,56.44 L104.8,52.66 L100.32,35.11 L105.32,31.8 L119.23,26.42 L155.39,24.36 L153.93,38.21 L150.73,41.58 L151.19,46.13 L158.69,53.62 L162.59,69.8 L160.06,89.92 L165.18,100.28 L167.61,99.17 L174.0,105.76 L141.12,129.14 L128.02,132.43 L127.96,128.59 L66.44,82.06 Z"/>
+              <path d="M301.03,160.43 L303.23,145.12 L311.33,138.83 L315.78,151.36 L335.62,170.83 L331.83,171.79 L319.74,159.84 L308.71,157.18 L307.09,161.69 L301.03,160.43 Z"/>
+              <path d="M100.32,35.11 L104.8,52.66 L92.63,56.44 L92.41,60.91 L84.34,66.32 L66.49,73.33 L65.87,83.72 L52.36,85.15 L46.59,97.92 L39.37,104.44 L34.9,117.67 L23.09,118.14 L36.51,88.95 L61.86,66.73 L60.56,59.21 L66.58,46.75 L75.65,41.5 L80.76,31.53 L100.32,35.11 Z"/>
+              <path d="M303.3,114.65 L241.6,114.65 L240.04,66.06 L242.46,56.85 L261.95,61.07 L272.68,56.93 L277.79,60.69 L289.78,58.96 L293.2,69.34 L289.2,79.48 L279.67,67.77 L297.2,103.01 L296.34,107.99 L303.3,114.65 Z"/>
+              <path d="M241.6,114.65 L241.6,126.72 L235.62,126.73 L235.56,129.27 L194.08,106.14 L185.15,111.69 L167.61,99.17 L165.18,100.28 L160.06,89.92 L163.34,58.01 L171.05,52.02 L171.34,47.38 L190.88,52.64 L193.31,58.01 L210.85,64.72 L215.88,60.37 L214.67,55.74 L220.04,49.98 L241.19,54.85 L241.6,114.65 Z"/>
+              <path d="M360.1,199.21 L345.41,217.34 L338.64,217.6 L329.25,223.88 L323.6,221.84 L317.31,226.88 L299.63,220.68 L292.08,207.72 L282.96,200.52 L287.49,196.93 L289.74,183.34 L298.09,171.57 L301.03,160.43 L307.09,161.69 L308.71,157.18 L319.74,159.84 L327.91,166.29 L331.83,171.79 L328.73,180.79 L334.04,181.54 L332.91,183.68 L338.73,192.07 L360.1,199.21 Z"/>
+              <path d="M287.9,253.29 L265.41,255.65 L266.95,243.94 L273.71,234.23 L271.62,233.42 L274.08,224.71 L285.23,224.66 L288.43,221.88 L290.89,226.07 L293.79,236.04 L287.85,246.89 L287.9,253.29 Z"/>
+            </clipPath>
+          </defs>
+
+          <!-- Country fills — Natural Earth 110m, 48 African countries -->
+          <path d="M287.9,253.29 L307.63,266.26 L307.99,269.76 L315.45,275.8 L313.05,283.25 L316.69,288.87 L315.37,298.81 L321.25,309.87 L317.11,313.38 L301.47,318.36 L291.31,317.14 L287.05,304.44 L271.45,297.93 L265.62,286.94 L264.17,274.73 L271.51,267.84 L269.78,254.41 L287.9,253.29 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M264.17,274.73 L265.62,286.94 L271.45,297.93 L261.02,299.06 L259.14,318.79 L265.6,321.12 L266.04,327.64 L262.06,327.59 L252.85,317.68 L249.68,319.58 L237.74,313.71 L226.81,314.51 L224.59,291.59 L216.08,289.49 L210.49,295.81 L202.46,296.29 L196.5,283.06 L174.95,282.53 L182.32,274.74 L187.43,277.58 L194.83,268.91 L196.92,258.07 L203.32,250.12 L208.02,222.17 L212.83,217.16 L228.11,223.21 L230.38,219.1 L244.98,215.8 L253.95,215.93 L259.43,221.65 L266.12,219.76 L271.94,226.35 L271.62,233.42 L273.71,234.23 L266.95,243.94 L262.53,264.7 L264.17,274.73 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M327.84,257.72 L324.76,252.74 L324.7,230.73 L330.67,221.97 L345.41,217.34 L366.08,190.45 L366.13,178.62 L377.38,174.91 L374.47,191.98 L364.29,215.3 L327.84,257.72 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M315.45,275.8 L307.99,269.76 L307.63,266.26 L287.9,253.29 L287.85,246.89 L293.79,236.04 L288.43,221.88 L295.15,214.29 L299.63,220.68 L309.83,225.81 L317.31,226.88 L323.6,221.84 L329.25,223.88 L324.7,230.73 L324.76,252.74 L327.84,257.72 L320.97,263.09 L315.45,275.8 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M239.35,197.84 L233.59,193.46 L234.08,186.6 L225.67,171.51 L231.33,152.83 L235.81,153.25 L235.62,126.73 L241.6,126.72 L241.6,114.65 L303.3,114.65 L306.51,135.11 L311.33,138.83 L303.23,145.12 L300.21,165.62 L289.74,183.34 L288.27,195.09 L284.28,173.98 L281.87,173.56 L278.38,175.22 L280.08,180.61 L274.63,188.29 L267.58,185.39 L262.23,190.78 L250.71,190.36 L245.71,184.66 L241.96,185.49 L239.19,193.68 L235.81,195.48 L239.35,197.84 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M235.56,129.27 L235.81,153.25 L231.33,152.83 L225.67,171.51 L230.49,180.24 L220.8,190.31 L209.42,193.29 L205.02,199.88 L191.05,202.72 L189.5,194.42 L184.16,189.86 L185.29,187.01 L192.03,187.25 L187.5,167.02 L184.16,166.89 L182.01,160.76 L184.26,152.8 L190.89,147.11 L194.3,124.39 L190.1,118.83 L188.83,109.44 L194.08,106.14 L235.56,129.27 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M196.59,420.18 L199.08,417.19 L207.62,423.01 L215.05,419.48 L215.06,397.17 L220.23,409.62 L223.95,409.0 L232.82,400.19 L245.06,401.51 L252.62,389.96 L264.65,381.0 L273.8,381.97 L277.64,394.76 L277.16,403.67 L273.03,402.99 L271.17,409.11 L274.27,412.38 L282.32,409.1 L279.06,421.24 L258.34,445.52 L245.66,452.6 L228.99,452.12 L215.97,457.74 L207.16,453.76 L204.81,444.55 L206.35,438.81 L196.59,420.18 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M273.8,381.97 L257.31,377.34 L242.97,354.69 L252.23,355.91 L262.13,344.46 L269.03,341.23 L282.41,348.51 L281.43,370.21 L273.8,381.97 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M264.65,381.0 L252.62,389.96 L245.06,401.51 L232.82,400.19 L223.95,409.0 L220.23,409.62 L215.06,397.17 L215.06,379.54 L220.18,379.33 L220.34,357.81 L242.97,354.69 L257.31,377.34 L264.65,381.0 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M215.06,397.17 L215.05,419.48 L207.62,423.01 L199.08,417.19 L196.59,420.18 L190.69,411.2 L185.74,381.12 L172.62,352.07 L181.6,350.07 L184.7,352.8 L206.57,352.12 L222.76,355.87 L236.58,352.03 L242.0,353.74 L234.21,357.98 L232.22,355.49 L220.34,357.81 L220.18,379.33 L215.06,379.54 L215.06,397.17 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M24.69,165.43 L19.95,158.57 L27.77,148.15 L35.8,147.28 L48.31,159.25 L51.73,172.39 L24.88,172.74 L24.02,168.11 L39.61,165.97 L24.69,165.43 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M51.73,172.39 L48.31,159.25 L50.94,154.59 L82.8,153.91 L78.04,96.79 L86.0,96.68 L127.96,128.59 L128.02,132.43 L133.79,131.84 L133.81,145.75 L130.52,153.51 L106.05,157.1 L90.77,166.17 L84.45,176.79 L83.5,184.9 L69.84,185.9 L64.14,173.2 L58.74,176.0 L51.73,172.39 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M22.87,120.7 L44.37,118.72 L44.65,106.89 L49.53,106.35 L49.36,90.89 L66.43,91.21 L66.44,82.06 L86.0,96.68 L78.04,96.79 L82.8,153.91 L50.94,154.59 L48.31,159.25 L35.8,147.28 L25.99,150.08 L26.96,126.18 L22.87,120.7 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M125.6,209.74 L121.3,210.45 L120.26,192.41 L115.62,184.3 L119.13,177.79 L126.41,173.64 L131.34,182.7 L125.76,196.16 L125.6,209.74 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M188.83,109.44 L190.1,118.83 L194.3,124.39 L190.89,147.11 L184.26,152.8 L182.01,160.76 L184.16,166.89 L187.5,167.02 L185.34,172.14 L179.64,165.42 L175.57,168.8 L168.75,166.68 L158.48,170.07 L139.9,163.79 L132.96,165.81 L130.38,177.11 L126.41,173.64 L122.8,175.42 L122.92,171.29 L116.93,169.92 L113.55,157.37 L130.52,153.51 L133.81,145.75 L133.79,131.84 L174.0,105.76 L185.15,111.69 L188.83,109.44 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M125.6,209.74 L125.76,196.16 L130.87,186.76 L130.74,171.72 L134.32,164.51 L158.48,170.07 L168.75,166.68 L175.57,168.8 L179.64,165.42 L187.4,174.55 L172.68,205.38 L169.11,207.41 L164.22,205.03 L159.61,208.62 L155.8,218.72 L142.27,221.8 L134.09,209.67 L125.6,209.74 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M186.98,169.87 L192.03,187.25 L185.29,187.01 L184.16,189.86 L191.87,201.08 L187.19,209.94 L186.89,218.96 L194.09,229.35 L194.49,237.11 L186.16,234.09 L161.78,233.75 L162.54,228.99 L155.74,220.39 L157.14,214.45 L164.22,205.03 L169.11,207.41 L172.68,205.38 L186.56,177.64 L186.98,169.87 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M116.28,181.12 L120.26,192.41 L121.3,210.45 L117.11,211.74 L111.34,182.87 L116.28,181.12 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M111.72,180.99 L117.11,211.74 L101.38,219.1 L96.75,217.38 L94.73,209.79 L98.28,197.9 L96.31,181.33 L111.72,180.99 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M69.84,185.9 L79.33,183.98 L89.08,189.49 L96.9,189.3 L98.28,197.9 L94.73,209.79 L96.75,217.38 L87.42,216.33 L71.5,221.19 L72.24,213.07 L66.87,208.48 L70.87,195.75 L69.84,185.9 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M40.36,171.52 L58.74,176.0 L64.14,173.2 L69.84,185.9 L70.87,195.75 L68.54,201.11 L63.71,203.37 L60.87,195.96 L56.97,197.12 L53.79,186.87 L46.99,188.13 L42.72,193.77 L32.92,180.86 L40.14,176.2 L40.36,171.52 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M83.5,184.9 L89.34,167.64 L106.05,157.1 L113.55,157.37 L116.93,169.92 L122.92,171.29 L121.67,177.23 L116.28,181.12 L96.31,181.33 L96.9,189.3 L89.08,189.49 L83.5,184.9 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M253.95,215.93 L238.53,216.69 L230.38,219.1 L228.11,223.21 L212.83,217.16 L207.56,226.38 L200.69,225.03 L194.87,233.85 L186.79,214.62 L191.05,202.72 L205.02,199.88 L209.42,193.29 L220.8,190.31 L230.49,180.24 L234.08,186.6 L233.59,193.46 L253.95,215.93 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M207.56,226.38 L203.32,250.12 L196.92,258.07 L194.83,268.91 L187.43,277.58 L177.23,274.36 L173.56,277.98 L169.29,271.59 L173.25,268.25 L171.29,264.26 L176.99,259.32 L184.36,262.48 L186.61,255.61 L183.59,247.32 L185.84,240.32 L180.67,239.61 L179.59,233.86 L194.49,237.11 L200.69,225.03 L207.56,226.38 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M170.24,233.89 L178.95,233.53 L180.67,239.61 L185.84,240.32 L183.59,247.32 L186.61,255.61 L184.36,262.48 L176.99,259.32 L171.29,264.26 L173.25,268.25 L169.29,271.59 L157.35,254.26 L160.96,241.45 L170.28,241.16 L170.24,233.89 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M271.45,297.93 L284.4,306.01 L284.79,322.67 L281.58,330.39 L284.31,331.95 L268.53,336.93 L269.03,341.23 L262.13,344.46 L252.23,355.91 L232.32,353.4 L225.42,344.69 L225.66,325.47 L236.48,325.54 L235.94,313.56 L245.51,318.74 L252.85,317.68 L262.06,327.59 L266.04,327.64 L265.6,321.12 L259.14,318.79 L259.54,302.91 L262.42,298.34 L271.45,297.93 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M281.95,303.31 L287.05,304.44 L289.86,308.93 L291.31,329.59 L297.17,335.81 L297.61,343.58 L293.78,349.04 L290.38,345.31 L290.79,335.83 L281.58,330.39 L285.73,311.13 L281.95,303.31 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M291.31,317.14 L306.45,317.44 L321.25,309.87 L323.63,336.3 L316.75,348.56 L306.14,353.79 L292.49,367.06 L296.53,380.99 L295.99,393.27 L283.27,400.73 L280.99,402.97 L282.32,409.1 L278.37,409.05 L273.8,381.97 L281.43,370.21 L282.41,348.51 L269.36,343.48 L268.53,336.93 L284.31,331.95 L290.79,335.83 L290.38,345.31 L293.78,349.04 L297.61,343.58 L297.17,335.81 L291.31,329.59 L291.31,317.14 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M175.68,284.4 L196.5,283.06 L202.46,296.29 L210.49,295.81 L216.08,289.49 L224.59,291.59 L226.81,314.51 L236.49,315.43 L236.48,325.54 L225.66,325.47 L225.42,344.69 L232.32,353.4 L222.76,355.87 L206.57,352.12 L184.7,352.8 L181.6,350.07 L172.62,352.07 L174.91,334.84 L183.04,315.8 L175.68,284.4 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M369.23,322.88 L373.56,342.43 L369.9,342.45 L370.43,349.49 L356.5,398.22 L347.73,402.2 L340.61,398.5 L337.0,385.14 L337.45,376.44 L342.81,364.96 L340.21,352.72 L342.72,345.51 L352.42,342.88 L359.67,335.71 L367.41,320.29 L369.23,322.88 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M160.91,64.47 L158.69,53.62 L151.19,46.13 L150.73,41.58 L153.93,38.21 L155.39,24.36 L161.05,21.93 L164.69,22.65 L164.54,25.71 L168.95,23.48 L166.72,27.6 L167.8,37.13 L164.38,40.17 L171.34,47.38 L171.05,52.02 L163.34,58.01 L163.44,63.07 L160.91,64.47 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M66.44,82.06 L66.49,73.33 L84.34,66.32 L92.41,60.91 L92.63,56.44 L104.8,52.66 L100.32,35.11 L105.32,31.8 L119.23,26.42 L155.39,24.36 L153.93,38.21 L150.73,41.58 L151.19,46.13 L158.69,53.62 L162.59,69.8 L160.06,89.92 L165.18,100.28 L167.61,99.17 L174.0,105.76 L141.12,129.14 L128.02,132.43 L127.96,128.59 L66.44,82.06 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M301.03,160.43 L303.23,145.12 L311.33,138.83 L315.78,151.36 L335.62,170.83 L331.83,171.79 L319.74,159.84 L308.71,157.18 L307.09,161.69 L301.03,160.43 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M100.32,35.11 L104.8,52.66 L92.63,56.44 L92.41,60.91 L84.34,66.32 L66.49,73.33 L65.87,83.72 L52.36,85.15 L46.59,97.92 L39.37,104.44 L34.9,117.67 L23.09,118.14 L36.51,88.95 L61.86,66.73 L60.56,59.21 L66.58,46.75 L75.65,41.5 L80.76,31.53 L100.32,35.11 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M303.3,114.65 L241.6,114.65 L240.04,66.06 L242.46,56.85 L261.95,61.07 L272.68,56.93 L277.79,60.69 L289.78,58.96 L293.2,69.34 L289.2,79.48 L279.67,67.77 L297.2,103.01 L296.34,107.99 L303.3,114.65 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M241.6,114.65 L241.6,126.72 L235.62,126.73 L235.56,129.27 L194.08,106.14 L185.15,111.69 L167.61,99.17 L165.18,100.28 L160.06,89.92 L163.34,58.01 L171.05,52.02 L171.34,47.38 L190.88,52.64 L193.31,58.01 L210.85,64.72 L215.88,60.37 L214.67,55.74 L220.04,49.98 L241.19,54.85 L241.6,114.65 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M360.1,199.21 L345.41,217.34 L338.64,217.6 L329.25,223.88 L323.6,221.84 L317.31,226.88 L299.63,220.68 L292.08,207.72 L282.96,200.52 L287.49,196.93 L289.74,183.34 L298.09,171.57 L301.03,160.43 L307.09,161.69 L308.71,157.18 L319.74,159.84 L327.91,166.29 L331.83,171.79 L328.73,180.79 L334.04,181.54 L332.91,183.68 L338.73,192.07 L360.1,199.21 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+          <path d="M287.9,253.29 L265.41,255.65 L266.95,243.94 L273.71,234.23 L271.62,233.42 L274.08,224.71 L285.23,224.66 L288.43,221.88 L290.89,226.07 L293.79,236.04 L287.85,246.89 L287.9,253.29 Z" fill="url(#af-grad)" stroke="rgba(59,130,246,0.35)" stroke-width="0.8" stroke-linejoin="round"/>
+
+          <!-- Scan lines clipped to continent -->
+          <g clip-path="url(#af-clip)" opacity="0.06">
+            <line x1="0" y1="20" x2="400" y2="20" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="42" x2="400" y2="42" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="64" x2="400" y2="64" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="86" x2="400" y2="86" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="108" x2="400" y2="108" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="130" x2="400" y2="130" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="152" x2="400" y2="152" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="174" x2="400" y2="174" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="196" x2="400" y2="196" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="218" x2="400" y2="218" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="240" x2="400" y2="240" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="262" x2="400" y2="262" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="284" x2="400" y2="284" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="306" x2="400" y2="306" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="328" x2="400" y2="328" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="350" x2="400" y2="350" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="372" x2="400" y2="372" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="394" x2="400" y2="394" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="416" x2="400" y2="416" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="438" x2="400" y2="438" stroke="#3b82f6" stroke-width="1"/>
+            <line x1="0" y1="460" x2="400" y2="460" stroke="#3b82f6" stroke-width="1"/>
+          </g>
+
+          <!-- Ghana pulse marker — Natural Earth projected coords -->
+          <circle cx="106.4" cy="199.53" r="4" fill="rgba(59,130,246,0.9)" filter="url(#af-glow)"/>
+          <circle cx="106.4" cy="199.53" r="4" fill="none" stroke="rgba(59,130,246,0.75)" stroke-width="1.5">
+            <animate attributeName="r" from="5" to="18" dur="2.2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" from="0.8" to="0" dur="2.2s" repeatCount="indefinite"/>
+          </circle>
+          <text x="114.4" y="194.53" font-size="8" font-family="'DM Mono',monospace" fill="rgba(59,130,246,0.85)">GHA</text>
+          <!-- Nigeria pulse marker -->
+          <circle cx="153" cy="191" r="4" fill="rgba(59,130,246,0.9)" filter="url(#af-glow)"/>
+          <circle cx="153" cy="191" r="4" fill="none" stroke="rgba(59,130,246,0.75)" stroke-width="1.5">
+            <animate attributeName="r" from="5" to="18" dur="2.4s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" from="0.8" to="0" dur="2.4s" repeatCount="indefinite"/>
+          </circle>
+          <text x="161" y="186" font-size="8" font-family="'DM Mono',monospace" fill="rgba(59,130,246,0.85)">NGA</text>
+
+          <!-- Cote d Ivoire pulse marker -->
+          <circle cx="83" cy="202" r="4" fill="rgba(59,130,246,0.9)" filter="url(#af-glow)"/>
+          <circle cx="83" cy="202" r="4" fill="none" stroke="rgba(59,130,246,0.75)" stroke-width="1.5">
+            <animate attributeName="r" from="5" to="18" dur="2.0s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" from="0.8" to="0" dur="2.0s" repeatCount="indefinite"/>
+          </circle>
+          <text x="57" y="197" font-size="8" font-family="'DM Mono',monospace" fill="rgba(59,130,246,0.85)">CIV</text>
+
+          <!-- Senegal pulse marker -->
+          <circle cx="37" cy="153" r="4" fill="rgba(59,130,246,0.9)" filter="url(#af-glow)"/>
+          <circle cx="37" cy="153" r="4" fill="none" stroke="rgba(59,130,246,0.75)" stroke-width="1.5">
+            <animate attributeName="r" from="5" to="18" dur="1.8s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" from="0.8" to="0" dur="1.8s" repeatCount="indefinite"/>
+          </circle>
+          <text x="45" y="148" font-size="8" font-family="'DM Mono',monospace" fill="rgba(59,130,246,0.85)">SEN</text>
+
+          <!-- Secondary data dots -->
+          <circle cx="280.6" cy="245.7" r="2" fill="rgba(6,182,212,0.5)"/>
+          <circle cx="293.6" cy="255.4" r="2" fill="rgba(6,182,212,0.45)"/>
+          <circle cx="207.8" cy="221.0" r="1.5" fill="rgba(34,197,94,0.5)"/>
+          <circle cx="257.2" cy="326.1" r="1.5" fill="rgba(245,158,11,0.45)"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-inner">
+    <div class="stat">
+      <div class="stat-n"><span>2</span></div>
+      <div class="stat-l">Countries covered</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n"><span>2</span> yrs</div>
+      <div class="stat-l">Satellite data archive</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n"><span>4</span></div>
+      <div class="stat-l">Intelligence products</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n"><span>100%</span></div>
+      <div class="stat-l">Open source data</div>
+    </div>
+  </div>
+</div>
+
+<!-- COUNTRIES -->
+<section class="section" id="countries" style="padding-top: 3.5rem; padding-bottom: 2rem;">
+  <div class="section-inner">
+    <div class="sec-label">Countries</div>
+    <h2 class="sec-title">Choose your country</h2>
+    <p class="sec-sub">Each country hub gives you access to all four intelligence products — FloodWatch, MineWatch, CropWatch, and HeatWatch — tailored to local boundaries, regions, and data sources.</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; margin-top: 2rem;">
+
+      <a href="hub.html" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 0.75rem; transition: border-color 0.2s, transform 0.15s;">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); border-radius: 99px; padding: 0.3rem 0.85rem; font-size: 0.7rem; font-weight: 700; color: #22c55e; text-transform: uppercase; letter-spacing: 0.1em; width: fit-content;">Ghana</div>
+        <div style="font-size: 1.3rem; font-weight: 800; color: var(--text-1); letter-spacing: -0.03em;">Ghana Intelligence Hub</div>
+        <p style="font-size: 0.85rem; color: var(--text-2); line-height: 1.6; flex: 1;">FloodWatch, MineWatch, CropWatch, and HeatWatch across all 16 regions and 260 districts. Built on CHIRPS, Sentinel-2, MODIS, and Landsat.</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid var(--border-dim);">
+          <span style="font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 99px; background: rgba(34,197,94,0.15); color: #22c55e;">Live</span>
+          <span style="font-size: 0.85rem; color: var(--accent);">&#8594;</span>
+        </div>
+      </a>
+
+      <a href="/nigeria/hub.html" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 0.75rem; transition: border-color 0.2s, transform 0.15s;">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); border-radius: 99px; padding: 0.3rem 0.85rem; font-size: 0.7rem; font-weight: 700; color: #22c55e; text-transform: uppercase; letter-spacing: 0.1em; width: fit-content;">Nigeria</div>
+        <div style="font-size: 1.3rem; font-weight: 800; color: var(--text-1); letter-spacing: -0.03em;">Nigeria Intelligence Hub</div>
+        <p style="font-size: 0.85rem; color: var(--text-2); line-height: 1.6; flex: 1;">FloodWatch, MineWatch (artisanal + oil/gas), CropWatch, and HeatWatch across all 37 states and 774 LGAs. Lagos, Kano, and Abuja heat monitoring.</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid var(--border-dim);">
+          <span style="font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 99px; background: rgba(34,197,94,0.15); color: #22c55e;">Live</span>
+          <span style="font-size: 0.85rem; color: var(--accent);">&#8594;</span>
+        </div>
+      </a>
+
+      <a href="/ivorycoast/hub.html" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 0.75rem; transition: border-color 0.2s, transform 0.15s;">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(251,146,60,0.1); border: 1px solid rgba(251,146,60,0.25); border-radius: 99px; padding: 0.3rem 0.85rem; font-size: 0.7rem; font-weight: 700; color: #fb923c; text-transform: uppercase; letter-spacing: 0.1em; width: fit-content;">🇨🇮 Côte d'Ivoire</div>
+        <div style="font-size: 1.3rem; font-weight: 800; color: var(--text-1); letter-spacing: -0.03em;">Côte d'Ivoire Intelligence Hub</div>
+        <p style="font-size: 0.85rem; color: var(--text-2); line-height: 1.6; flex: 1;">FloodWatch, gold MineWatch (Tongon, Ity, Agbaou, Bonikro, Séguéla), CropWatch across the cocoa belt, and HeatWatch for Abidjan, Bouaké, and Korhogo.</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid var(--border-dim);">
+          <span style="font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 99px; background: rgba(251,146,60,0.15); color: #fb923c;">Live</span>
+          <span style="font-size: 0.85rem; color: var(--accent);">&#8594;</span>
+        </div>
+      </a>
+
+      <a href="/senegal/hub.html" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 0.75rem; transition: border-color 0.2s, transform 0.15s;">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.25); border-radius: 99px; padding: 0.3rem 0.85rem; font-size: 0.7rem; font-weight: 700; color: #06b6d4; text-transform: uppercase; letter-spacing: 0.1em; width: fit-content;">🇸🇳 Senegal</div>
+        <div style="font-size: 1.3rem; font-weight: 800; color: var(--text-1); letter-spacing: -0.03em;">Senegal Intelligence Hub</div>
+        <p style="font-size: 0.85rem; color: var(--text-2); line-height: 1.6; flex: 1;">FloodWatch for Casamance and Dakar, gold MineWatch across the Kédougou belt (Sabodala-Massawa), CropWatch for the groundnut basin, and HeatWatch for Dakar, Saint-Louis, and Touba.</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid var(--border-dim);">
+          <span style="font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 99px; background: rgba(6,182,212,0.15); color: #06b6d4;">Live</span>
+          <span style="font-size: 0.85rem; color: var(--accent);">&#8594;</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="section" id="products">
+  <div class="section-inner">
+    <div class="sec-label">Products — Ghana</div>
+    <h2 class="sec-title">What we watch</h2>
+    <p class="sec-sub">
+      Four intelligence modules covering West Africa's most critical environmental and economic
+      risk factors &mdash; powered by open satellite data from NASA, ESA, and USGS.
+    </p>
+    <div class="products-grid">
+
+      <a href="/flood/" class="pcard c-blue">
+        <div class="pcard-icon">🌧️</div>
+        <div>
+          <div class="pcard-cat">Hydrology</div>
+          <div class="pcard-name">FloodWatch</div>
+        </div>
+        <p class="pcard-desc">Monthly rainfall intelligence across all 16 regions and 260 districts. CHIRPS satellite data, year-on-year comparison, zonal statistics per boundary.</p>
+        <div class="pcard-foot">
+          <span class="badge b-live">Live &mdash; 2024&ndash;2025</span>
+          <span class="pcard-arrow">&rarr;</span>
+        </div>
+      </a>
+
+      <a href="/mine/" class="pcard c-amber">
+        <div class="pcard-icon">⚡</div>
+        <div>
+          <div class="pcard-cat">Mining &amp; Environment</div>
+          <div class="pcard-name">MineWatch</div>
+        </div>
+        <p class="pcard-desc">Sentinel-2 optical change detection for illegal galamsey activity. NDVI and NDWI shift analysis over known mining corridors and water bodies.</p>
+        <div class="pcard-foot">
+          <span class="badge b-live">Live &mdash; 2024&ndash;2026</span>
+          <span class="pcard-arrow">&rarr;</span>
+        </div>
+      </a>
+
+      <a href="/crop/" class="pcard c-green">
+        <div class="pcard-icon">🌿</div>
+        <div>
+          <div class="pcard-cat">Agriculture</div>
+          <div class="pcard-name">CropWatch</div>
+        </div>
+        <p class="pcard-desc">MODIS 250m NDVI 16-day composites for crop stress monitoring and food security risk scoring across key farming regions.</p>
+        <div class="pcard-foot">
+          <span class="badge b-live">Live &mdash; 2024&ndash;2025</span>
+          <span class="pcard-arrow">&rarr;</span>
+        </div>
+      </a>
+
+      <a href="/heat/" class="pcard c-red">
+        <div class="pcard-icon">🌞</div>
+        <div>
+          <div class="pcard-cat">Urban Climate</div>
+          <div class="pcard-name">HeatWatch</div>
+        </div>
+        <p class="pcard-desc">Urban heat island mapping using Landsat thermal bands. Targeting Accra, Kumasi, and Tamale for city planning and public health use.</p>
+        <div class="pcard-foot">
+          <span class="badge b-beta">In Development</span>
+          <span class="pcard-arrow">&rarr;</span>
+        </div>
+      </a>
+
+      
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- AUDIENCE -->
+<section class="section" id="audience">
+  <div class="section-inner">
+    <div class="sec-label">Use Cases</div>
+    <h2 class="sec-title">Built for decision-makers</h2>
+    <p class="sec-sub">
+      From underwriting teams to disaster response planners &mdash; satellite intelligence
+      that translates directly into operational decisions.
+    </p>
+    <div class="audience-grid">
+
+      <div class="acard">
+        <div class="acard-num">01 /</div>
+        <div class="acard-title">Insurance &amp; Risk</div>
+        <p class="acard-desc">Property and crop underwriting informed by real satellite data. Site risk scoring for flood, heat, and vegetation stress &mdash; by district.</p>
+        <div class="acard-tags">
+          <span class="atag">Flood risk</span>
+          <span class="atag">Crop underwriting</span>
+          <span class="atag">Site scoring</span>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-num">02 /</div>
+        <div class="acard-title">Government &amp; NGOs</div>
+        <p class="acard-desc">Disaster response planning for national agencies and civil protection bodies. Food security early warning. Pre-positioning for humanitarian organisations ahead of seasonal flooding.</p>
+        <div class="acard-tags">
+          <span class="atag">Civil protection</span>
+          <span class="atag">Food security</span>
+          <span class="atag">Disaster planning</span>
+        </div>
+      </div>
+
+      <div class="acard">
+        <div class="acard-num">03 /</div>
+        <div class="acard-title">Agribusiness &amp; Finance</div>
+        <p class="acard-desc">Supply chain risk monitoring for agricultural corridors. Crop yield forecasting and investment decisions informed by vegetation data.</p>
+        <div class="acard-tags">
+          <span class="atag">Supply chain</span>
+          <span class="atag">Yield forecasting</span>
+          <span class="atag">Investment risk</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DATA SOURCES -->
+<div class="data-strip" id="data">
+  <div class="data-strip-inner">
+    <div class="data-label">Powered by open satellite data</div>
+    <div class="data-badges">
+      <div class="dbadge"><span class="dbadge-dot"></span>NASA CHIRPS</div>
+      <div class="dbadge"><span class="dbadge-dot"></span>Sentinel-2 (ESA)</div>
+      <div class="dbadge"><span class="dbadge-dot"></span>MODIS (NASA)</div>
+      <div class="dbadge"><span class="dbadge-dot"></span>Landsat (USGS)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="section" id="about" style="border-top: 1px solid var(--border-dim);">
+  <div class="section-inner" style="max-width: 720px;">
+    <div class="sec-label">About</div>
+    <h2 class="sec-title" style="margin-bottom: 2rem;">What this is</h2>
+
+    <p style="font-size: 1rem; color: var(--text-2); line-height: 1.8; margin-bottom: 1.25rem;">
+      Satellites have been observing West Africa for decades. The data is free, global, and
+      remarkably detailed &mdash; CHIRPS rainfall going back to 1981, Sentinel-2 imagery
+      updated every five days, Landsat thermal bands measuring city temperatures since the 1970s.
+      Most of it sits in archives, useful only to those with the tools and time to process it.
+    </p>
+
+    <p style="font-size: 1rem; color: var(--text-2); line-height: 1.8; margin-bottom: 1.25rem;">
+      InsightsAfrica turns that archive into something readable. Not raw rasters, not academic
+      papers &mdash; working dashboards that show whether last month&rsquo;s rainfall in the
+      Volta Basin was higher than the year before, whether heat is intensifying in Kumasi&rsquo;s
+      urban core, or whether vegetation around a mining corridor has quietly shifted.
+    </p>
+
+    <p style="font-size: 1rem; color: var(--text-2); line-height: 1.8;">
+      It started with Ghana because the use case was clearest there. West Africa is next.
+      The data is already there &mdash; it just needed someone to look at it properly.
+    </p>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section" id="contact" style="border-top: 1px solid var(--border-dim);">
+  <div class="section-inner">
+    <div class="sec-label">Contact</div>
+    <h2 class="sec-title" style="margin-bottom: 0.6rem;">Get in touch</h2>
+    <p class="sec-sub">Data partnerships, API access, media enquiries, or anything else — we'd like to hear from you.</p>
+
+    <div class="contact-wrap">
+      <div class="contact-info">
+        <h3>Who we work with</h3>
+        <p>Governments, research institutions, NGOs, agribusinesses, financial analysts, and journalists working across West Africa.</p>
+        <div class="contact-detail"><div class="contact-detail-dot"></div>info@insightsafrica.org</div>
+        <div class="contact-detail"><div class="contact-detail-dot"></div>Ghana &middot; Nigeria &middot; West Africa</div>
+        <div class="contact-detail"><div class="contact-detail-dot"></div>Open data. Public benefit.</div>
+      </div>
+
+      <form class="cform" id="contact-form" onsubmit="submitContact(event)">
+        <div class="cform-row">
+          <div class="cfield">
+            <label for="cf-name">Full name</label>
+            <input id="cf-name" type="text" placeholder="e.g. Kofi Mensah" required />
+          </div>
+          <div class="cfield">
+            <label for="cf-email">Email address</label>
+            <input id="cf-email" type="email" placeholder="you@example.com" required />
+          </div>
+        </div>
+        <div class="cfield">
+          <label for="cf-type">Enquiry type</label>
+          <select id="cf-type" required>
+            <option value="" disabled selected>Select one…</option>
+            <option value="General">General</option>
+            <option value="Data Partnership">Data Partnership</option>
+            <option value="API Access">API Access</option>
+            <option value="Media">Media</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="cfield">
+          <label for="cf-msg">Message</label>
+          <textarea id="cf-msg" placeholder="Tell us what you're working on…" required></textarea>
+        </div>
+        <div class="cform-msg" id="cf-feedback"></div>
+        <button type="submit" class="cform-submit" id="cf-btn">Send message &rarr;</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="foot-brand">InsightsAfrica</div>
+    <div class="foot-mission">Built on open data for public benefit<br>Ghana &middot; Nigeria &middot; West Africa</div>
+    <div class="foot-links">
+      <a href="hub.html">Ghana Hub</a>
+      <a href="/nigeria/hub.html">Nigeria Hub</a>
+      <a href="/ivorycoast/hub.html">Côte d'Ivoire Hub</a>
+      <a href="/flood/">FloodWatch</a>
+      <a href="/mine/">MineWatch</a>
+      <a href="/crop/">CropWatch</a>
+      <a href="#about">About</a>
+    </div>
+  </div>
+  <div class="foot-copy">&copy; 2026 InsightsAfrica</div>
+</footer>
+
+<script>
+  // Theme
+  function toggleTheme() {
+    var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('ia-theme', next);
+    document.getElementById('theme-btn').textContent = next === 'dark' ? '☀' : '☾';
+  }
+  document.getElementById('theme-btn').textContent =
+    document.documentElement.getAttribute('data-theme') === 'dark' ? '☀' : '☾';
+
+  // Mobile menu
+  function toggleMenu() {
+    document.getElementById('mob-menu').classList.toggle('open');
+  }
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 768) document.getElementById('mob-menu').classList.remove('open');
+  });
+
+  // Nav shadow on scroll
+  window.addEventListener('scroll', function() {
+    document.getElementById('nav').style.boxShadow =
+      window.scrollY > 20 ? '0 4px 24px rgba(0,0,0,0.28)' : 'none';
+  });
+
+  // Contact form submission
+  async function submitContact(e) {
+    e.preventDefault();
+    var btn = document.getElementById('cf-btn');
+    var fb  = document.getElementById('cf-feedback');
+    btn.disabled = true;
+    btn.textContent = 'Sending\u2026';
+    fb.className = 'cform-msg';
+    fb.textContent = '';
+
+    var payload = {
+      name:         document.getElementById('cf-name').value.trim(),
+      email:        document.getElementById('cf-email').value.trim(),
+      enquiry_type: document.getElementById('cf-type').value,
+      message:      document.getElementById('cf-msg').value.trim()
+    };
+
+    try {
+      var res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      var data = await res.json();
+      if (res.ok && data.ok) {
+        fb.className = 'cform-msg ok';
+        fb.textContent = "Message sent \u2014 we'll be in touch shortly.";
+        document.getElementById('contact-form').reset();
+      } else {
+        fb.className = 'cform-msg err';
+        fb.textContent = data.detail || 'Something went wrong. Please try again.';
+      }
+    } catch (err) {
+      fb.className = 'cform-msg err';
+      fb.textContent = 'Network error. Please check your connection and try again.';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Send message \u2192';
+  }
+
+  // Update hub.html link: add ← Home nav item when on hub
+  // (hub.html handles its own nav)
+</script>
+</body>
+</html>
