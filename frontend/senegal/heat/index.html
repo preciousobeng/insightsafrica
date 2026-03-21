@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HeatWatch — InsightsAfrica Senegal</title>
+  <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0f1e;
+      color: #e2e8f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* -- Header -- */
+    header {
+      background: #0d1527;
+      border-bottom: 1px solid #1e3a5f;
+      padding: 0 1.5rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+
+    .brand-logo {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      border-radius: 6px;
+    }
+
+    .brand-name { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; }
+    .brand-sub  { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+    .back-link  { font-size: 0.72rem; color: #475569; text-decoration: none; transition: color 0.15s; }
+    .back-link:hover { color: #ef4444; }
+
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #ef4444;
+      animation: pulse 2s infinite;
+    }
+    .status-dot.pending { background: #475569; animation: none; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .status-text { font-size: 0.75rem; color: #64748b; }
+
+    /* -- Layout -- */
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    /* -- Sidebar -- */
+    .sidebar {
+      width: 320px;
+      background: #0d1527;
+      border-right: 1px solid #1e3a5f;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .sidebar-section {
+      padding: 1.5rem;
+      border-bottom: 1px solid #1e2d45;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #ef4444;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Stats */
+    .stat-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+    .stat-label { font-size: 0.78rem; color: #94a3b8; }
+    .stat-value { font-size: 0.9rem; font-weight: 600; color: #f1f5f9; }
+    .stat-value.highlight { color: #ef4444; }
+    .stat-value.warm     { color: #f97316; }
+    .stat-value.moderate { color: #f59e0b; }
+
+    /* UHI badge */
+    .uhi-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 99px;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #ef4444;
+      margin-top: 0.25rem;
+    }
+
+    /* City buttons */
+    .city-btn {
+      width: 100%;
+      text-align: left;
+      background: #1a2540;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      color: #94a3b8;
+      font-size: 0.82rem;
+      cursor: pointer;
+      margin-bottom: 0.4rem;
+      transition: all 0.15s;
+    }
+    .city-btn:hover, .city-btn.active {
+      background: rgba(239,68,68,0.08);
+      border-color: #ef4444;
+      color: #f1f5f9;
+    }
+    .city-region {
+      display: block;
+      font-size: 0.7rem;
+      color: #475569;
+      margin-top: 0.1rem;
+    }
+    .city-temp {
+      float: right;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #f97316;
+    }
+
+    /* Temperature legend */
+    .legend-gradient {
+      height: 10px;
+      border-radius: 5px;
+      background: linear-gradient(to right, #313695, #4575b4, #74add1, #abd9e9, #e0f3f8, #fee090, #fdae61, #f46d43, #d73027, #a50026);
+      margin-bottom: 0.5rem;
+    }
+    .legend-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: #64748b;
+    }
+    .legend-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.35rem; }
+    .legend-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+    .legend-text { font-size: 0.74rem; color: #94a3b8; }
+
+    /* Date display */
+    .date-tag {
+      display: inline-block;
+      background: #1a2540;
+      border: 1px solid #1e3a5f;
+      border-radius: 5px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.7rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+
+    /* Info box */
+    .info-box {
+      background: #1a2540;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      line-height: 1.55;
+    }
+
+    .sidebar-message { font-size: 0.78rem; color: #475569; line-height: 1.5; padding: 0.25rem 0; }
+
+    /* -- Map -- */
+    #map { flex: 1; }
+    .leaflet-container { background: #0a0f1e; }
+
+    .heat-tooltip {
+      background: rgba(13,21,39,0.94);
+      border: 1px solid rgba(239,68,68,0.35);
+      color: #e2e8f0;
+      font-size: 0.75rem;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      white-space: pre-line;
+    }
+    .heat-tooltip::before { display: none; }
+
+    /* -- Theme toggle -- */
+    .theme-toggle {
+      background: none; border: 1px solid #1e3a5f; border-radius: 6px;
+      color: #475569; cursor: pointer; font-size: 0.85rem;
+      padding: 0.2rem 0.5rem; line-height: 1;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-toggle:hover { border-color: #ef4444; color: #e2e8f0; }
+
+    /* -- Light theme -- */
+    [data-theme="light"] body { background: #f8f5f0; color: #1e293b; }
+    [data-theme="light"] header { background: #ffffff; border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .brand-name { color: #0f172a; }
+    [data-theme="light"] .brand-sub { color: #64748b; }
+    [data-theme="light"] .back-link { color: #64748b; }
+    [data-theme="light"] .back-link:hover { color: #dc2626; }
+    [data-theme="light"] .status-text { color: #64748b; }
+    [data-theme="light"] .theme-toggle { border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .theme-toggle:hover { border-color: #ef4444; color: #0f172a; }
+    [data-theme="light"] .sidebar { background: #ffffff; border-right-color: #e2e8f0; }
+    [data-theme="light"] .sidebar-section { border-bottom-color: #f1f5f9; }
+    [data-theme="light"] .section-label { color: #dc2626; }
+    [data-theme="light"] .stat-label { color: #64748b; }
+    [data-theme="light"] .stat-value { color: #0f172a; }
+    [data-theme="light"] .stat-value.highlight { color: #dc2626; }
+    [data-theme="light"] .stat-value.warm { color: #ea580c; }
+    [data-theme="light"] .stat-value.moderate { color: #d97706; }
+    [data-theme="light"] .uhi-badge { background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.2); color: #dc2626; }
+    [data-theme="light"] .city-btn { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .city-btn:hover,
+    [data-theme="light"] .city-btn.active { background: #fff5f5; border-color: #ef4444; color: #0f172a; }
+    [data-theme="light"] .city-region { color: #94a3b8; }
+    [data-theme="light"] .city-temp { color: #ea580c; }
+    [data-theme="light"] .legend-labels { color: #94a3b8; }
+    [data-theme="light"] .legend-text { color: #475569; }
+    [data-theme="light"] .date-tag { background: #f1f5f9; border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .info-box { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .sidebar-message { color: #94a3b8; }
+    [data-theme="light"] .leaflet-container { background: #f8f5f0; }
+    [data-theme="light"] .heat-tooltip { background: rgba(255,255,255,0.96); border-color: rgba(239,68,68,0.3); color: #0f172a; }
+
+    /* -- Heat chart -- */
+    #heat-chart-section { display: block; }
+    @media (max-width: 767px) { #heat-chart-section { display: none; } }
+
+    /* -- Player controls (heat accent: red) -- */
+    .player-year-row { display: flex; gap: 0.35rem; margin-bottom: 0.65rem; flex-wrap: wrap; }
+    .city-filter-btn {
+      flex: 1; padding: 0.3rem 0; font-size: 0.68rem; font-weight: 600;
+      background: #1a1520; border: 1px solid #3f2020; border-radius: 6px;
+      color: #64748b; cursor: pointer; transition: all 0.15s;
+    }
+    .city-filter-btn:hover { border-color: #ef4444; color: #e2e8f0; }
+    .city-filter-btn.active { background: rgba(239,68,68,0.12); border-color: #ef4444; color: #fca5a5; }
+
+    .play-btn-heat {
+      width: 100%; padding: 0.5rem; font-size: 0.8rem; font-weight: 600;
+      background: #ef4444; border: none; border-radius: 8px;
+      color: #fff; cursor: pointer; margin-bottom: 0.6rem;
+      transition: background 0.15s;
+    }
+    .play-btn-heat:hover { background: #dc2626; }
+
+    .player-info {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 0.4rem;
+    }
+    .player-frame   { font-size: 0.78rem; color: #94a3b8; font-weight: 500; }
+    .player-counter { font-size: 0.7rem; color: #475569; }
+
+    .progress-track-heat {
+      height: 6px; background: #2d1515; border-radius: 3px;
+      cursor: pointer; margin-bottom: 0.5rem; position: relative;
+    }
+    .progress-fill-heat {
+      height: 100%; background: #ef4444; border-radius: 3px;
+      transition: width 0.15s linear; pointer-events: none;
+    }
+
+    .speed-row { display: flex; gap: 0.3rem; }
+    .speed-btn-heat {
+      flex: 1; padding: 0.25rem 0; font-size: 0.68rem; font-weight: 600;
+      background: #1a1520; border: 1px solid #3f2020; border-radius: 5px;
+      color: #64748b; cursor: pointer; transition: all 0.15s;
+    }
+    .speed-btn-heat:hover { border-color: #ef4444; color: #e2e8f0; }
+    .speed-btn-heat.active { background: rgba(239,68,68,0.12); border-color: #ef4444; color: #fca5a5; }
+
+    /* Map wrap + badge */
+    .map-wrap { flex: 1; position: relative; }
+    .map-date-badge {
+      display: none; position: absolute; top: 12px; left: 50%;
+      transform: translateX(-50%); z-index: 800;
+      background: rgba(20,8,8,0.88); border: 1px solid rgba(239,68,68,0.5);
+      border-radius: 20px; padding: 0.3rem 1rem;
+      font-size: 0.82rem; font-weight: 600; color: #fca5a5;
+      backdrop-filter: blur(4px); pointer-events: none; white-space: nowrap;
+    }
+    #map { width: 100%; height: 100%; }
+
+    /* Light theme overrides */
+    [data-theme="light"] .city-filter-btn { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .city-filter-btn.active { background: #fff5f5; border-color: #ef4444; color: #dc2626; }
+    [data-theme="light"] .progress-track-heat { background: #fee2e2; }
+    [data-theme="light"] .speed-btn-heat { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .speed-btn-heat.active { background: #fff5f5; border-color: #ef4444; color: #dc2626; }
+
+    /* -- Mobile layout -- */
+    @media (max-width: 767px) {
+      header { padding: 0 0.85rem; }
+      .brand-sub { display: none; }
+      .back-link { margin-right: 0.4rem; }
+      .header-right { gap: 0.6rem; }
+
+      .main { flex-direction: column; overflow: hidden; }
+
+      .sidebar {
+        width: 100%;
+        order: 2;
+        border-right: none;
+        border-top: 1px solid #1e3a5f;
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      #heat-player-section { display: none; }
+      .map-wrap { order: 1; height: 52vh; flex: none; }
+      #map { height: 100%; }
+    }
+
+    @media (max-width: 767px) {
+      [data-theme="light"] .sidebar { border-top-color: #e2e8f0; }
+    }
+  
+    /* ── Download buttons ── */
+    .download-buttons { display: flex; flex-direction: column; gap: 6px; }
+    .dl-btn {
+      display: block; padding: 7px 12px;
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 6px; color: #10b981; font-size: 12px;
+      text-decoration: none; text-align: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .dl-btn:hover { background: rgba(16,185,129,0.2); border-color: #10b981; }
+    [data-theme="light"] .dl-btn { background: #f0fdf4; border-color: #bbf7d0; color: #059669; }
+    [data-theme="light"] .dl-btn:hover { background: #dcfce7; border-color: #6ee7b7; }
+
+    .dl-date-range {
+      display: grid; grid-template-columns: auto 1fr; gap: 6px 8px;
+      align-items: center; margin-bottom: 8px;
+    }
+    .dl-date-range label { font-size: 11px; color: #94a3b8; white-space: nowrap; }
+    .dl-date-range input[type=month] {
+      flex: 1; min-width: 120px; padding: 4px 6px; border-radius: 5px;
+      border: 1px solid rgba(148,163,184,0.3); background: rgba(255,255,255,0.05);
+      color: inherit; font-size: 12px; cursor: pointer;
+    }
+    [data-theme="light"] .dl-date-range input[type=month] {
+      background: #f8fafc; border-color: #e2e8f0; color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo"></div>
+      <div>
+        <div class="brand-name">HeatWatch</div>
+        <div class="brand-sub">InsightsAfrica &middot; Senegal &middot; Urban Heat Islands</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="/senegal/hub.html" class="back-link">&#8592; Senegal Hub</a>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
+      <div class="status-dot pending" id="status-dot"></div>
+      <span class="status-text" id="status-text">Loading&hellip;</span>
+    </div>
+  </header>
+
+  <div class="main">
+
+    <aside class="sidebar">
+
+      <!-- Active city stats -->
+      <div class="sidebar-section">
+        <div class="section-label">Active City</div>
+        <div class="stat-row">
+          <span class="stat-label">City</span>
+          <span class="stat-value highlight" id="city-name">&mdash;</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">State</span>
+          <span class="stat-value" id="city-region">&mdash;</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Mean LST</span>
+          <span class="stat-value warm" id="city-mean">&mdash;</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Peak LST</span>
+          <span class="stat-value highlight" id="city-max">&mdash;</span>
+        </div>
+        <div id="uhi-container" style="display:none">
+          <div class="uhi-badge" id="uhi-badge">&#9652; &mdash; UHI</div>
+        </div>
+        <div class="date-tag" id="city-date">&mdash;</div>
+      </div>
+
+      <!-- City tour player -->
+      <div class="sidebar-section" id="heat-player-section" style="display:none;">
+        <div class="section-label">City Tour Player</div>
+
+        <div class="player-year-row">
+          <button class="city-filter-btn active" id="cf-all"   onclick="setCityFilter('all')">All cities</button>
+          <button class="city-filter-btn"        id="cf-abidjan" onclick="setCityFilter('abidjan')">Abidjan</button>
+          <button class="city-filter-btn"        id="cf-bouake"  onclick="setCityFilter('bouake')">Bouaké</button>
+          <button class="city-filter-btn"        id="cf-korhogo" onclick="setCityFilter('korhogo')">Korhogo</button>
+        </div>
+
+        <button class="play-btn-heat" id="heat-play-btn" onclick="toggleHeatPlay()">&#x25B6;  Play</button>
+
+        <div class="player-info">
+          <span class="player-frame" id="heat-player-frame">---</span>
+          <span class="player-counter" id="heat-player-counter">0 / 0</span>
+        </div>
+        <div class="progress-track-heat" id="heat-progress-track" onclick="heatScrubTo(event)">
+          <div class="progress-fill-heat" id="heat-progress-fill" style="width:0%"></div>
+        </div>
+
+        <div class="speed-row">
+          <button class="speed-btn-heat"        id="hspd-slow"   onclick="setHeatSpeed(2000)">Slow</button>
+          <button class="speed-btn-heat active" id="hspd-normal" onclick="setHeatSpeed(1200)">Normal</button>
+          <button class="speed-btn-heat"        id="hspd-fast"   onclick="setHeatSpeed(600)">Fast</button>
+        </div>
+      </div>
+
+      <!-- LST / UHI chart -->
+      <div class="sidebar-section" id="heat-chart-section" style="display:none;">
+        <div class="section-label">Land Surface Temp &amp; UHI by Scene</div>
+        <div style="position:relative; height:150px; width:100%;">
+          <canvas id="heat-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- City selector -->
+      <div class="sidebar-section">
+        <div class="section-label">Select City</div>
+        <div id="city-list">
+          <p class="sidebar-message">Loading cities&hellip;</p>
+        </div>
+      </div>
+
+      <!-- Temperature legend -->
+      <div class="sidebar-section">
+        <div class="section-label">Temperature Scale</div>
+        <div class="legend-gradient"></div>
+        <div class="legend-labels">
+          <span>&lt;20&deg;C</span>
+          <span>30&deg;C</span>
+          <span>&gt;40&deg;C</span>
+        </div>
+        <div style="margin-top:0.75rem">
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#313695"></div>
+            <span class="legend-text">Below 20&deg;C &mdash; Cool (rural fringe)</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#74add1"></div>
+            <span class="legend-text">20&ndash;28&deg;C &mdash; Moderate</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#fee090"></div>
+            <span class="legend-text">28&ndash;34&deg;C &mdash; Warm</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#f46d43"></div>
+            <span class="legend-text">34&ndash;38&deg;C &mdash; Hot</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#a50026"></div>
+            <span class="legend-text">Above 38&deg;C &mdash; Extreme heat</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="sidebar-section">
+        <div class="section-label">About</div>
+        <div class="info-box">
+          Land Surface Temperature (LST) derived from Landsat 9 TIRS Band 10
+          (thermal infrared, 100m). Darker red indicates urban heat island
+          effect &mdash; city surfaces retaining more heat than surrounding
+          vegetation and rural land. Key metric: UHI intensity = urban mean
+          minus rural fringe mean.
+        </div>
+      </div>
+
+
+      <div class="sidebar-section">
+        <div class="section-label">Download Data</div>
+        <div class="download-buttons">
+          <div class="dl-date-range">
+            <label>From</label>
+            <input type="month" id="dl-from" value="2024-01" min="2024-01" max="2025-12">
+            <label>To</label>
+            <input type="month" id="dl-to" value="2025-12" min="2024-01" max="2025-12">
+          </div>
+          <button class="dl-btn" onclick="dlCsv('/api/senegal/heat/download/csv', 'insightsafrica_senegal_heat.csv')">CSV — LST Scenes</button>
+        </div>
+      </div>
+
+        </aside>
+
+    <div class="map-wrap">
+      <div class="map-date-badge" id="map-date-badge"></div>
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map', { center: [7.5, -5.5], zoom: 6 });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '\u00a9 OpenStreetMap \u00a9 CARTO',
+      subdomains: 'abcd',
+      maxZoom: 20,
+    }).addTo(map);
+
+    // City definitions
+    const CITY_DEFS = [
+      { id: 'abidjan', name: 'Abidjan', region: 'Lagunes', centre: [5.3600, -4.0083], zoom: 11 },
+      { id: 'bouake',  name: 'Bouak\u00e9',  region: 'Vall\u00e9e du Bandama', centre: [7.6900, -5.0302], zoom: 11 },
+      { id: 'korhogo', name: 'Korhogo', region: 'Savanes', centre: [9.4580, -5.6296], zoom: 11 },
+    ];
+
+    let layersByCity = {};   // city_id -> array of layer objects (sorted newest first)
+    let currentOverlay = null;
+    let activeCity = null;
+
+    function setStatus(text, live) {
+      document.getElementById('status-text').textContent = text;
+      const dot = document.getElementById('status-dot');
+      dot.className = 'status-dot' + (live ? '' : ' pending');
+    }
+
+    function formatTemp(c) {
+      return c != null ? c.toFixed(1) + '\u00b0C' : '\u2014';
+    }
+
+    function tempClass(c) {
+      if (c == null) return '';
+      if (c >= 38) return 'highlight';
+      if (c >= 33) return 'warm';
+      return 'moderate';
+    }
+
+    function updateCityInfo(layer) {
+      const s = layer.stats || {};
+      document.getElementById('city-name').textContent   = layer.city_name;
+      document.getElementById('city-region').textContent = layer.region || '\u2014';
+      document.getElementById('city-date').textContent   = layer.date || '\u2014';
+
+      const meanEl = document.getElementById('city-mean');
+      meanEl.textContent = formatTemp(s.mean_lst_c);
+      meanEl.className = 'stat-value ' + tempClass(s.mean_lst_c);
+
+      document.getElementById('city-max').textContent = formatTemp(s.max_lst_c);
+
+      const uhiContainer = document.getElementById('uhi-container');
+      const uhiBadge     = document.getElementById('uhi-badge');
+      if (s.uhi_intensity_c != null) {
+        uhiContainer.style.display = 'block';
+        uhiBadge.textContent = '\u25b2 +' + s.uhi_intensity_c.toFixed(1) + '\u00b0C UHI intensity';
+      } else {
+        uhiContainer.style.display = 'none';
+      }
+    }
+
+    function displayCity(cityId) {
+      activeCity = cityId;
+
+      // Highlight active button
+      document.querySelectorAll('.city-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.cityId === cityId);
+      });
+
+      // Remove existing overlay
+      if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
+
+      const layers = layersByCity[cityId];
+      if (layers && layers.length) {
+        const layer = layers[0]; // most recent
+        updateCityInfo(layer);
+
+        if (layer.png) {
+          const bounds = layer.leaflet_bounds; // [[south,west],[north,east]]
+          currentOverlay = L.imageOverlay('/ic-tiles/' + layer.png, bounds, { opacity: 0.80 });
+          currentOverlay.addTo(map);
+          map.fitBounds(bounds, { padding: [30, 30] });
+        } else {
+          // No PNG yet -- zoom to city centre
+          const def = CITY_DEFS.find(c => c.id === cityId);
+          if (def) map.setView(def.centre, def.zoom);
+        }
+      } else {
+        // No data for this city yet -- zoom to centre
+        const def = CITY_DEFS.find(c => c.id === cityId);
+        if (def) map.setView(def.centre, def.zoom);
+
+        // Clear stats
+        ['city-name','city-region','city-date','city-mean','city-max'].forEach(id => {
+          document.getElementById(id).textContent = '\u2014';
+        });
+        document.getElementById('uhi-container').style.display = 'none';
+        document.getElementById('city-name').textContent   = def ? def.name   : '\u2014';
+        document.getElementById('city-region').textContent = def ? def.region : '\u2014';
+      }
+    }
+
+    function renderCityList(hasData) {
+      const container = document.getElementById('city-list');
+      container.textContent = '';
+
+      CITY_DEFS.forEach((def, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'city-btn' + (i === 0 ? ' active' : '');
+        btn.dataset.cityId = def.id;
+
+        const layers = layersByCity[def.id];
+        const latest = layers && layers[0];
+
+        // City name
+        const nameText = document.createTextNode(def.name);
+        btn.appendChild(nameText);
+
+        // Temperature badge (if data available)
+        if (latest && latest.stats && latest.stats.mean_lst_c != null) {
+          const tempSpan = document.createElement('span');
+          tempSpan.className = 'city-temp';
+          tempSpan.textContent = latest.stats.mean_lst_c.toFixed(1) + '\u00b0C';
+          btn.appendChild(tempSpan);
+        }
+
+        const regionSpan = document.createElement('span');
+        regionSpan.className = 'city-region';
+        regionSpan.textContent = def.region + (latest ? ' \u2014 ' + latest.date : '');
+        btn.appendChild(regionSpan);
+
+        btn.addEventListener('click', () => displayCity(def.id));
+        container.appendChild(btn);
+
+        // Map marker
+        const hasCity = !!(latest && latest.stats);
+        const tip = hasCity
+          ? [
+              def.name + ' \u2014 ' + def.region,
+              '',
+              'Mean LST: ' + formatTemp(latest.stats.mean_lst_c),
+              'Peak LST: ' + formatTemp(latest.stats.max_lst_c),
+              latest.stats.uhi_intensity_c != null
+                ? 'UHI: +' + latest.stats.uhi_intensity_c.toFixed(1) + '\u00b0C above rural'
+                : '',
+              'Source: ' + (latest.source || 'Landsat'),
+            ].filter(Boolean).join('\n')
+          : def.name + '\n' + def.region + '\n\nData pending';
+
+        L.circleMarker(def.centre, {
+          radius: 10,
+          fillColor: hasCity ? '#ef4444' : '#475569',
+          color: '#fff',
+          weight: 1.5,
+          fillOpacity: 0.85,
+        }).addTo(map)
+          .bindTooltip(tip, { sticky: true, className: 'heat-tooltip' })
+          .on('click', () => displayCity(def.id));
+      });
+    }
+
+    // -- Heat chart --
+    let heatChart = null;
+    const CITY_COLOURS = {
+      lagos: { bar: 'rgba(239,68,68,0.75)',   border: 'rgba(239,68,68,1)'   },
+      kano:  { bar: 'rgba(249,115,22,0.75)',  border: 'rgba(249,115,22,1)'  },
+      abuja: { bar: 'rgba(245,158,11,0.75)',  border: 'rgba(245,158,11,1)'  },
+    };
+
+    function buildHeatChart(allLayers) {
+      // Build flat list sorted by date
+      const scenes = allLayers.slice().sort((a, b) => a.date.localeCompare(b.date));
+      if (!scenes.length) return;
+
+      document.getElementById('heat-chart-section').style.display = 'block';
+
+      const labels = scenes.map(l => {
+        const d = new Date(l.date);
+        const mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getUTCMonth()];
+        return l.city_name.slice(0, 3) + ' ' + mon + ' \'' + String(d.getUTCFullYear()).slice(2);
+      });
+
+      const lstData = scenes.map(l => l.stats ? l.stats.mean_lst_c      : null);
+      const uhiData = scenes.map(l => l.stats ? l.stats.uhi_intensity_c : null);
+      const barBg   = scenes.map(l => (CITY_COLOURS[l.city_id] || CITY_COLOURS.lagos).bar);
+      const barBd   = scenes.map(l => (CITY_COLOURS[l.city_id] || CITY_COLOURS.lagos).border);
+
+      const ctx = document.getElementById('heat-chart').getContext('2d');
+      if (heatChart) heatChart.destroy();
+
+      heatChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Mean LST (\u00b0C)',
+              data: lstData,
+              backgroundColor: barBg,
+              borderColor: barBd,
+              borderWidth: 1,
+              borderRadius: 3,
+              yAxisID: 'y',
+            },
+            {
+              label: 'UHI intensity (\u00b0C)',
+              data: uhiData,
+              type: 'line',
+              borderColor: 'rgba(148,163,184,0.85)',
+              backgroundColor: 'rgba(148,163,184,0.1)',
+              borderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              tension: 0.3,
+              yAxisID: 'y2',
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          onClick: (event, elements) => {
+            if (!elements.length) return;
+            const scene = scenes[elements[0].index];
+            if (scene) displayCity(scene.city_id, scene.date);
+          },
+          plugins: {
+            legend: {
+              display: true,
+              labels: { color: '#64748b', font: { size: 9 }, boxWidth: 10, padding: 8 },
+            },
+            tooltip: {
+              backgroundColor: 'rgba(13,21,39,0.95)',
+              borderColor: '#1e3a5f', borderWidth: 1,
+              titleColor: '#ef4444', bodyColor: '#94a3b8', padding: 9,
+              callbacks: {
+                title: (items) => scenes[items[0].dataIndex].city_name + ' \u2014 ' + scenes[items[0].dataIndex].date,
+                label: (item) => {
+                  const s = scenes[item.dataIndex].stats || {};
+                  if (item.datasetIndex === 0) return [
+                    'Mean LST: ' + (s.mean_lst_c||0).toFixed(1) + '\u00b0C',
+                    'Urban: '   + (s.urban_mean_c||0).toFixed(1) + '\u00b0C',
+                    'Rural: '   + (s.rural_mean_c||0).toFixed(1) + '\u00b0C',
+                  ];
+                  return 'UHI: ' + (s.uhi_intensity_c||0).toFixed(2) + '\u00b0C';
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.04)' },
+              ticks: { color: '#64748b', font: { size: 8 }, maxRotation: 30 },
+            },
+            y: {
+              position: 'left',
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              ticks: { color: '#64748b', font: { size: 9 }, callback: v => v + '\u00b0C' },
+              title: { display: false },
+            },
+            y2: {
+              position: 'right',
+              grid: { drawOnChartArea: false },
+              ticks: { color: '#94a3b8', font: { size: 9 }, callback: v => v.toFixed(1) },
+            },
+          },
+        },
+      });
+    }
+
+    // -- City tour player --
+    let allScenes     = [];   // flat sorted list of all heat layers
+    let playerScenes  = [];   // filtered subset
+    let heatPlayerIdx = 0;
+    let heatTimer     = null;
+    let heatSpeedMs   = 1200;
+    let cityFilter    = 'all';
+
+    function displayScene(scene) {
+      // Show a specific heat scene on the map (used by player)
+      if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
+      if (scene.png) {
+        currentOverlay = L.imageOverlay('/ic-tiles/' + scene.png, scene.leaflet_bounds, { opacity: 0.80 });
+        currentOverlay.addTo(map);
+        map.fitBounds(scene.leaflet_bounds, { padding: [30, 30] });
+      }
+      updateCityInfo(scene);
+      activeCity = scene.city_id;
+      document.querySelectorAll('.city-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.cityId === scene.city_id);
+      });
+      const badge = document.getElementById('map-date-badge');
+      badge.textContent = scene.city_name + ' \u2014 ' + scene.date;
+      badge.style.display = 'block';
+    }
+
+    function setCityFilter(cid) {
+      cityFilter = cid;
+      document.querySelectorAll('.city-filter-btn').forEach(b => b.classList.remove('active'));
+      const idMap = { all: 'cf-all', abidjan: 'cf-abidjan', bouake: 'cf-bouake', korhogo: 'cf-korhogo' };
+      if (idMap[cid]) document.getElementById(idMap[cid]).classList.add('active');
+      rebuildHeatPlayer();
+    }
+
+    function rebuildHeatPlayer() {
+      playerScenes = cityFilter === 'all'
+        ? allScenes.slice()
+        : allScenes.filter(s => s.city_id === cityFilter);
+      heatPlayerIdx = 0;
+      updateHeatPlayerUI();
+    }
+
+    function updateHeatPlayerUI() {
+      const total = playerScenes.length;
+      const cur   = total ? heatPlayerIdx + 1 : 0;
+      const scene = playerScenes[heatPlayerIdx];
+      const label = scene ? scene.city_name + ' \u2014 ' + scene.date : '---';
+      document.getElementById('heat-player-frame').textContent   = label;
+      document.getElementById('heat-player-counter').textContent = cur + ' / ' + total;
+      const pct = total > 1 ? (heatPlayerIdx / (total - 1)) * 100 : 0;
+      document.getElementById('heat-progress-fill').style.width = pct + '%';
+    }
+
+    function setHeatSpeed(ms) {
+      heatSpeedMs = ms;
+      document.querySelectorAll('.speed-btn-heat').forEach(b => b.classList.remove('active'));
+      const ids = { 2000: 'hspd-slow', 1200: 'hspd-normal', 600: 'hspd-fast' };
+      if (ids[ms]) document.getElementById(ids[ms]).classList.add('active');
+      if (heatTimer) { pauseHeat(); playHeat(); }
+    }
+
+    function playHeat() {
+      if (!playerScenes.length) return;
+      const btn = document.getElementById('heat-play-btn');
+      btn.textContent = '\u23F8  Pause';
+      heatTimer = setInterval(() => {
+        heatPlayerIdx = (heatPlayerIdx + 1) % playerScenes.length;
+        displayScene(playerScenes[heatPlayerIdx]);
+        updateHeatPlayerUI();
+      }, heatSpeedMs);
+      displayScene(playerScenes[heatPlayerIdx]);
+      updateHeatPlayerUI();
+    }
+
+    function pauseHeat() {
+      if (heatTimer) { clearInterval(heatTimer); heatTimer = null; }
+      const btn = document.getElementById('heat-play-btn');
+      if (btn) btn.textContent = '\u25B6  Play';
+      const badge = document.getElementById('map-date-badge');
+      if (badge) badge.style.display = 'none';
+    }
+
+    function toggleHeatPlay() {
+      if (heatTimer) pauseHeat();
+      else           playHeat();
+    }
+
+    function heatScrubTo(event) {
+      if (!playerScenes.length) return;
+      const track = document.getElementById('heat-progress-track');
+      const rect  = track.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+      heatPlayerIdx = Math.round(ratio * (playerScenes.length - 1));
+      displayScene(playerScenes[heatPlayerIdx]);
+      updateHeatPlayerUI();
+    }
+
+    async function loadLayers() {
+      try {
+        const res = await fetch('/api/senegal/heat/layers');
+        if (!res.ok) throw new Error('no data');
+        const layers = await res.json();
+
+        if (!layers.length) throw new Error('empty');
+
+        // Group by city, sort newest first
+        layers.forEach(l => {
+          if (!layersByCity[l.city_id]) layersByCity[l.city_id] = [];
+          layersByCity[l.city_id].push(l);
+        });
+        Object.keys(layersByCity).forEach(k => {
+          layersByCity[k].sort((a, b) => b.date.localeCompare(a.date));
+        });
+
+        renderCityList(true);
+        displayCity('lagos');
+        buildHeatChart(layers);
+
+        // Initialise city tour player -- sorted by date ascending
+        allScenes = layers.slice().sort((a, b) => a.date.localeCompare(b.date));
+        document.getElementById('heat-player-section').style.display = 'block';
+        rebuildHeatPlayer();
+
+        setStatus('Live', true);
+
+      } catch (_) {
+        // No data yet -- show placeholder city markers
+        renderCityList(false);
+        displayCity('lagos');
+
+        const container = document.getElementById('city-list');
+        const note = document.createElement('p');
+        note.className = 'sidebar-message';
+        note.style.marginTop = '0.5rem';
+        note.textContent = 'No data yet \u2014 run fetch_landsat.py --country nigeria to download imagery.';
+        container.appendChild(note);
+
+        setStatus('Pending data', false);
+      }
+    }
+
+    loadLayers();
+  </script>
+
+  <script>
+    function toggleTheme() {
+      var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ia-theme', next);
+      document.getElementById('theme-toggle').textContent = next === 'dark' ? '\u2600' : '\u263e';
+    }
+    document.getElementById('theme-toggle').textContent =
+      document.documentElement.getAttribute('data-theme') === 'dark' ? '\u2600' : '\u263e';
+  </script>
+
+<script>
+  function dlCsv(baseUrl, filename) {
+    const from = document.getElementById('dl-from')?.value;
+    const to   = document.getElementById('dl-to')?.value;
+    let url = baseUrl;
+    if (from) url += (url.includes('?') ? '&' : '?') + 'from=' + from;
+    if (to)   url += (url.includes('?') ? '&' : '?') + 'to='   + to;
+    const raw   = localStorage.getItem('sb-ajkpbpiqmsmahzetfxzc-auth-token');
+    const token = raw ? JSON.parse(raw)?.access_token : null;
+    const hdrs  = token ? { 'Authorization': 'Bearer ' + token } : {};
+    fetch(url, { headers: hdrs })
+      .then(r => r.blob())
+      .then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+      });
+  }
+</script>
+</body>
+</html>

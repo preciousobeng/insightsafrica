@@ -248,46 +248,32 @@
     .theme-toggle:hover { border-color: #3b82f6; color: #e2e8f0; }
 
     /* ── Country switcher pill ── */
-    .country-switcher {
-      display: inline-flex;
-      align-items: center;
-      gap: 0;
-      background: #0a0f1e;
-      border: 1px solid #1e3a5f;
-      border-radius: 99px;
-      overflow: hidden;
-      font-size: 0.72rem;
-      font-weight: 700;
+        /* ── Country switcher dropdown ── */
+    .cs-dropdown { position: relative; display: inline-block; }
+    .cs-btn {
+      display: flex; align-items: center; gap: 0.4rem;
+      background: #0a0f1e; border: 1px solid #1e3a5f; border-radius: 99px;
+      padding: 0.3rem 0.85rem; font-size: 0.72rem; font-weight: 700;
+      color: #38bdf8; cursor: pointer; white-space: nowrap;
+      font-family: inherit;
     }
-    .cs-item {
-      padding: 0.28rem 0.75rem;
-      text-decoration: none;
-      transition: background 0.15s, color 0.15s;
-      white-space: nowrap;
+    .cs-btn:hover { border-color: #3b82f6; }
+    .cs-menu {
+      display: none; position: absolute; top: calc(100% + 6px); right: 0;
+      background: #0d1527; border: 1px solid #1e3a5f; border-radius: 10px;
+      min-width: 170px; overflow: hidden; z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
-    .cs-item.active {
-      background: #1a2f1a;
-      color: #4ade80;
-      cursor: default;
+    .cs-menu.open { display: block; }
+    .cs-menu a {
+      display: block; padding: 0.55rem 1rem; font-size: 0.75rem; font-weight: 600;
+      color: #94a3b8; text-decoration: none; transition: background 0.15s, color 0.15s;
     }
-    .cs-item.link {
-      color: #475569;
-    }
-    .cs-item.link:hover {
-      background: rgba(59,130,246,0.1);
-      color: #94a3b8;
-    }
-    .cs-divider {
-      color: #1e3a5f;
-      font-size: 0.9rem;
-      line-height: 1;
-      user-select: none;
-    }
-    [data-theme="light"] .country-switcher { background: #f8fafc; border-color: #e2e8f0; }
-    [data-theme="light"] .cs-item.active   { background: #dcfce7; color: #16a34a; }
-    [data-theme="light"] .cs-item.link     { color: #64748b; }
-    [data-theme="light"] .cs-item.link:hover { background: rgba(37,99,235,0.07); color: #1e293b; }
-    [data-theme="light"] .cs-divider       { color: #cbd5e1; }
+    .cs-menu a:hover { background: rgba(59,130,246,0.12); color: #e2e8f0; }
+    [data-theme="light"] .cs-btn { background: #f8fafc; border-color: #e2e8f0; color: #1d4ed8; }
+    [data-theme="light"] .cs-btn:hover { border-color: #3b82f6; }
+    [data-theme="light"] .cs-menu { background: #fff; border-color: #e2e8f0; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    [data-theme="light"] .cs-menu a { color: #475569; }
+    [data-theme="light"] .cs-menu a:hover { background: rgba(37,99,235,0.07); color: #1e293b; }
 
     /* ── Light theme ── */
     [data-theme="light"] body { background: #f1f5f9; color: #1e293b; }
@@ -379,18 +365,14 @@
     <div class="header-right">
       <a href="/" style="font-size:0.75rem;color:#475569;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#475569'">&larr; Home</a>
       <a href="https://monitor.insightsafrica.org" target="_blank" rel="noopener" style="font-size:0.75rem;color:#38bdf8;text-decoration:none;font-weight:500;">Monitor ↗</a>
-      <div class="country-switcher" title="Switch country hub">
-        <a class="cs-item link" href="/hub.html">&#127468;&#127469; Ghana</a>
-        <span class="cs-divider">&#124;</span>
-        <span class="cs-item active">&#127475;&#127468; Nigeria</span>
-        <span class="cs-divider">&#124;</span>
-        <a class="cs-item link" href="/ivorycoast/hub.html">&#127464;&#127470; Côte d'Ivoire</a>
-        <span class="cs-divider">&#124;</span>
-        <a class="cs-item link" href="/senegal/hub.html">&#127480;&#127475; Senegal</a>
-      </div>
-      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
-    </div>
-  </header>
+      <div class="cs-dropdown" id="cs-dropdown">
+        <button class="cs-btn" onclick="toggleCS()">&#127475;&#127468; Nigeria &#9660;</button>
+        <div class="cs-menu" id="cs-menu">
+          <a href="/hub.html">&#127468;&#127469; Ghana</a>
+          <a href="/ivorycoast/hub.html">&#127464;&#127470; Côte d'Ivoire</a>
+          <a href="/senegal/hub.html">&#127480;&#127475; Senegal</a>
+        </div>
+      </div></header>
 
   <div class="country-banner">
     <div class="country-pill">&#127475;&#127468; Nigeria</div>
@@ -574,7 +556,17 @@
   </script>
 
   <script>
-    function toggleTheme() {
+    function toggleCS() {
+    document.getElementById('cs-menu').classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#cs-dropdown')) {
+      var m = document.getElementById('cs-menu');
+      if (m) m.classList.remove('open');
+    }
+  });
+
+  function toggleTheme() {
       var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('ia-theme', next);

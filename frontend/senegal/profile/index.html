@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nigeria Country Profile — InsightsAfrica</title>
+  <title>Senegal Country Profile — InsightsAfrica</title>
   <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
   <style>
@@ -241,23 +241,23 @@
 <body>
 
 <header>
-  <a class="brand" href="/nigeria/hub.html">
+  <a class="brand" href="/senegal/hub.html">
     <div class="brand-logo"></div>
     <div>
       <div class="brand-name">InsightsAfrica</div>
-      <div class="brand-sub">Country Profile · Nigeria</div>
+      <div class="brand-sub">Country Profile · Senegal</div>
     </div>
   </a>
   <div class="header-right">
-    <a class="back-link" href="/nigeria/hub.html">← Nigeria Hub</a>
+    <a class="back-link" href="/senegal/hub.html">← Senegal Hub</a>
     <button class="theme-toggle" onclick="toggleTheme()">◑</button>
   </div>
 </header>
 
 <!-- Hero -->
 <div class="hero">
-  <div class="hero-pill">🇳🇬 Nigeria · Intelligence Profile</div>
-  <h1 class="hero-title">Nigeria — <span>Country Profile</span></h1>
+  <div class="hero-pill">🇨🇮 Senegal · Intelligence Profile</div>
+  <h1 class="hero-title">Senegal — <span>Country Profile</span></h1>
   <p class="hero-summary loading" id="hero-summary">Loading intelligence summary…</p>
 </div>
 
@@ -315,7 +315,7 @@
       <div class="section-heading">Environmental Intelligence</div>
       <div class="env-grid">
 
-        <a class="env-card loading" href="/nigeria/flood/" id="env-flood">
+        <a class="env-card loading" href="/senegal/flood/" id="env-flood">
           <div class="env-card-icon">🌧️</div>
           <div class="env-card-label">Flood Risk</div>
           <div class="env-card-name">FloodWatch</div>
@@ -324,7 +324,7 @@
           <div class="env-card-link">View FloodWatch →</div>
         </a>
 
-        <a class="env-card loading" href="/nigeria/crop/" id="env-crop">
+        <a class="env-card loading" href="/senegal/crop/" id="env-crop">
           <div class="env-card-icon">🌾</div>
           <div class="env-card-label">Crop Health</div>
           <div class="env-card-name">CropWatch</div>
@@ -333,7 +333,7 @@
           <div class="env-card-link">View CropWatch →</div>
         </a>
 
-        <a class="env-card loading" href="/nigeria/heat/" id="env-heat">
+        <a class="env-card loading" href="/senegal/heat/" id="env-heat">
           <div class="env-card-icon">🌡️</div>
           <div class="env-card-label">Urban Heat</div>
           <div class="env-card-name">HeatWatch</div>
@@ -342,7 +342,7 @@
           <div class="env-card-link">View HeatWatch →</div>
         </a>
 
-        <a class="env-card loading" href="/nigeria/mine/" id="env-mine">
+        <a class="env-card loading" href="/senegal/mine/" id="env-mine">
           <div class="env-card-icon">⛏️</div>
           <div class="env-card-label">Mining Activity</div>
           <div class="env-card-name">MineWatch</div>
@@ -359,7 +359,7 @@
       <div class="human-list" id="human-list">
         <div class="human-row loading"><div class="human-row-label">Loading…</div></div>
       </div>
-      <a class="human-more" href="/nigeria/human/">View all indicators →</a>
+      <a class="human-more" href="/senegal/human/">View all indicators →</a>
 
       <div style="margin-top:1.5rem">
         <div class="section-heading">Country Index</div>
@@ -381,20 +381,20 @@
 </main>
 
 <footer>
-  <span class="footer-brand">InsightsAfrica — Nigeria</span>
+  <span class="footer-brand">InsightsAfrica — Senegal</span>
   <span class="footer-note">Satellite + World Bank data · All open source</span>
 </footer>
 
 <script>
 /* ── Config (Ghana) ── */
 const CFG = {
-  floodApi:   '/api/nigeria/flood/layers',
-  cropApi:    '/api/nigeria/crop/layers',
-  heatApi:    '/api/nigeria/heat/layers',
-  mineApi:    '/api/nigeria/mine/sites',
-  humanApi:   '/api/indicators/nigeria',
-  mainCity:   'lagos',
-  accentColor:'#4ade80',
+  floodApi:   '/api/senegal/flood/layers',
+  cropApi:    '/api/senegal/crop/layers',
+  heatApi:    '/api/senegal/heat/layers',
+  mineApi:    '/api/senegal/mine/sites',
+  humanApi:   '/api/indicators/senegal',
+  mainCity:   'abidjan',
+  accentColor:'#06b6d4',
 };
 
 /* ── Helpers ── */
@@ -477,7 +477,7 @@ function renderHero(flood, human) {
   const peak = flood ? `${Math.round(flood.rainfall_mm?.mean ?? 0)}mm peak monthly rainfall` : 'flood data available';
   const le   = human?.indicators?.life_expectancy?.current;
   const leStr = le ? `a life expectancy of ${le.value} years (${le.year})` : '';
-  el.textContent = `Cross-satellite and socioeconomic intelligence for Nigeria — ${peak} recorded, ${leStr ? leStr + ', and ' : ''}drawing on CHIRPS, MODIS, Landsat, Sentinel-2, and World Bank data streams.`;
+  el.textContent = `Cross-satellite and socioeconomic intelligence for Senegal — ${peak} recorded, ${leStr ? leStr + ', and ' : ''}drawing on CHIRPS, MODIS, Landsat, Sentinel-2, and World Bank data streams.`;
 }
 
 /* ── Radar chart ── */
@@ -502,7 +502,7 @@ function renderRadar(flood, crop, heat, mine, human) {
     data: {
       labels: ['Flood Risk', 'Crop Stress', 'Urban Heat', 'Mining', 'Human\nVulnerability'],
       datasets: [{
-        label: 'Nigeria',
+        label: "Senegal",
         data: [floodScore, cropScore, heatScore, mineScore, humanScore],
         borderColor: CFG.accentColor,
         backgroundColor: isDark ? CFG.accentColor + '33' : CFG.accentColor + '66',

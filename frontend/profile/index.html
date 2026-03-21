@@ -505,7 +505,7 @@ function renderRadar(flood, crop, heat, mine, human) {
         label: 'Ghana',
         data: [floodScore, cropScore, heatScore, mineScore, humanScore],
         borderColor: CFG.accentColor,
-        backgroundColor: CFG.accentColor + '22',
+        backgroundColor: isDark ? CFG.accentColor + '33' : CFG.accentColor + '66',
         borderWidth: 2,
         pointBackgroundColor: CFG.accentColor,
         pointRadius: 4,
