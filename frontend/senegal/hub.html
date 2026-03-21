@@ -274,6 +274,25 @@
     [data-theme="light"] .profile-card .card-title { color: #0f172a; }
     [data-theme="light"] .profile-card .card-desc  { color: #475569; }
     [data-theme="light"] .profile-card .card-label { color: #0891b2; }
+
+    [data-theme="light"] body { background: #f1f5f9; color: #1e293b; }
+    [data-theme="light"] header { background: #ffffff; border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .brand-name { color: #0f172a; }
+    [data-theme="light"] .brand-tagline { color: #64748b; }
+    [data-theme="light"] .header-right { color: #64748b; }
+    [data-theme="light"] .country-banner { background: linear-gradient(135deg,#ffffff 0%,#f8fafc 100%); border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .country-pill { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
+    [data-theme="light"] .country-title { color: #0f172a; }
+    [data-theme="light"] .country-title span { color: #ea580c; }
+    [data-theme="light"] .country-desc { color: #475569; }
+    [data-theme="light"] .section-heading { color: #ea580c; }
+    [data-theme="light"] .card-label { color: #64748b; }
+    [data-theme="light"] .card-title { color: #0f172a; }
+    [data-theme="light"] .card-desc { color: #475569; }
+    [data-theme="light"] .card-footer { border-top-color: #e2e8f0; }
+    [data-theme="light"] footer { border-top-color: #e2e8f0; }
+    [data-theme="light"] .footer-brand { color: #475569; }
+    [data-theme="light"] .footer-note { color: #64748b; }
     @media (max-width: 540px) {
       .profile-card { flex-direction: column !important; gap: 0.75rem !important; }
     }
@@ -436,7 +455,7 @@
           <a href="/ivorycoast/hub.html">&#127464;&#127470; Côte d'Ivoire</a>
         </div>
       </div>
-    <button class="theme-toggle" onclick="toggleTheme()">◑</button>
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme">◑</button>
   </div>
 </header>
 
@@ -593,7 +612,13 @@ function toggleTheme() {
   const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', t);
   localStorage.setItem('ia-theme', t);
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = t === 'dark' ? '☀' : '☾';
 }
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀' : '☾';
+});
 
 (async function () {
   function set(id, value, sub) {
