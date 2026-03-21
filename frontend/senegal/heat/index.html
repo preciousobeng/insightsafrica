@@ -412,9 +412,9 @@
 
         <div class="player-year-row">
           <button class="city-filter-btn active" id="cf-all"   onclick="setCityFilter('all')">All cities</button>
-          <button class="city-filter-btn"        id="cf-abidjan" onclick="setCityFilter('abidjan')">Abidjan</button>
-          <button class="city-filter-btn"        id="cf-bouake"  onclick="setCityFilter('bouake')">Bouaké</button>
-          <button class="city-filter-btn"        id="cf-korhogo" onclick="setCityFilter('korhogo')">Korhogo</button>
+          <button class="city-filter-btn"        id="cf-dakar" onclick="setCityFilter('dakar')">Dakar</button>
+          <button class="city-filter-btn"        id="cf-saint_louis" onclick="setCityFilter('saint_louis')">Saint-Louis</button>
+          <button class="city-filter-btn"        id="cf-touba" onclick="setCityFilter('touba')">Touba</button>
         </div>
 
         <button class="play-btn-heat" id="heat-play-btn" onclick="toggleHeatPlay()">&#x25B6;  Play</button>
@@ -529,9 +529,9 @@
 
     // City definitions
     const CITY_DEFS = [
-      { id: 'abidjan', name: 'Abidjan', region: 'Lagunes', centre: [5.3600, -4.0083], zoom: 11 },
-      { id: 'bouake',  name: 'Bouak\u00e9',  region: 'Vall\u00e9e du Bandama', centre: [7.6900, -5.0302], zoom: 11 },
-      { id: 'korhogo', name: 'Korhogo', region: 'Savanes', centre: [9.4580, -5.6296], zoom: 11 },
+      { id: 'dakar',       name: 'Dakar',       region: 'Dakar',       centre: [14.6928, -17.4467], zoom: 11 },
+      { id: 'saint_louis', name: 'Saint-Louis', region: 'Saint-Louis', centre: [16.0179, -16.4896], zoom: 11 },
+      { id: 'touba',       name: 'Touba',       region: 'Diourbel',    centre: [14.8500, -15.8833], zoom: 11 },
     ];
 
     let layersByCity = {};   // city_id -> array of layer objects (sorted newest first)

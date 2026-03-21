@@ -108,6 +108,12 @@ COUNTRIES = {
         "iso3": "CIV",
         "output": "ivorycoast_indicators.json",
     },
+    "senegal": {
+        "name": "Senegal",
+        "wb_code": "SN",
+        "iso3": "SEN",
+        "output": "senegal_indicators.json",
+    },
 }
 
 WB_BASE = "https://api.worldbank.org/v2/country"

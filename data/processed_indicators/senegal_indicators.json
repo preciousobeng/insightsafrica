@@ -1,0 +1,283 @@
+{
+  "country": "Senegal",
+  "country_key": "senegal",
+  "country_code": "SEN",
+  "wb_code": "SN",
+  "updated": "2026-03-21",
+  "source": "World Bank Open Data API (api.worldbank.org)",
+  "indicators": {
+    "child_mortality": {
+      "label": "Child mortality (under-5)",
+      "unit": "per 1,000 live births",
+      "source": "World Bank / UNICEF",
+      "wb_indicator": "SH.DYN.MORT",
+      "higher_is_better": false,
+      "current": {
+        "year": 2023,
+        "value": 38.5
+      },
+      "trend": [
+        {
+          "year": 2009,
+          "value": 66.3
+        },
+        {
+          "year": 2010,
+          "value": 63.0
+        },
+        {
+          "year": 2011,
+          "value": 60.1
+        },
+        {
+          "year": 2012,
+          "value": 57.7
+        },
+        {
+          "year": 2013,
+          "value": 55.7
+        },
+        {
+          "year": 2014,
+          "value": 53.9
+        },
+        {
+          "year": 2015,
+          "value": 52.4
+        },
+        {
+          "year": 2016,
+          "value": 51.1
+        },
+        {
+          "year": 2017,
+          "value": 49.7
+        },
+        {
+          "year": 2018,
+          "value": 48.2
+        },
+        {
+          "year": 2019,
+          "value": 46.5
+        },
+        {
+          "year": 2020,
+          "value": 44.6
+        },
+        {
+          "year": 2021,
+          "value": 42.5
+        },
+        {
+          "year": 2022,
+          "value": 40.4
+        },
+        {
+          "year": 2023,
+          "value": 38.5
+        }
+      ]
+    },
+    "maternal_mortality": {
+      "label": "Maternal mortality ratio",
+      "unit": "per 100,000 live births",
+      "source": "World Bank / WHO",
+      "wb_indicator": "SH.STA.MMRT",
+      "higher_is_better": false,
+      "current": {
+        "year": 2023,
+        "value": 237.0
+      },
+      "trend": [
+        {
+          "year": 2009,
+          "value": 441.0
+        },
+        {
+          "year": 2010,
+          "value": 436.0
+        },
+        {
+          "year": 2011,
+          "value": 415.0
+        },
+        {
+          "year": 2012,
+          "value": 405.0
+        },
+        {
+          "year": 2013,
+          "value": 385.0
+        },
+        {
+          "year": 2014,
+          "value": 373.0
+        },
+        {
+          "year": 2015,
+          "value": 357.0
+        },
+        {
+          "year": 2016,
+          "value": 345.0
+        },
+        {
+          "year": 2017,
+          "value": 325.0
+        },
+        {
+          "year": 2018,
+          "value": 305.0
+        },
+        {
+          "year": 2019,
+          "value": 286.0
+        },
+        {
+          "year": 2020,
+          "value": 252.0
+        },
+        {
+          "year": 2021,
+          "value": 263.0
+        },
+        {
+          "year": 2022,
+          "value": 228.0
+        },
+        {
+          "year": 2023,
+          "value": 237.0
+        }
+      ]
+    },
+    "poverty_215": {
+      "label": "Poverty headcount (<$2.15/day)",
+      "unit": "% of population",
+      "source": "World Bank PovcalNet",
+      "wb_indicator": "SI.POV.DDAY",
+      "higher_is_better": false,
+      "current": {
+        "year": 2021,
+        "value": 17.9
+      },
+      "trend": [
+        {
+          "year": 1991,
+          "value": 77.3
+        },
+        {
+          "year": 1994,
+          "value": 72.2
+        },
+        {
+          "year": 2001,
+          "value": 63.9
+        },
+        {
+          "year": 2005,
+          "value": 53.6
+        },
+        {
+          "year": 2011,
+          "value": 53.3
+        },
+        {
+          "year": 2018,
+          "value": 19.1
+        },
+        {
+          "year": 2021,
+          "value": 17.9
+        }
+      ]
+    },
+    "gini": {
+      "label": "Gini inequality index",
+      "unit": "0–100 scale",
+      "source": "World Bank",
+      "wb_indicator": "SI.POV.GINI",
+      "higher_is_better": false,
+      "current": {
+        "year": 2021,
+        "value": 36.2
+      },
+      "trend": [
+        {
+          "year": 1991,
+          "value": 54.0
+        },
+        {
+          "year": 1994,
+          "value": 39.2
+        },
+        {
+          "year": 2001,
+          "value": 41.2
+        },
+        {
+          "year": 2005,
+          "value": 39.2
+        },
+        {
+          "year": 2011,
+          "value": 40.3
+        },
+        {
+          "year": 2018,
+          "value": 38.3
+        },
+        {
+          "year": 2021,
+          "value": 36.2
+        }
+      ]
+    },
+    "health_expenditure": {
+      "label": "Health expenditure per capita",
+      "unit": "USD",
+      "source": "World Bank / WHO",
+      "wb_indicator": "SH.XPD.CHEX.PC.CD",
+      "higher_is_better": true,
+      "current": null,
+      "trend": []
+    },
+    "clean_water": {
+      "label": "Access to clean water",
+      "unit": "% of population",
+      "source": "WHO / UNICEF JMP",
+      "wb_indicator": "SH.H2O.BASW.ZS",
+      "higher_is_better": true,
+      "current": null,
+      "trend": []
+    },
+    "literacy": {
+      "label": "Adult literacy rate",
+      "unit": "% of people aged 15+",
+      "source": "UNESCO / World Bank",
+      "wb_indicator": "SE.ADT.LITR.ZS",
+      "higher_is_better": true,
+      "current": null,
+      "trend": []
+    },
+    "school_enrollment": {
+      "label": "Primary school enrollment",
+      "unit": "% gross",
+      "source": "UNESCO / World Bank",
+      "wb_indicator": "SE.PRM.ENRR",
+      "higher_is_better": true,
+      "current": null,
+      "trend": []
+    },
+    "life_expectancy": {
+      "label": "Life expectancy at birth",
+      "unit": "years",
+      "source": "World Bank / UN",
+      "wb_indicator": "SP.DYN.LE00.IN",
+      "higher_is_better": true,
+      "current": null,
+      "trend": []
+    }
+  }
+}

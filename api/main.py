@@ -1057,6 +1057,11 @@ def ivorycoast_indicators():
     return _indicators_resp("ivorycoast_indicators.json")
 
 
+@app.get("/api/indicators/senegal")
+def senegal_indicators():
+    return _indicators_resp("senegal_indicators.json")
+
+
 # ── Static mounts — AFTER all API routes ──
 # Nigeria mounts MUST come before /nigeria root and before Ghana / root
 
