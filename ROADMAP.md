@@ -1,6 +1,6 @@
 # InsightsAfrica — Roadmap
 
-_Last updated: 2026-03-20_
+_Last updated: 2026-03-21_
 
 ---
 
@@ -43,6 +43,15 @@ _Last updated: 2026-03-20_
 | Senegal HeatWatch — Landsat 9 (Dakar/Saint-Louis/Touba, 6 scenes) | ✅ Done — 2026-03-20 |
 | Senegal MineWatch — senegal_mining_sites.json (3 sites, Kédougou belt) | ✅ Done — 2026-03-20 |
 | Senegal boundaries — GADM 4.1 (14 regions + 45 departments) | ✅ Done — 2026-03-20 |
+| Senegal product pages (flood/crop/heat/mine/human/profile) | ✅ Done — 2026-03-21 |
+| Senegal MineWatch — Sentinel-2 NDVI/NDWI processed (3 sites) | ✅ Done — 2026-03-21 |
+| Senegal HumanWatch — World Bank indicators API + data | ✅ Done — 2026-03-21 |
+| Senegal Country Profile — composite risk engine live | ✅ Done — 2026-03-21 |
+| Senegal HeatWatch — cities corrected (Dakar/Saint-Louis/Touba) | ✅ Done — 2026-03-21 |
+| Country switcher dropdown — all 4 hubs (CdI + Senegal upgraded) | ✅ Done — 2026-03-21 |
+| Landing page — removed redundant country/product card sections | ✅ Done — 2026-03-21 |
+| Telegram channel @insightsafricaorg — daily automated bulletin | ✅ Done — 2026-03-21 |
+| Supabase keepalive monitor — 6-hourly, personal Telegram alert | ✅ Done — 2026-03-21 |
 
 ---
 
@@ -60,9 +69,7 @@ _Last updated: 2026-03-20_
 ✅  HumanWatch + Country Profile pages (2026-03-19)
 ✅  Senegal full pipeline + hub (2026-03-20)
 
-1.  Telegram InsightsAfrica channel — publish Africa news/intelligence posts (free, no rate limits)
-    → Kweku creates channel manually, then build publisher bot on gcloud-vm
-    → Crucix API → Africa keyword filter → Gemini reformat → Telegram Bot API → dedup log → cron
+✅  Telegram channel @insightsafricaorg + daily bulletin bot (gcloud-vm, Gemini 2.5 Flash, BBC/AJ RSS, 36h dedup) — 2026-03-21
 2.  HeatWatch 2025 data               ← fetch_landsat.py --year 2025 for all countries
 3.  CropWatch Leaflet time-lapse player ← Play/Pause, date range, speed control
 4.  FloodWatch time-lapse player      ← same pattern, 24 monthly layers
@@ -157,17 +164,17 @@ _Last updated: 2026-03-20_
 - [x] Senegal — full pipeline + hub (MODIS tile h16v07, Kédougou mining, groundnut basin) — 2026-03-20
 - [x] Country switcher across all hubs (Ghana/Nigeria/CdI/Senegal)
 - [x] Glowing pulse orbs on SVG map for all 4 countries
-- [x] HumanWatch — World Bank indicators across 3 countries — 2026-03-19
-- [x] Country Profile pages — 5-product radar chart + risk engine — 2026-03-19
+- [x] HumanWatch — World Bank indicators across 4 countries (Senegal added 2026-03-21)
+- [x] Country Profile pages — 5-product radar chart + risk engine, all 4 countries — 2026-03-19/21
 
 ---
 
 ## Phase 5 — Social Publishing
 **Goal:** Automated intelligence distribution via social/messaging channels.
 
-- [ ] Telegram channel — InsightsAfrica intelligence posts (free, African news desk format)
-  - Crucix API → Africa keyword filter → Gemini reformat → Telegram Bot API
-  - Cron on gcloud-vm, dedup via JSON log, markdown + optional map tile PNG
+- [x] Telegram channel @insightsafricaorg — daily automated bulletin (2026-03-21)
+  - BBC Africa + Al Jazeera RSS → Africa keyword filter → Gemini 2.5 Flash → Telegram Bot API
+  - Cron on gcloud-vm (07:00 UTC), 36h TTL dedup dict, HTML parse_mode
 - [ ] Twitter/X — same pipeline, X Basic tier (~£84/month) when reach justifies cost
 - [ ] Newsletter / digest format (weekly PDF or email)
 
