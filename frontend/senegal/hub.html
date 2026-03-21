@@ -84,6 +84,32 @@
     [data-theme="light"] .theme-toggle { border-color: #e2e8f0; color: #64748b; }
     [data-theme="light"] .theme-toggle:hover { border-color: #06b6d4; color: #0f172a; }
 
+        /* ── Country switcher dropdown ── */
+    .cs-dropdown { position: relative; display: inline-block; }
+    .cs-btn {
+      display: flex; align-items: center; gap: 0.4rem;
+      background: #0a0f1e; border: 1px solid #1e3a5f; border-radius: 99px;
+      padding: 0.3rem 0.85rem; font-size: 0.72rem; font-weight: 700;
+      color: #38bdf8; cursor: pointer; white-space: nowrap;
+      font-family: inherit;
+    }
+    .cs-btn:hover { border-color: #3b82f6; }
+    .cs-menu {
+      display: none; position: absolute; top: calc(100% + 6px); right: 0;
+      background: #0d1527; border: 1px solid #1e3a5f; border-radius: 10px;
+      min-width: 170px; overflow: hidden; z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .cs-menu.open { display: block; }
+    .cs-menu a {
+      display: block; padding: 0.55rem 1rem; font-size: 0.75rem; font-weight: 600;
+      color: #94a3b8; text-decoration: none; transition: background 0.15s, color 0.15s;
+    }
+    .cs-menu a:hover { background: rgba(59,130,246,0.12); color: #e2e8f0; }
+    [data-theme="light"] .cs-btn { background: #f8fafc; border-color: #e2e8f0; color: #1d4ed8; }
+    [data-theme="light"] .cs-btn:hover { border-color: #3b82f6; }
+    [data-theme="light"] .cs-menu { background: #fff; border-color: #e2e8f0; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    [data-theme="light"] .cs-menu a { color: #475569; }
+    [data-theme="light"] .cs-menu a:hover { background: rgba(37,99,235,0.07); color: #1e293b; }
     .cs-pill {
       display: inline-flex; align-items: center; gap: 0;
       background: #0a0f1e; border: 1px solid #1e3a5f; border-radius: 99px;
@@ -402,15 +428,14 @@
   <div class="header-right">
     <a href="/" style="font-size:0.75rem;color:#475569;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#475569'">&larr; Home</a>
       <a href="https://monitor.insightsafrica.org" target="_blank" rel="noopener" style="font-size:0.75rem;color:#38bdf8;text-decoration:none;font-weight:500;">Monitor ↗</a>
-    <div class="cs-pill">
-      <a class="cs-link" href="/hub.html">&#127468;&#127469; Ghana</a>
-      <span class="cs-div">&#124;</span>
-      <a class="cs-link" href="/nigeria/hub.html">&#127475;&#127468; Nigeria</a>
-      <span class="cs-div">&#124;</span>
-      <a class="cs-link" href="/ivorycoast/hub.html">&#127464;&#127470; Côte d'Ivoire</a>
-      <span class="cs-div">&#124;</span>
-      <span class="cs-active">&#127480;&#127475; Senegal</span>
-    </div>
+      <div class="cs-dropdown" id="cs-dropdown">
+        <button class="cs-btn" onclick="toggleCS()">&#127480;&#127475; Senegal &#9660;</button>
+        <div class="cs-menu" id="cs-menu">
+          <a href="/hub.html">&#127468;&#127469; Ghana</a>
+          <a href="/nigeria/hub.html">&#127475;&#127468; Nigeria</a>
+          <a href="/ivorycoast/hub.html">&#127464;&#127470; Côte d'Ivoire</a>
+        </div>
+      </div>
     <button class="theme-toggle" onclick="toggleTheme()">◑</button>
   </div>
 </header>
@@ -547,13 +572,6 @@
 
 <div class="flex-spacer"></div>
 
-<div class="country-switcher">
-  <span class="switcher-label">Switch country:</span>
-  <a href="/hub.html" class="switcher-pill ghana">🇬🇭 Ghana</a>
-  <a href="/nigeria/hub.html" class="switcher-pill nigeria">🇳🇬 Nigeria</a>
-  <a href="/ivorycoast/hub.html" class="switcher-pill">🇨🇮 Côte d'Ivoire</a>
-  <a href="/senegal/hub.html" class="switcher-pill senegal active">🇸🇳 Senegal</a>
-</div>
 
 <footer>
   InsightsAfrica · Satellite data: CHIRPS, Sentinel-2, MODIS MOD13Q1, Landsat 9 ·
@@ -561,6 +579,16 @@
 </footer>
 
 <script>
+    function toggleCS() {
+      document.getElementById('cs-menu').classList.toggle('open');
+    }
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('#cs-dropdown')) {
+        var m = document.getElementById('cs-menu');
+        if (m) m.classList.remove('open');
+      }
+    });
+
 function toggleTheme() {
   const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', t);
