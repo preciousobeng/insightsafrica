@@ -594,11 +594,17 @@ def senegal_heat_layers():
 
 @app.get("/api/senegal/boundaries/{level}")
 def senegal_boundaries(level: str):
-    if level not in ("regions", "departments"):
-        raise HTTPException(status_code=400, detail="level must be 'regions' or 'departments'")
-    path = SENEGAL_DIR / f"senegal_{level}.geojson"
+    aliases = {
+        "districts": "districts",
+        "departments": "districts",
+        "regions": "regions",
+    }
+    resolved = aliases.get(level)
+    if resolved is None:
+        raise HTTPException(status_code=400, detail="level must be 'regions' or 'districts'")
+    path = SENEGAL_DIR / f"senegal_{resolved}.geojson"
     if not path.exists():
-        raise HTTPException(status_code=404, detail=f"{level} not found. Run fetch_boundaries.py --country senegal")
+        raise HTTPException(status_code=404, detail=f"{resolved} not found. Run fetch_boundaries.py --country senegal")
     with open(path) as f:
         return JSONResponse(content=json.load(f))
 

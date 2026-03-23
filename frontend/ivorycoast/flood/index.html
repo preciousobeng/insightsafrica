@@ -767,8 +767,8 @@
 
       // Update zonal stats and refresh all visible boundary tooltips
       activeLayerStats = layer.zonal_stats || {};
-      refreshTooltips('states', layer.label);
-      refreshTooltips('lgas', layer.label);
+      refreshTooltips('districts', layer.label);
+      refreshTooltips('regions', layer.label);
 
       if (!fromPlayer) map.fitBounds(bounds, { padding: [20, 20] });
       if (fromPlayer) showMapBadge(layer.label);

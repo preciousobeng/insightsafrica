@@ -750,7 +750,7 @@
         currentOverlay = null;
       }
 
-      const imgUrl = '/ic-tiles/' + layer.png;
+      const imgUrl = '/sn-tiles/' + layer.png;
       const bounds = layer.leaflet_bounds; // [[south, west], [north, east]]
 
       currentOverlay = L.imageOverlay(imgUrl, bounds, { opacity: 0.8 });
@@ -767,8 +767,8 @@
 
       // Update zonal stats and refresh all visible boundary tooltips
       activeLayerStats = layer.zonal_stats || {};
-      refreshTooltips('states', layer.label);
-      refreshTooltips('lgas', layer.label);
+      refreshTooltips('districts', layer.label);
+      refreshTooltips('regions', layer.label);
 
       if (!fromPlayer) map.fitBounds(bounds, { padding: [20, 20] });
       if (fromPlayer) showMapBadge(layer.label);
