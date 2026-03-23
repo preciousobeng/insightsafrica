@@ -445,11 +445,11 @@
       <div class="sidebar-section">
         <div class="section-label">Boundaries</div>
         <div style="display:flex; flex-direction:column; gap:0.4rem;">
-          <button class="layer-btn active" id="btn-districts" onclick="toggleBoundary('districts')">
-            Districts (14)
+          <button class="layer-btn active" id="btn-departments" onclick="toggleBoundary('departments')">
+            Departments (46)
           </button>
           <button class="layer-btn" id="btn-regions" onclick="toggleBoundary('regions')">
-            Regions (31)
+            Regions (14)
           </button>
         </div>
       </div>
@@ -505,9 +505,9 @@
             <label>To</label>
             <input type="month" id="dl-to" value="2025-12" min="2024-01" max="2025-12">
           </div>
-          <button class="dl-btn" onclick="dlCsv('/api/senegal/flood/download/csv?level=districts', 'insightsafrica_senegal_flood_districts.csv')">CSV — Districts</button>
+          <button class="dl-btn" onclick="dlCsv('/api/senegal/flood/download/csv?level=departments', 'insightsafrica_senegal_flood_departments.csv')">CSV — Departments</button>
           <button class="dl-btn" onclick="dlCsv('/api/senegal/flood/download/csv?level=regions', 'insightsafrica_senegal_flood_regions.csv')">CSV — Regions</button>
-          <a class="dl-btn" href="/api/senegal/flood/download/districts.geojson" download>GeoJSON — District boundaries</a>
+          <a class="dl-btn" href="/api/senegal/flood/download/departments.geojson" download>GeoJSON — Department boundaries</a>
         </div>
       </div>
 
@@ -539,13 +539,13 @@
     let layers = [];
 
     // Boundary layers
-    const boundaryLayers = { districts: null, regions: null };
-    const boundaryVisible = { districts: true, regions: false };
+    const boundaryLayers = { departments: null, regions: null };
+    const boundaryVisible = { departments: true, regions: false };
     const boundaryCache = {};
     let activeLayerStats = {};   // zonal_stats from the current rainfall layer
 
     const BOUNDARY_STYLES = {
-      districts: {
+      departments: {
         color: '#ffffff',
         weight: 1.8,
         opacity: 0.7,
@@ -562,7 +562,7 @@
     async function loadBoundary(level) {
       if (boundaryCache[level]) return boundaryCache[level];
       const endpointMap = {
-        districts: '/api/senegal/boundaries/districts',
+        departments: '/api/senegal/boundaries/departments',
         regions: '/api/senegal/boundaries/regions'
       };
       const res = await fetch(endpointMap[level]);
@@ -577,14 +577,14 @@
       const stats = activeLayerStats[level] || {};
 
       // Build lookup key matching Python output
-      const key = (level === 'regions' && p.district)
-        ? p.name + '|' + p.district
+      const key = (level === 'departments' && p.region)
+        ? p.name + '|' + p.region
         : p.name;
 
       const areaStats = stats[key];
-      const header = level === 'regions'
-        ? p.name + '\n' + p.district + ' District'
-        : p.name + ' District';
+      const header = level === 'departments'
+        ? p.name + '\n' + p.region + ' Region'
+        : p.name + ' Region';
 
       if (!areaStats || areaStats.mean === null) {
         return header + '\n\nNo data';
@@ -646,8 +646,8 @@
       }
     }
 
-    // Load districts on startup
-    showBoundary('districts', '');
+    // Load departments on startup
+    showBoundary('departments', '');
 
     function setStatus(text) {
       document.getElementById('status-text').textContent = text;
@@ -767,7 +767,7 @@
 
       // Update zonal stats and refresh all visible boundary tooltips
       activeLayerStats = layer.zonal_stats || {};
-      refreshTooltips('districts', layer.label);
+      refreshTooltips('departments', layer.label);
       refreshTooltips('regions', layer.label);
 
       if (!fromPlayer) map.fitBounds(bounds, { padding: [20, 20] });

@@ -595,13 +595,13 @@ def senegal_heat_layers():
 @app.get("/api/senegal/boundaries/{level}")
 def senegal_boundaries(level: str):
     aliases = {
-        "districts": "districts",
-        "departments": "districts",
+        "districts": "departments",
+        "departments": "departments",
         "regions": "regions",
     }
     resolved = aliases.get(level)
     if resolved is None:
-        raise HTTPException(status_code=400, detail="level must be 'regions' or 'districts'")
+        raise HTTPException(status_code=400, detail="level must be 'regions' or 'departments'")
     path = SENEGAL_DIR / f"senegal_{resolved}.geojson"
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"{resolved} not found. Run fetch_boundaries.py --country senegal")
@@ -1021,14 +1021,15 @@ async def ivorycoast_mine_csv(request: Request):
 @app.get("/api/senegal/flood/download/csv")
 async def senegal_flood_csv(
     request: Request,
-    level: Literal["districts", "regions"] = Query("districts"),
+    level: Literal["departments", "districts", "regions"] = Query("departments"),
     from_date: str | None = Query(None, alias="from"),
     to_date:   str | None = Query(None, alias="to"),
 ):
+    resolved_level = "departments" if level == "districts" else level
     user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
     await _log_download(request, "senegal", "flood", "csv", user_id, from_date, to_date)
-    content = _chirps_csv(SENEGAL_DIR, "chirps-*_senegal.json", level, from_date, to_date, country="senegal")
-    return _csv_resp(content, f"insightsafrica_senegal_flood_{level}.csv")
+    content = _chirps_csv(SENEGAL_DIR, "chirps-*_senegal.json", resolved_level, from_date, to_date, country="senegal")
+    return _csv_resp(content, f"insightsafrica_senegal_flood_{resolved_level}.csv")
 
 
 @app.get("/api/senegal/flood/download/districts.geojson")
@@ -1036,7 +1037,15 @@ async def senegal_districts_geojson(request: Request):
     token = _extract_token(request)
     user  = await _get_user(token) if token else None
     await _log_download(request, "senegal", "flood", "districts.geojson", user["id"] if user else None)
-    return _geojson_resp(SENEGAL_DIR / "senegal_districts.geojson", "senegal_districts.geojson")
+    return _geojson_resp(SENEGAL_DIR / "senegal_departments.geojson", "senegal_departments.geojson")
+
+
+@app.get("/api/senegal/flood/download/departments.geojson")
+async def senegal_departments_geojson(request: Request):
+    token = _extract_token(request)
+    user  = await _get_user(token) if token else None
+    await _log_download(request, "senegal", "flood", "departments.geojson", user["id"] if user else None)
+    return _geojson_resp(SENEGAL_DIR / "senegal_departments.geojson", "senegal_departments.geojson")
 
 
 @app.get("/api/senegal/flood/download/regions.geojson")
