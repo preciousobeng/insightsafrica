@@ -1,11 +1,6 @@
--- =============================================================
--- InsightsAfrica — profiles table + duplicate signup protection
--- Run in: Supabase Dashboard → SQL Editor → New Query
--- =============================================================
+-- InsightsAfrica Supabase migration
+-- Adds profile tiers, API key storage, and atomic API key verification.
 
-
--- 1. Profiles table
--- ---------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.profiles (
   id             UUID        PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   full_name      TEXT        NOT NULL,
@@ -15,12 +10,25 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   created_at     TIMESTAMPTZ DEFAULT NOW()
 );
 
+ALTER TABLE public.profiles
+  ADD COLUMN IF NOT EXISTS tier TEXT NOT NULL DEFAULT 'free';
 
--- 2. Row Level Security
--- ---------------------------------------------------------
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'profiles_tier_check'
+  ) THEN
+    ALTER TABLE public.profiles
+      ADD CONSTRAINT profiles_tier_check
+      CHECK (tier IN ('free', 'premium'));
+  END IF;
+END;
+$$;
+
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
--- Users can only read their own profile
 DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
 CREATE POLICY "Users can view own profile"
   ON public.profiles
@@ -34,9 +42,6 @@ CREATE POLICY "Users can update own profile"
   USING (auth.uid() = id)
   WITH CHECK (auth.uid() = id);
 
-
--- 3. Trigger function — auto-creates profile on every new signup
--- ---------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -55,24 +60,19 @@ BEGIN
       ELSE NULL
     END
   )
-  ON CONFLICT (id) DO NOTHING;
+  ON CONFLICT (id) DO UPDATE
+  SET full_name = EXCLUDED.full_name,
+      email = EXCLUDED.email,
+      tier = COALESCE(public.profiles.tier, EXCLUDED.tier);
   RETURN NEW;
 END;
 $$;
 
--- Attach trigger to auth.users
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
-
--- 4. RPC — duplicate check (name + DOB combination)
--- Called from the frontend BEFORE sb.auth.signUp()
--- Returns true if that name+DOB combo is already registered
--- SECURITY DEFINER so unauthenticated users can call it
--- without being able to query the profiles table directly
--- ---------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.check_duplicate_signup(
   check_name TEXT,
   check_dob  DATE
@@ -84,14 +84,11 @@ AS $$
   SELECT EXISTS (
     SELECT 1
     FROM public.profiles
-    WHERE LOWER(TRIM(full_name))  = LOWER(TRIM(check_name))
-    AND   date_of_birth           = check_dob
+    WHERE LOWER(TRIM(full_name)) = LOWER(TRIM(check_name))
+      AND date_of_birth = check_dob
   );
 $$;
 
-
--- 5. Download events table
--- ---------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.download_events (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   country     TEXT NOT NULL,
@@ -107,9 +104,6 @@ CREATE TABLE IF NOT EXISTS public.download_events (
 CREATE INDEX IF NOT EXISTS idx_download_events_created_at ON public.download_events(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_download_events_country_product ON public.download_events(country, product);
 
-
--- 6. API keys table + atomic verification RPC
--- ---------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.api_keys (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id         UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,

@@ -545,13 +545,13 @@
     let activeLayerStats = {};   // zonal_stats from the current rainfall layer
 
     const BOUNDARY_STYLES = {
-      states: {
+      districts: {
         color: '#ffffff',
         weight: 1.8,
         opacity: 0.7,
         fillOpacity: 0,
       },
-      lgas: {
+      regions: {
         color: '#cbd5e1',
         weight: 0.8,
         opacity: 0.5,
@@ -561,7 +561,10 @@
 
     async function loadBoundary(level) {
       if (boundaryCache[level]) return boundaryCache[level];
-      const endpointMap = { states: '/api/senegal/boundaries/districts', lgas: '/api/senegal/boundaries/regions' };
+      const endpointMap = {
+        districts: '/api/senegal/boundaries/districts',
+        regions: '/api/senegal/boundaries/regions'
+      };
       const res = await fetch(endpointMap[level]);
       if (!res.ok) throw new Error('Failed to load ' + level);
       const geojson = await res.json();
@@ -643,8 +646,8 @@
       }
     }
 
-    // Load states on startup
-    showBoundary('states', '');
+    // Load districts on startup
+    showBoundary('districts', '');
 
     function setStatus(text) {
       document.getElementById('status-text').textContent = text;

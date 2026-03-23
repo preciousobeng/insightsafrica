@@ -90,7 +90,7 @@ async def _get_tier(user_id: str) -> str:
     try:
         async with httpx.AsyncClient(timeout=4.0) as client:
             r = await client.get(
-                f"{_SUPA_URL}/rest/v1/user_profiles",
+                f"{_SUPA_URL}/rest/v1/profiles",
                 headers=_supa_headers_service,
                 params={"id": f"eq.{user_id}", "select": "tier"},
             )
@@ -161,41 +161,18 @@ async def _verify_api_key(key: str) -> dict | None:
     if not key or not _SUPA_URL:
         return None
     key_hash = _hash_key(key)
-    today = datetime.now(timezone.utc).date().isoformat()
     try:
         async with httpx.AsyncClient(timeout=4.0) as client:
-            r = await client.get(
-                f"{_SUPA_URL}/rest/v1/api_keys",
+            r = await client.post(
+                f"{_SUPA_URL}/rest/v1/rpc/verify_and_consume_api_key",
                 headers=_supa_headers_service,
-                params={
-                    "key_hash": f"eq.{key_hash}",
-                    "revoked_at": "is.null",
-                    "select": "id,user_id,tier,requests_today,last_reset",
-                },
+                json={"key_hash_input": key_hash, "free_limit": _FREE_RPD},
             )
-        if r.status_code != 200 or not r.json():
+        if r.status_code != 200:
             return None
-        row = r.json()[0]
-
-        # Daily reset
-        needs_reset = row["last_reset"] != today
-        new_count   = 1 if needs_reset else row["requests_today"] + 1
-
-        # Rate limit check (premium = unlimited)
-        if row["tier"] == "free" and new_count > _FREE_RPD:
+        row = r.json()
+        if not row:
             return None
-
-        # Update counter
-        patch = {"requests_today": new_count}
-        if needs_reset:
-            patch["last_reset"] = today
-        async with httpx.AsyncClient(timeout=4.0) as client:
-            await client.patch(
-                f"{_SUPA_URL}/rest/v1/api_keys",
-                headers=_supa_headers_service,
-                params={"id": f"eq.{row['id']}"},
-                json=patch,
-            )
         return row
     except Exception:
         return None
@@ -1035,6 +1012,68 @@ async def ivorycoast_mine_csv(request: Request):
 
 # ── Human Development indicators ─────────────────────────────────────────────
 
+@app.get("/api/senegal/flood/download/csv")
+async def senegal_flood_csv(
+    request: Request,
+    level: Literal["districts", "regions"] = Query("districts"),
+    from_date: str | None = Query(None, alias="from"),
+    to_date:   str | None = Query(None, alias="to"),
+):
+    user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
+    await _log_download(request, "senegal", "flood", "csv", user_id, from_date, to_date)
+    content = _chirps_csv(SENEGAL_DIR, "chirps-*_senegal.json", level, from_date, to_date, country="senegal")
+    return _csv_resp(content, f"insightsafrica_senegal_flood_{level}.csv")
+
+
+@app.get("/api/senegal/flood/download/districts.geojson")
+async def senegal_districts_geojson(request: Request):
+    token = _extract_token(request)
+    user  = await _get_user(token) if token else None
+    await _log_download(request, "senegal", "flood", "districts.geojson", user["id"] if user else None)
+    return _geojson_resp(SENEGAL_DIR / "senegal_districts.geojson", "senegal_districts.geojson")
+
+
+@app.get("/api/senegal/flood/download/regions.geojson")
+async def senegal_regions_geojson(request: Request):
+    token = _extract_token(request)
+    user  = await _get_user(token) if token else None
+    await _log_download(request, "senegal", "flood", "regions.geojson", user["id"] if user else None)
+    return _geojson_resp(SENEGAL_DIR / "senegal_regions.geojson", "senegal_regions.geojson")
+
+
+@app.get("/api/senegal/crop/download/csv")
+async def senegal_crop_csv(
+    request: Request,
+    from_date: str | None = Query(None, alias="from"),
+    to_date:   str | None = Query(None, alias="to"),
+):
+    user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
+    await _log_download(request, "senegal", "crop", "csv", user_id, from_date, to_date)
+    content = _ndvi_csv(SENEGAL_DIR, "ndvi_*_senegal.json", from_date, to_date)
+    return _csv_resp(content, "insightsafrica_senegal_crop_ndvi.csv")
+
+
+@app.get("/api/senegal/heat/download/csv")
+async def senegal_heat_csv(
+    request: Request,
+    from_date: str | None = Query(None, alias="from"),
+    to_date:   str | None = Query(None, alias="to"),
+):
+    user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
+    await _log_download(request, "senegal", "heat", "csv", user_id, from_date, to_date)
+    content = _heat_csv(SENEGAL_DIR, "heat_*.json", from_date, to_date)
+    return _csv_resp(content, "insightsafrica_senegal_heat.csv")
+
+
+@app.get("/api/senegal/mine/download/csv")
+async def senegal_mine_csv(request: Request):
+    token = _extract_token(request)
+    user  = await _get_user(token) if token else None
+    await _log_download(request, "senegal", "mine", "csv", user["id"] if user else None)
+    content = _mine_csv(SENEGAL_DIR / "senegal_mining_sites.json")
+    return _csv_resp(content, "insightsafrica_senegal_mine_sites.csv")
+
+
 def _indicators_resp(filename: str) -> JSONResponse:
     path = INDICATORS_DIR / filename
     if not path.exists():
@@ -1081,6 +1120,14 @@ app.mount("/ivorycoast/heat",       StaticFiles(directory=str(FRONTEND_DIR / "iv
 app.mount("/ivorycoast/human",      StaticFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "human"), html=True), name="ic-human")
 app.mount("/ivorycoast/profile",    StaticFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "profile"),html=True),name="ic-profile")
 app.mount("/ivorycoast",            StaticFiles(directory=str(FRONTEND_DIR / "ivorycoast"),           html=True), name="ivorycoast")
+app.mount("/sn-tiles",              StaticFiles(directory=str(SENEGAL_DIR)),                                       name="sn-tiles")
+app.mount("/senegal/flood",         StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "flood"),    html=True), name="sn-flood")
+app.mount("/senegal/mine",          StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "mine"),     html=True), name="sn-mine")
+app.mount("/senegal/crop",          StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "crop"),     html=True), name="sn-crop")
+app.mount("/senegal/heat",          StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "heat"),     html=True), name="sn-heat")
+app.mount("/senegal/human",         StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "human"),    html=True), name="sn-human")
+app.mount("/senegal/profile",       StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "profile"),  html=True), name="sn-profile")
+app.mount("/senegal",               StaticFiles(directory=str(FRONTEND_DIR / "senegal"),              html=True), name="senegal")
 app.mount("/tiles",                 StaticFiles(directory=str(PROCESSED_DIR)),                                    name="tiles")
 app.mount("/flood",                 StaticFiles(directory=str(FRONTEND_DIR / "flood"),                html=True), name="flood")
 app.mount("/mine",                  StaticFiles(directory=str(FRONTEND_DIR / "mine"),                 html=True), name="mine")
