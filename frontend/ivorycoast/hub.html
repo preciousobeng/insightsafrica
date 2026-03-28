@@ -72,7 +72,15 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
+    .header-links, .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .header-actions { flex-shrink: 0; }
 
     .theme-toggle {
       background: none; border: 1px solid #1e3a5f; border-radius: 6px;
@@ -440,8 +448,11 @@
     </div>
   </a>
   <div class="header-right">
+    <div class="header-links">
     <a href="/" style="font-size:0.75rem;color:#475569;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#475569'">&larr; Home</a>
       <a href="https://monitor.insightsafrica.org" target="_blank" rel="noopener" style="font-size:0.75rem;color:#38bdf8;text-decoration:none;font-weight:500;">Monitor ↗</a>
+    </div>
+    <div class="header-actions">
       <div class="cs-dropdown" id="cs-dropdown">
         <button class="cs-btn" onclick="toggleCS()">&#127464;&#127470; Côte d'Ivoire &#9660;</button>
         <div class="cs-menu" id="cs-menu">
@@ -451,6 +462,7 @@
         </div>
       </div>
     <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme">◑</button>
+    </div>
   </div>
 </header>
 

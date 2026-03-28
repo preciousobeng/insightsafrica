@@ -73,7 +73,24 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
+    .header-links, .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .header-actions { flex-shrink: 0; }
+    .header-link {
+      font-size: 0.75rem;
+      text-decoration: none;
+      transition: color 0.15s;
+      white-space: nowrap;
+    }
+    .header-link.home { color: #475569; }
+    .header-link.home:hover { color: #94a3b8; }
+    .header-link.monitor { color: #38bdf8; font-weight: 500; }
 
     /* ── Country switcher pill ── */
         /* ── Country switcher dropdown ── */
@@ -294,7 +311,7 @@
       background: none; border: 1px solid #1e3a5f; border-radius: 6px;
       color: #475569; cursor: pointer; font-size: 0.85rem;
       padding: 0.2rem 0.5rem; line-height: 1;
-      transition: border-color 0.15s, color 0.15s; margin-left: 0.75rem;
+      transition: border-color 0.15s, color 0.15s; margin-left: 0;
     }
     .theme-toggle:hover { border-color: #3b82f6; color: #e2e8f0; }
 
@@ -539,9 +556,14 @@
     @media (max-width: 767px) {
       header { padding: 0 1rem; }
       .brand-tagline { display: none; }
+      .header-right { gap: 0.5rem; }
+      .header-links, .header-actions { gap: 0.5rem; }
+      .header-link { font-size: 0.72rem; }
       /* On small screens: hide the switcher label text, keep icon portion readable */
       .country-switcher { font-size: 0.65rem; }
       .cs-item { padding: 0.25rem 0.5rem; }
+      .cs-btn { padding: 0.28rem 0.7rem; font-size: 0.68rem; }
+      .theme-toggle { margin-left: 0; }
 
       .country-banner { padding: 1.5rem 1rem 1.25rem; }
       .country-title  { font-size: 1.6rem; }
@@ -570,8 +592,11 @@
       </div>
     </a>
     <div class="header-right">
+      <div class="header-links">
       <a href="/" style="font-size:0.75rem;color:#475569;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color=#94a3b8" onmouseout="this.style.color=#475569">&larr; Home</a>
       <a href="https://monitor.insightsafrica.org" target="_blank" rel="noopener" style="font-size:0.75rem;color:#38bdf8;text-decoration:none;font-weight:500;">Monitor ↗</a>
+      </div>
+      <div class="header-actions">
       <div class="cs-dropdown" id="cs-dropdown">
         <button class="cs-btn" onclick="toggleCS()">&#127468;&#127469; Ghana &#9660;</button>
         <div class="cs-menu" id="cs-menu">
@@ -579,7 +604,9 @@
           <a href="/ivorycoast/hub.html">&#127464;&#127470; Côte d'Ivoire</a>
           <a href="/senegal/hub.html">&#127480;&#127475; Senegal</a>
         </div>
+      </div>
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme">&#9680;</button>
+      </div>
       </div></header>
 
   <div class="country-banner">
