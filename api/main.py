@@ -661,12 +661,11 @@ def capeverde_heat_layers():
 @app.get("/api/capeverde/boundaries/{level}")
 def capeverde_boundaries(level: str):
     aliases = {
-        "islands":        "islands",
-        "municipalities": "municipalities",
+        "islands": "islands",
     }
     resolved = aliases.get(level)
     if resolved is None:
-        raise HTTPException(status_code=400, detail="level must be 'islands' or 'municipalities'")
+        raise HTTPException(status_code=400, detail="level must be 'islands'")
     path = CAPEVERDE_DIR / f"capeverde_{resolved}.geojson"
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"{resolved} not found. Run fetch_boundaries.py --country capeverde")

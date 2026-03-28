@@ -95,11 +95,6 @@ COUNTRY_CONFIG = {
                 "out_name": "capeverde_islands.geojson",
                 "level_label": "island",
             },
-            "municipalities": {
-                "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_CPV_2.json.zip",
-                "out_name": "capeverde_municipalities.geojson",
-                "level_label": "municipality",
-            },
         },
     },
 }
