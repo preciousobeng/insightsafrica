@@ -71,7 +71,7 @@ def extract_ndvi(hdf_paths: list, bbox: dict) -> np.ndarray:
     # Approximate WGS84 bounds for each MODIS tile (sinusoidal projection,
     # rectangular approximation sufficient for visualization overlays).
     TILE_BOUNDS = {
-        "h15v07": {"west": -31.5, "east": -18.5, "south": 10.0, "north": 20.0},
+        "h15v07": {"west": -30.0, "east": -20.0, "south": 10.0, "north": 20.0},
         "h16v07": {"west": -18.5, "east": -5.0, "south": 10.0, "north": 20.0},
         "h16v08": {"west": -18.5, "east": -5.0, "south":  0.0, "north": 10.0},
         "h17v07": {"west":  -5.0, "east":  8.5, "south": 10.0, "north": 20.0},
