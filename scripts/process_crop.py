@@ -26,12 +26,14 @@ PROCESSED_DIR     = BASE_DIR / "data" / "processed"
 NIGERIA_DIR       = BASE_DIR / "data" / "processed_nigeria"
 IVORYCOAST_DIR    = BASE_DIR / "data" / "processed_ivorycoast"
 SENEGAL_DIR       = BASE_DIR / "data" / "processed_senegal"
+CAPEVERDE_DIR     = BASE_DIR / "data" / "processed_capeverde"
 
 COUNTRY_OUT_DIRS = {
     "ghana":      PROCESSED_DIR,
     "nigeria":    NIGERIA_DIR,
     "ivorycoast": IVORYCOAST_DIR,
     "senegal":    SENEGAL_DIR,
+    "capeverde":  CAPEVERDE_DIR,
 }
 
 COUNTRY_BBOXES = {
@@ -39,6 +41,7 @@ COUNTRY_BBOXES = {
     "nigeria":    {"west":  2.668,  "east": 14.678,  "south":  4.269,  "north": 13.872},
     "ivorycoast": {"west": -8.601,  "east": -2.493,  "south":  4.341,  "north": 10.740},
     "senegal":    {"west": -17.535, "east": -11.355, "south": 12.307, "north": 16.693},
+    "capeverde":  {"west": -25.50,  "east": -22.60,  "south": 14.75,  "north": 17.25},
 }
 
 DOY_TO_MONTH = {
@@ -68,6 +71,7 @@ def extract_ndvi(hdf_paths: list, bbox: dict) -> np.ndarray:
     # Approximate WGS84 bounds for each MODIS tile (sinusoidal projection,
     # rectangular approximation sufficient for visualization overlays).
     TILE_BOUNDS = {
+        "h15v07": {"west": -31.5, "east": -18.5, "south": 10.0, "north": 20.0},
         "h16v07": {"west": -18.5, "east": -5.0, "south": 10.0, "north": 20.0},
         "h16v08": {"west": -18.5, "east": -5.0, "south":  0.0, "north": 10.0},
         "h17v07": {"west":  -5.0, "east":  8.5, "south": 10.0, "north": 20.0},
@@ -120,7 +124,13 @@ def extract_ndvi(hdf_paths: list, bbox: dict) -> np.ndarray:
             col_e = np.vstack([col_e, np.full((h - col_e.shape[0], col_e.shape[1]), np.nan)])
         return np.hstack([col_w, col_e])
 
-    if has_h16 and has_h17 and not has_h18:
+    has_h15 = "h15v07" in tiles or "h15v08" in tiles
+
+    if has_h15 and not has_h16 and not has_h17 and not has_h18:
+        # Cape Verde: single tile h15v07
+        mosaic = tiles.get("h15v07") or list(tiles.values())[0]
+        mb = TILE_BOUNDS["h15v07"]
+    elif has_h16 and has_h17 and not has_h18:
         # Ivory Coast: h16 (west) + h17 (east) — 2×2 mosaic
         col16 = col_mosaic("h16v07", "h16v08")
         col17 = col_mosaic("h17v07", "h17v08")
