@@ -120,6 +120,29 @@ COUNTRY_CITIES = {
             "centre": [14.90, -15.85],
         },
     ],
+    "capeverde": [
+        {
+            "id":     "praia",
+            "name":   "Praia",
+            "region": "Santiago",
+            "bbox":   [-23.65, 14.85, -23.45, 15.05],
+            "centre": [14.930, -23.520],
+        },
+        {
+            "id":     "mindelo",
+            "name":   "Mindelo",
+            "region": "São Vicente",
+            "bbox":   [-25.10, 16.82, -24.90, 16.98],
+            "centre": [16.890, -25.000],
+        },
+        {
+            "id":     "santa_maria",
+            "name":   "Santa Maria",
+            "region": "Sal",
+            "bbox":   [-22.97, 16.56, -22.82, 16.68],
+            "centre": [16.600, -22.900],
+        },
+    ],
 }
 
 

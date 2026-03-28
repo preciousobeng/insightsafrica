@@ -190,6 +190,7 @@ PROCESSED_DIR     = BASE_DIR / "data" / "processed"
 NIGERIA_DIR       = BASE_DIR / "data" / "processed_nigeria"
 IVORYCOAST_DIR    = BASE_DIR / "data" / "processed_ivorycoast"
 SENEGAL_DIR       = BASE_DIR / "data" / "processed_senegal"
+CAPEVERDE_DIR     = BASE_DIR / "data" / "processed_capeverde"
 INDICATORS_DIR    = BASE_DIR / "data" / "processed_indicators"
 FRONTEND_DIR      = BASE_DIR / "frontend"
 
@@ -605,6 +606,70 @@ def senegal_boundaries(level: str):
     path = SENEGAL_DIR / f"senegal_{resolved}.geojson"
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"{resolved} not found. Run fetch_boundaries.py --country senegal")
+    with open(path) as f:
+        return JSONResponse(content=json.load(f))
+
+
+# ── Cape Verde API routes ─────────────────────────────────────────────────────
+
+@app.get("/capeverde")
+@app.get("/capeverde/")
+def capeverde_hub():
+    return RedirectResponse(url="/capeverde/hub.html")
+
+
+@app.get("/api/capeverde/flood/layers")
+def capeverde_flood_layers():
+    """All processed CHIRPS rainfall layers for Cape Verde."""
+    layers = []
+    for f in sorted(CAPEVERDE_DIR.glob("chirps-*_capeverde.json")):
+        with open(f) as fh:
+            layers.append(json.load(fh))
+    return JSONResponse(content=layers)
+
+
+@app.get("/api/capeverde/crop/layers")
+def capeverde_crop_layers():
+    """All processed MODIS NDVI layers for Cape Verde."""
+    layers = []
+    for f in sorted(CAPEVERDE_DIR.glob("ndvi_*_capeverde.json")):
+        with open(f) as fh:
+            layers.append(json.load(fh))
+    return JSONResponse(content=layers)
+
+
+@app.get("/api/capeverde/mine/sites")
+def capeverde_mine_sites():
+    """Quarry and extraction sites for Cape Verde."""
+    sites_path = CAPEVERDE_DIR / "capeverde_mining_sites.json"
+    if not sites_path.exists():
+        raise HTTPException(status_code=404, detail="No Cape Verde site data yet. Run fetch_sentinel2.py --country capeverde")
+    with open(sites_path) as f:
+        return JSONResponse(content=json.load(f))
+
+
+@app.get("/api/capeverde/heat/layers")
+def capeverde_heat_layers():
+    """All processed Landsat LST layers for Cape Verde cities."""
+    layers = []
+    for f in sorted(CAPEVERDE_DIR.glob("heat_*.json")):
+        with open(f) as fh:
+            layers.append(json.load(fh))
+    return JSONResponse(content=layers)
+
+
+@app.get("/api/capeverde/boundaries/{level}")
+def capeverde_boundaries(level: str):
+    aliases = {
+        "islands":        "islands",
+        "municipalities": "municipalities",
+    }
+    resolved = aliases.get(level)
+    if resolved is None:
+        raise HTTPException(status_code=400, detail="level must be 'islands' or 'municipalities'")
+    path = CAPEVERDE_DIR / f"capeverde_{resolved}.geojson"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail=f"{resolved} not found. Run fetch_boundaries.py --country capeverde")
     with open(path) as f:
         return JSONResponse(content=json.load(f))
 

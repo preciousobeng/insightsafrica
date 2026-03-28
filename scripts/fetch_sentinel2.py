@@ -32,6 +32,7 @@ RAW_DIR           = BASE_DIR / "data" / "raw" / "sentinel2"
 PROCESSED_DIR     = BASE_DIR / "data" / "processed"
 NIGERIA_DIR       = BASE_DIR / "data" / "processed_nigeria"
 IVORYCOAST_DIR    = BASE_DIR / "data" / "processed_ivorycoast"
+CAPEVERDE_DIR     = BASE_DIR / "data" / "processed_capeverde"
 
 # Ghana artisanal mining (galamsey) hotspots — (lon_min, lat_min, lon_max, lat_max)
 GHANA_SITES = [
@@ -258,11 +259,52 @@ SENEGAL_SITES = [
     },
 ]
 
+
+CAPEVERDE_SITES = [
+    {
+        "id":       "santiago_basalt",
+        "name":     "Santiago Basalt Quarry Zone",
+        "region":   "Santiago",
+        "category": "industrial",
+        "bbox":     [-23.60, 14.95, -23.40, 15.15],
+        "centre":   [-23.500, 15.050],
+        "notes":    "Basalt extraction for construction materials, primary island quarrying zone",
+    },
+    {
+        "id":       "santo_antao_pozzolana",
+        "name":     "Santo Antão Pozzolana Zone",
+        "region":   "Santo Antão",
+        "category": "industrial",
+        "bbox":     [-25.20, 17.00, -25.00, 17.20],
+        "centre":   [-25.100, 17.100],
+        "notes":    "Volcanic pozzolana soil extraction used in cement and construction",
+    },
+    {
+        "id":       "sal_salt_flats",
+        "name":     "Sal Salt Flats (Pedra de Lume)",
+        "region":   "Sal",
+        "category": "artisanal",
+        "bbox":     [-22.95, 16.75, -22.83, 16.87],
+        "centre":   [-22.890, 16.810],
+        "notes":    "Historic crater-lake salt extraction, Pedra de Lume, Sal island",
+    },
+    {
+        "id":       "sao_vicente_quarry",
+        "name":     "São Vicente Quarry Zone",
+        "region":   "São Vicente",
+        "category": "artisanal",
+        "bbox":     [-25.06, 16.85, -24.90, 16.95],
+        "centre":   [-24.980, 16.900],
+        "notes":    "Basalt and aggregate quarrying supplying Mindelo port construction",
+    },
+]
+
 COUNTRY_SITES = {
     "ghana":      GHANA_SITES,
     "nigeria":    NIGERIA_SITES,
     "ivorycoast": IVORYCOAST_SITES,
     "senegal":    SENEGAL_SITES,
+    "capeverde":  CAPEVERDE_SITES,
 }
 
 CDSE_TOKEN_URL  = "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"
@@ -361,10 +403,12 @@ def main():
     processed_dir = {
         "nigeria":    NIGERIA_DIR,
         "ivorycoast": IVORYCOAST_DIR,
+        "capeverde":  CAPEVERDE_DIR,
     }.get(args.country, PROCESSED_DIR)
     sites_filename = {
         "nigeria":    "nigeria_mining_sites.json",
         "ivorycoast": "ivorycoast_mining_sites.json",
+        "capeverde":  "capeverde_mining_sites.json",
     }.get(args.country, "galamsey_sites.json")
     sites_path = processed_dir / sites_filename
 

@@ -32,6 +32,10 @@ COUNTRY_BBOXES = {
         "west": -17.535, "east": -11.355,
         "south": 12.307, "north": 16.693,
     },
+    "capeverde": {
+        "west": -25.50, "east": -22.60,
+        "south": 14.75, "north": 17.25,
+    },
 }
 
 CHIRPS_BASE = "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_monthly/tifs"

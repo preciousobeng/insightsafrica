@@ -38,6 +38,7 @@ COUNTRY_BBOXES = {
     "nigeria":    {"west":  2.668,  "east": 14.678,  "south":  4.269,  "north": 13.872},
     "ivorycoast": {"west": -8.601,  "east": -2.493,  "south":  4.341,  "north": 10.740},
     "senegal":    {"west": -17.535, "east": -11.355, "south": 12.307, "north": 16.693},
+    "capeverde":  {"west": -25.50,  "east": -22.60,  "south": 14.75,  "north": 17.25},
 }
 
 # MODIS tiles needed per country
@@ -49,6 +50,7 @@ COUNTRY_TILES = {
     "nigeria":    ["h17v07", "h17v08", "h18v07", "h18v08"],
     "ivorycoast": ["h16v07", "h16v08", "h17v07", "h17v08"],
     "senegal":    ["h16v07"],
+    "capeverde":  ["h15v07"],
 }
 
 # Key farming regions per country
@@ -79,6 +81,12 @@ FARMING_REGIONS = {
         {"name": "Casamance (Rice Belt)",              "bbox": [-16.8, 12.3, -14.5, 13.2]},
         {"name": "Senegal River Valley",               "bbox": [-15.5, 15.5, -11.5, 16.7]},
         {"name": "Ferlo / Sahel Transition",           "bbox": [-16.0, 14.5, -12.0, 16.0]},
+    ],
+    "capeverde": [
+        {"name": "Santiago Highlands (Serra Malagueta)", "bbox": [-23.65, 15.00, -23.40, 15.25]},
+        {"name": "Santo Antão Ribeira Valleys",          "bbox": [-25.35, 17.00, -25.10, 17.20]},
+        {"name": "São Nicolau Farmed Plateaus",          "bbox": [-24.40, 16.50, -24.15, 16.70]},
+        {"name": "Fogo Volcanic Slopes",                 "bbox": [-24.40, 14.85, -24.25, 15.10]},
     ],
 }
 

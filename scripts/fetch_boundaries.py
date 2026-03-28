@@ -24,6 +24,7 @@ PROCESSED_DIR     = BASE_DIR / "data" / "processed"
 NIGERIA_DIR       = BASE_DIR / "data" / "processed_nigeria"
 IVORYCOAST_DIR    = BASE_DIR / "data" / "processed_ivorycoast"
 SENEGAL_DIR       = BASE_DIR / "data" / "processed_senegal"
+CAPEVERDE_DIR     = BASE_DIR / "data" / "processed_capeverde"
 
 COUNTRY_CONFIG = {
     "ghana": {
@@ -83,6 +84,21 @@ COUNTRY_CONFIG = {
                 "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_SEN_2.json.zip",
                 "out_name": "senegal_departments.geojson",
                 "level_label": "department",
+            },
+        },
+    },
+    "capeverde": {
+        "processed_dir": CAPEVERDE_DIR,
+        "levels": {
+            "islands": {
+                "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_CPV_1.json.zip",
+                "out_name": "capeverde_islands.geojson",
+                "level_label": "island",
+            },
+            "municipalities": {
+                "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_CPV_2.json.zip",
+                "out_name": "capeverde_municipalities.geojson",
+                "level_label": "municipality",
             },
         },
     },
