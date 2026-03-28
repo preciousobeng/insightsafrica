@@ -136,7 +136,7 @@ def extract_ndvi(hdf_paths: list, bbox: dict) -> np.ndarray:
 
     if has_h15 and not has_h16 and not has_h17 and not has_h18:
         # Cape Verde: single tile h15v07
-        mosaic = tiles.get("h15v07") or list(tiles.values())[0]
+        mosaic = tiles["h15v07"] if "h15v07" in tiles else list(tiles.values())[0]
         mb = TILE_BOUNDS["h15v07"]
     elif has_h16 and has_h17 and not has_h18:
         # Ivory Coast: h16 (west) + h17 (east) — 2×2 mosaic
