@@ -234,6 +234,12 @@
         <div class="section-label">About</div>
         <div class="info-box">MODIS Normalized Difference Vegetation Index (NDVI) at 250m resolution. Monitors drought stress across Cape Verde's subsistence farming zones during the short rainy season (Aug–Oct). Data: NASA USGS (free). Updated weekly.</div>
       </div>
+      <div class="sidebar-section" id="ndvi-chart-section" style="display:none;">
+        <div class="section-label">Mean NDVI &mdash; Year on Year</div>
+        <div style="position:relative; height:140px; width:100%;">
+          <canvas id="ndvi-chart"></canvas>
+        </div>
+      </div>
     </aside>
     <div class="map-wrap">
       <div class="map-date-badge" id="map-date-badge">-</div>
@@ -291,6 +297,111 @@
     }
 
     loadZones();
+
+    // ── NDVI trend chart ──
+    let ndviChart = null;
+    // Standard MODIS 16-day DOYs and approximate month labels
+    const MODIS_DOYS = [1,17,33,49,65,81,97,113,129,145,161,177,193,209,225,241,257,273,289,305,321,337,353];
+    const MODIS_LABELS = MODIS_DOYS.map(d => {
+      const m = Math.min(Math.floor((d - 1) / 30.4), 11);
+      return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m];
+    });
+
+    const NDVI_YEAR_COLOURS = {
+      2024: { line: 'rgba(34,197,94,0.9)',   fill: 'rgba(34,197,94,0.12)'  },
+      2025: { line: 'rgba(20,184,166,0.9)',  fill: 'rgba(20,184,166,0.12)' },
+    };
+
+    function buildNdviChart(layerData) {
+      // Group by year, map DOY → mean_ndvi
+      const byYear = {};
+      layerData.forEach(l => {
+        const yr = l.year;
+        if (!byYear[yr]) byYear[yr] = {};
+        byYear[yr][l.doy] = l;
+      });
+
+      const years = Object.keys(byYear).sort();
+      const datasets = years.map(year => {
+        const col = NDVI_YEAR_COLOURS[year] || { line: 'rgba(148,163,184,0.85)', fill: 'rgba(148,163,184,0.1)' };
+        return {
+          label: String(year),
+          data: MODIS_DOYS.map(d => {
+            const l = byYear[year][d];
+            return l ? (l.stress_score ? l.stress_score.mean_ndvi : null) : null;
+          }),
+          borderColor: col.line,
+          backgroundColor: col.fill,
+          borderWidth: 2,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          tension: 0.35,
+          fill: true,
+          spanGaps: true,
+        };
+      });
+
+      const ctx = document.getElementById('ndvi-chart').getContext('2d');
+      if (ndviChart) ndviChart.destroy();
+
+      ndviChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: MODIS_LABELS, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          onClick: (event, elements) => {
+            if (!elements.length) return;
+            const el = elements[0];
+            const doy = MODIS_DOYS[el.index];
+            const year = parseInt(years[el.datasetIndex], 10);
+            const match = allLayers.find(l => l.year === year && l.doy === doy);
+            if (match) {
+              pause();
+              displayLayer(match, false);
+              hideMapBadge();
+            }
+          },
+          plugins: {
+            legend: {
+              display: true,
+              labels: { color: '#64748b', font: { size: 10 }, boxWidth: 12, padding: 8 },
+            },
+            tooltip: {
+              backgroundColor: 'rgba(13,21,39,0.95)',
+              borderColor: '#1e3a5f', borderWidth: 1,
+              titleColor: '#22c55e', bodyColor: '#94a3b8', padding: 9,
+              callbacks: {
+                title: (items) => MODIS_LABELS[items[0].dataIndex],
+                label: (item) => {
+                  const year = years[item.datasetIndex];
+                  const doy = MODIS_DOYS[item.dataIndex];
+                  const l = byYear[year] && byYear[year][doy];
+                  if (!l || !l.stress_score) return year + ': no data';
+                  const s = l.stress_score;
+                  return [
+                    year + ' NDVI mean: ' + s.mean_ndvi.toFixed(3),
+                    'Healthy: ' + s.healthy.toFixed(1) + '%',
+                    'Severe stress: ' + s.severe_stress.toFixed(1) + '%',
+                  ];
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.04)' },
+              ticks: { color: '#64748b', font: { size: 9 }, maxRotation: 0 },
+            },
+            y: {
+              min: 0.2, max: 0.85,
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              ticks: { color: '#64748b', font: { size: 9 }, callback: v => v.toFixed(2) },
+            },
+          },
+        },
+      });
+    }
   </script>
   <script>
     function toggleTheme() {

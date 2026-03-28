@@ -147,6 +147,15 @@
         <div class="section-label">About</div>
         <div class="info-box">CHIRPS (Climate Hazards Group InfraRed Precipitation with Station data) — 0.05° (~5km) resolution daily rainfall. Monitors flash flood risk across Cape Verde's 9 inhabited islands via ribeiras (narrow volcanic gorges). Data: USGS + NOAA (free). Updated daily.</div>
       </div>
+      <div class="sidebar-section" id="chart-section" style="display:none;">
+        <div class="section-label">Year-on-Year Rainfall</div>
+        <div style="font-size:0.68rem; color:#475569; margin-bottom:0.6rem;">
+          Mean mm/month — click a bar to load that layer
+        </div>
+        <div style="position:relative; height:140px; width:100%;">
+          <canvas id="rainfall-chart"></canvas>
+        </div>
+      </div>
     </aside>
     <div id="map"></div>
   </div>
@@ -180,6 +189,9 @@
 
     function renderLayers(layers) {
       const container = document.getElementById('layer-list');
+
+        buildChart(layers);
+        document.getElementById('chart-section').style.display = 'block';
       container.textContent = '';
       if (!layers.length) {
         const p = document.createElement('p');
@@ -201,6 +213,127 @@
     }
 
     loadLayers();
+
+    // ── Bar chart ──
+    let rainfallChart = null;
+    const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    const YEAR_COLOURS = {
+      2024: { bar: 'rgba(59,130,246,0.75)',  border: 'rgba(59,130,246,1)'  },
+      2025: { bar: 'rgba(6,182,212,0.75)',   border: 'rgba(6,182,212,1)'   },
+      2026: { bar: 'rgba(168,85,247,0.75)',  border: 'rgba(168,85,247,1)'  },
+    };
+
+    function buildChart(layerData) {
+      // Group by year, each year gets 12 monthly slots
+      const byYear = {};
+      layerData.forEach(l => {
+        const y = l.year;
+        if (!byYear[y]) byYear[y] = Array(12).fill(null);
+        byYear[y][(l.month || 1) - 1] = l;
+      });
+
+      const years = Object.keys(byYear).sort();
+      const labels = MONTH_SHORT;
+
+      const datasets = years.map(year => {
+        const colour = YEAR_COLOURS[year] || { bar: 'rgba(148,163,184,0.7)', border: '#94a3b8' };
+        return {
+          label: String(year),
+          data: byYear[year].map(l => l ? l.rainfall_mm.mean : null),
+          backgroundColor: colour.bar,
+          borderColor: colour.border,
+          borderWidth: 1,
+          borderRadius: 3,
+          borderSkipped: false,
+        };
+      });
+
+      const ctx = document.getElementById('rainfall-chart').getContext('2d');
+      if (rainfallChart) rainfallChart.destroy();
+
+      rainfallChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          onClick: (event, elements) => {
+            if (!elements.length) return;
+            const el = elements[0];
+            const monthIdx = el.index;
+            const year = parseInt(years[el.datasetIndex], 10);
+            const match = layers.find(l => l.year === year && l.month === monthIdx + 1);
+            if (match) {
+              pause();
+              hideMapBadge();
+              displayLayer(match, false);
+              document.querySelectorAll('.layer-btn[data-index]').forEach(b => {
+                b.classList.toggle('active', layers[parseInt(b.dataset.index, 10)] === match);
+              });
+              // Expand the clicked year's accordion if collapsed
+              const yearGroups = document.querySelectorAll('.year-header');
+              yearGroups.forEach(header => {
+                if (header.firstChild.textContent === String(year)) {
+                  const monthList = header.nextElementSibling;
+                  if (monthList.classList.contains('collapsed')) {
+                    monthList.classList.remove('collapsed');
+                    header.lastChild.textContent = '\u25BC';
+                  }
+                }
+              });
+            }
+          },
+          plugins: {
+            legend: {
+              display: true,
+              labels: {
+                color: '#64748b',
+                font: { size: 10 },
+                boxWidth: 12,
+                padding: 10,
+              },
+            },
+            tooltip: {
+              backgroundColor: 'rgba(13,21,39,0.95)',
+              borderColor: '#1e3a5f',
+              borderWidth: 1,
+              titleColor: '#0ea5e9',
+              bodyColor: '#94a3b8',
+              padding: 10,
+              callbacks: {
+                title: (items) => MONTH_SHORT[items[0].dataIndex],
+                label: (item) => {
+                  const year = years[item.datasetIndex];
+                  const monthIdx = item.dataIndex;
+                  const l = byYear[year][monthIdx];
+                  if (!l) return item.dataset.label + ': no data';
+                  return [
+                    year + ' mean: ' + l.rainfall_mm.mean.toFixed(1) + ' mm',
+                    year + ' max:  ' + l.rainfall_mm.max.toFixed(1) + ' mm',
+                  ];
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.04)' },
+              ticks: { color: '#64748b', font: { size: 9 } },
+            },
+            y: {
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              ticks: {
+                color: '#64748b',
+                font: { size: 9 },
+                callback: (v) => v + ' mm',
+              },
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    }
   </script>
   <script>
     function toggleTheme() {
