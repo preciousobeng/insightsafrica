@@ -44,6 +44,14 @@ COUNTRY_BBOXES = {
     "capeverde":  {"west": -25.50,  "east": -22.60,  "south": 14.75,  "north": 17.25},
 }
 
+COUNTRY_TILES = {
+    "ghana":      ["h17v07", "h17v08"],
+    "nigeria":    ["h17v07", "h17v08", "h18v07", "h18v08"],
+    "ivorycoast": ["h16v07", "h16v08", "h17v07", "h17v08"],
+    "senegal":    ["h16v07", "h16v08"],
+    "capeverde":  ["h15v07"],
+}
+
 DOY_TO_MONTH = {
      1: "Jan",  17: "Jan",  33: "Feb",  49: "Feb",
      65: "Mar",  81: "Mar",  97: "Apr", 113: "Apr",
@@ -240,7 +248,10 @@ def main():
     args = parser.parse_args()
 
     pattern = f"*A{args.year}{args.doy:03d}*.hdf"
-    files = list(RAW_DIR.glob(pattern))
+    files = [
+        f for f in RAW_DIR.glob(pattern)
+        if any(t in f.name for t in COUNTRY_TILES.get(args.country, []))
+    ] or list(RAW_DIR.glob(pattern))  # fallback to all if no filter match
     if not files:
         print(f"No HDF files found for year={args.year} doy={args.doy:03d}")
         print(f"Run: python scripts/fetch_modis_ndvi.py --country {args.country} "
