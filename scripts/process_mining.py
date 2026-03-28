@@ -46,24 +46,28 @@ RAW_DIR       = BASE_DIR / "data" / "raw" / "sentinel2"
 PROCESSED_DIR = BASE_DIR / "data" / "processed"
 NIGERIA_DIR   = BASE_DIR / "data" / "processed_nigeria"
 SENEGAL_DIR   = BASE_DIR / "data" / "processed_senegal"
+CAPEVERDE_DIR = BASE_DIR / "data" / "processed_capeverde"
 
 COUNTRY_SITES_FILE = {
     "ghana":   PROCESSED_DIR / "galamsey_sites.json",
     "nigeria": NIGERIA_DIR   / "nigeria_mining_sites.json",
-    "senegal": SENEGAL_DIR   / "senegal_mining_sites.json",
+    "senegal":   SENEGAL_DIR   / "senegal_mining_sites.json",
+    "capeverde": CAPEVERDE_DIR / "capeverde_mining_sites.json",
 }
 
 COUNTRY_OUT_DIR = {
     "ghana":   PROCESSED_DIR,
     "nigeria": NIGERIA_DIR,
-    "senegal": SENEGAL_DIR,
+    "senegal":   SENEGAL_DIR,
+    "capeverde": CAPEVERDE_DIR,
 }
 
 # PNG prefix per country
 COUNTRY_PNG_PREFIX = {
     "ghana":   "galamsey",
     "nigeria": "nigeria",
-    "senegal": "senegal",
+    "senegal":   "senegal",
+    "capeverde": "capeverde",
 }
 
 CDSE_TOKEN_URL   = "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"

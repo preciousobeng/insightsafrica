@@ -77,6 +77,14 @@ COUNTRY_CITIES = {
         "touba":       {"name": "Touba",       "region": "Diourbel",
                         "bbox": [-16.05, 14.75, -15.65, 15.05]},
     },
+    "capeverde": {
+        "praia":       {"name": "Praia",       "region": "Santiago",
+                        "bbox": [-23.65, 14.85, -23.45, 15.05]},
+        "mindelo":     {"name": "Mindelo",     "region": "Sao Vicente",
+                        "bbox": [-25.10, 16.82, -24.90, 16.98]},
+        "santa_maria": {"name": "Santa Maria", "region": "Sal",
+                        "bbox": [-22.97, 16.56, -22.82, 16.68]},
+    },
 }
 
 # Landsat C2 L2 scale / offset for surface temperature

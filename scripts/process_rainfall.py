@@ -29,12 +29,14 @@ PROCESSED_DIR     = BASE_DIR / "data" / "processed"
 NIGERIA_DIR       = BASE_DIR / "data" / "processed_nigeria"
 IVORYCOAST_DIR    = BASE_DIR / "data" / "processed_ivorycoast"
 SENEGAL_DIR       = BASE_DIR / "data" / "processed_senegal"
+CAPEVERDE_DIR     = BASE_DIR / "data" / "processed_capeverde"
 
 COUNTRY_OUT_DIRS = {
     "ghana":      PROCESSED_DIR,
     "nigeria":    NIGERIA_DIR,
     "ivorycoast": IVORYCOAST_DIR,
     "senegal":    SENEGAL_DIR,
+    "capeverde":  CAPEVERDE_DIR,
 }
 
 COUNTRY_BOUNDARIES = {
@@ -53,6 +55,9 @@ COUNTRY_BOUNDARIES = {
     "senegal": {
         "regions":     SENEGAL_DIR / "senegal_regions.geojson",
         "departments": SENEGAL_DIR / "senegal_departments.geojson",
+    },
+    "capeverde": {
+        "islands": CAPEVERDE_DIR / "capeverde_islands.geojson",
     },
 }
 
