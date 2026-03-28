@@ -397,11 +397,15 @@ const CFG = {
   accentColor:'#06b6d4',
 };
 
+let radarChart = null;
+let radarSnapshot = null;
+
 /* ── Helpers ── */
 function toggleTheme() {
   const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', t);
   localStorage.setItem('ia-theme', t);
+  if (radarSnapshot) renderRadar(...radarSnapshot);
 }
 
 function setKpi(id, value, sub) {
@@ -482,9 +486,10 @@ function renderHero(flood, human) {
 
 /* ── Radar chart ── */
 function renderRadar(flood, crop, heat, mine, human) {
+  radarSnapshot = [flood, crop, heat, mine, human];
   const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-  const gridColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
-  const tickColor = isDark ? '#475569' : '#94a3b8';
+  const gridColor = isDark ? 'rgba(148,163,184,0.28)' : 'rgba(15,23,42,0.10)';
+  const tickColor = '#94a3b8';
 
   // Normalise each dimension to 0–10
   const floodScore  = flood  ? Math.min(10, (flood.rainfall_mm?.mean ?? 0) / 25)   : 0;
@@ -497,7 +502,8 @@ function renderRadar(flood, crop, heat, mine, human) {
     return Math.min(10, (cm / 15) + (p / 10));
   })() : 0;
 
-  new Chart(document.getElementById('radarChart'), {
+  if (radarChart) radarChart.destroy();
+  radarChart = new Chart(document.getElementById('radarChart'), {
     type: 'radar',
     data: {
       labels: ['Flood Risk', 'Crop Stress', 'Urban Heat', 'Mining', 'Human\nVulnerability'],
