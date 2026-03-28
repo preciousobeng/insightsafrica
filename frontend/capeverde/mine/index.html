@@ -190,6 +190,7 @@
         if (!res.ok) throw new Error('no data');
         allSites = await res.json();
         renderSiteList(allSites);
+        buildChangeChart(allSites);
         if (allSites.length) displaySite(allSites[0]);
         setStatus('Live');
       } catch (_) {
@@ -198,6 +199,7 @@
         p.className = 'sidebar-message';
         p.textContent = 'No data yet - run fetch_sentinel2.py --country capeverde first.';
         document.getElementById('site-list').appendChild(p);
+        document.getElementById('change-chart-section').style.display = 'none';
         setStatus('Pending data');
       }
     }
@@ -209,7 +211,8 @@
       const withData = siteData.filter(s => s.ndvi_change != null);
       if (!withData.length) { document.getElementById('change-chart-section').style.display = 'none'; return; }
       document.getElementById('change-chart-section').style.display = 'block';
-      const ndviLabel = NDVI_LABEL[activeTab], ndwiLabel = NDWI_LABEL[activeTab];
+      const ndviLabel = 'NDVI change';
+      const ndwiLabel = 'NDWI change';
       const labels = withData.map(s => s.name.split(/[,\s]+/)[0]);
       const ndviVals = withData.map(s => s.ndvi_change);
       const ndwiVals = withData.map(s => s.ndwi_change);

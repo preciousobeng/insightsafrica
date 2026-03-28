@@ -258,32 +258,6 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          onClick: (event, elements) => {
-            if (!elements.length) return;
-            const el = elements[0];
-            const monthIdx = el.index;
-            const year = parseInt(years[el.datasetIndex], 10);
-            const match = layers.find(l => l.year === year && l.month === monthIdx + 1);
-            if (match) {
-              pause();
-              hideMapBadge();
-              displayLayer(match, false);
-              document.querySelectorAll('.layer-btn[data-index]').forEach(b => {
-                b.classList.toggle('active', layers[parseInt(b.dataset.index, 10)] === match);
-              });
-              // Expand the clicked year's accordion if collapsed
-              const yearGroups = document.querySelectorAll('.year-header');
-              yearGroups.forEach(header => {
-                if (header.firstChild.textContent === String(year)) {
-                  const monthList = header.nextElementSibling;
-                  if (monthList.classList.contains('collapsed')) {
-                    monthList.classList.remove('collapsed');
-                    header.lastChild.textContent = '\u25BC';
-                  }
-                }
-              });
-            }
-          },
           plugins: {
             legend: {
               display: true,

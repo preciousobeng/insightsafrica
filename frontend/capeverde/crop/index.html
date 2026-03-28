@@ -262,6 +262,12 @@
         if (!res.ok) throw new Error('no data');
         const zones = await res.json();
         renderZones(zones);
+        if (zones.length) {
+          buildNdviChart(zones);
+          document.getElementById('ndvi-chart-section').style.display = 'block';
+        } else {
+          document.getElementById('ndvi-chart-section').style.display = 'none';
+        }
         setStatus('Live');
       } catch (_) {
         const container = document.getElementById('zone-list');
@@ -270,6 +276,7 @@
         p.className = 'sidebar-message';
         p.textContent = 'No data yet - run fetch_modis.py --country capeverde first.';
         container.appendChild(p);
+        document.getElementById('ndvi-chart-section').style.display = 'none';
         setStatus('Pending data');
       }
     }
@@ -350,18 +357,6 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          onClick: (event, elements) => {
-            if (!elements.length) return;
-            const el = elements[0];
-            const doy = MODIS_DOYS[el.index];
-            const year = parseInt(years[el.datasetIndex], 10);
-            const match = allLayers.find(l => l.year === year && l.doy === doy);
-            if (match) {
-              pause();
-              displayLayer(match, false);
-              hideMapBadge();
-            }
-          },
           plugins: {
             legend: {
               display: true,
