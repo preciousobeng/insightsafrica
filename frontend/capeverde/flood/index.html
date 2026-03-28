@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FloodWatch — InsightsAfrica Cape Verde</title>
+  <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0f1e;
+      color: #e2e8f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #0d1527;
+      border-bottom: 1px solid #1e3a5f;
+      padding: 0 1.5rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 1000;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .brand-logo { width: 28px; height: 28px; background: linear-gradient(135deg, #0ea5e9, #06b6d4); border-radius: 6px; }
+    .brand-name { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; letter-spacing: -0.02em; }
+    .brand-sub  { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+    .back-link  { font-size: 0.72rem; color: #475569; text-decoration: none; }
+    .back-link:hover { color: #0ea5e9; }
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+    .status-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .status-text { font-size: 0.75rem; color: #64748b; }
+
+    .main { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 320px; background: #0d1527; border-right: 1px solid #1e3a5f; display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+    .sidebar-section { padding: 1.5rem; border-bottom: 1px solid #1e2d45; }
+    .sidebar-section:last-child { border-bottom: none; }
+    .section-label { font-size: 0.65rem; font-weight: 700; color: #0ea5e9; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.75rem; }
+    .stat-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+    .stat-label  { font-size: 0.78rem; color: #94a3b8; }
+    .stat-value  { font-size: 0.9rem; font-weight: 600; color: #f1f5f9; }
+    .stat-value.highlight { color: #0ea5e9; }
+
+    .legend-bar { height: 12px; border-radius: 6px; background: linear-gradient(to right, #ffffcc, #c7e9b4, #7fcdbb, #41b6c4, #1d91c0, #225ea8, #0c2c84); margin-bottom: 0.4rem; }
+    .legend-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: #64748b; }
+
+    .layer-btn { width: 100%; text-align: left; background: #1a2540; border: 1px solid #1e3a5f; border-radius: 8px; padding: 0.5rem 0.75rem; color: #94a3b8; font-size: 0.8rem; cursor: pointer; margin-bottom: 0.3rem; transition: all 0.15s; }
+    .layer-btn:hover, .layer-btn.active { background: #1e3a5f; border-color: #0ea5e9; color: #f1f5f9; }
+    .layer-date { display: block; font-size: 0.7rem; color: #475569; margin-top: 0.1rem; }
+
+    .sidebar-message { font-size: 0.78rem; color: #475569; line-height: 1.5; padding: 0.5rem 0; }
+    .info-box { background: #1a2540; border: 1px solid #1e3a5f; border-radius: 8px; padding: 0.75rem; font-size: 0.78rem; color: #94a3b8; line-height: 1.5; }
+
+    #map { flex: 1; }
+    .leaflet-container { background: #0a0f1e; }
+    .flood-tooltip { background: rgba(13,21,39,0.92); border: 1px solid rgba(14,165,233,0.27); color: #e2e8f0; font-size: 0.75rem; font-family: 'Segoe UI', system-ui, sans-serif; padding: 0.3rem 0.6rem; border-radius: 6px; white-space: pre-line; }
+    .flood-tooltip::before { display: none; }
+
+    .theme-toggle { background: none; border: 1px solid #1e3a5f; border-radius: 6px; color: #475569; cursor: pointer; font-size: 0.85rem; padding: 0.2rem 0.5rem; line-height: 1; transition: border-color 0.15s, color 0.15s; }
+    .theme-toggle:hover { border-color: #0ea5e9; color: #e2e8f0; }
+
+    [data-theme="light"] body { background: #f1f5f9; color: #1e293b; }
+    [data-theme="light"] header { background: #ffffff; border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .brand-name { color: #0f172a; }
+    [data-theme="light"] .back-link { color: #64748b; }
+    [data-theme="light"] .back-link:hover { color: #0ea5e9; }
+    [data-theme="light"] .theme-toggle { border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .sidebar { background: #ffffff; border-right-color: #e2e8f0; }
+    [data-theme="light"] .sidebar-section { border-bottom-color: #f1f5f9; }
+    [data-theme="light"] .section-label { color: #0284c7; }
+    [data-theme="light"] .stat-value.highlight { color: #0284c7; }
+    [data-theme="light"] .layer-btn { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .layer-btn:hover, [data-theme="light"] .layer-btn.active { background: #f0f9ff; border-color: #0ea5e9; color: #0f172a; }
+    [data-theme="light"] .info-box { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .leaflet-container { background: #f1f5f9; }
+    [data-theme="light"] .flood-tooltip { background: rgba(255,255,255,0.96); border-color: rgba(14,165,233,0.35); color: #0f172a; }
+
+    @media (max-width: 767px) {
+      header { padding: 0 0.85rem; }
+      .brand-sub { display: none; }
+      .back-link { margin-right: 0.4rem; }
+      .header-right { gap: 0.6rem; }
+      .main { flex-direction: column; }
+      .sidebar { width: 100%; order: 2; border-right: none; border-top: 1px solid #1e3a5f; flex: 1; }
+      #map { order: 1; height: 52vh; flex: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-logo"></div>
+      <div>
+        <div class="brand-name">FloodWatch</div>
+        <div class="brand-sub">InsightsAfrica · Cape Verde · Flash Flood Monitoring</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="/capeverde/hub.html" class="back-link">&#8592; Cape Verde Hub</a>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
+      <div class="status-dot"></div>
+      <span class="status-text" id="status-text">Loading...</span>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="section-label">Coverage</div>
+        <div style="font-size:0.72rem; color:#0ea5e9; font-weight:600;">CHIRPS rainfall across 9 inhabited islands — Cape Verde</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">Rainfall Data</div>
+        <div class="stat-row"><span class="stat-label">Island</span><span class="stat-value highlight" id="island-name">-</span></div>
+        <div class="stat-row"><span class="stat-label">Latest Rainfall</span><span class="stat-value" id="island-rainfall">-</span></div>
+        <div class="stat-row"><span class="stat-label">Status</span><span class="stat-value" id="island-status">-</span></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">Legend</div>
+        <div class="legend-bar"></div>
+        <div class="legend-labels">
+          <span>0 mm</span>
+          <span>100 mm</span>
+          <span>200+ mm</span>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">Available Data</div>
+        <div id="layer-list"><p class="sidebar-message">Loading layers...</p></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">About</div>
+        <div class="info-box">CHIRPS (Climate Hazards Group InfraRed Precipitation with Station data) — 0.05° (~5km) resolution daily rainfall. Monitors flash flood risk across Cape Verde's 9 inhabited islands via ribeiras (narrow volcanic gorges). Data: USGS + NOAA (free). Updated daily.</div>
+      </div>
+    </aside>
+    <div id="map"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map', { center: [16.3, -23.6], zoom: 8 });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap © CARTO', subdomains: 'abcd', maxZoom: 20,
+    }).addTo(map);
+
+    function setStatus(t) { document.getElementById('status-text').textContent = t; }
+
+    async function loadLayers() {
+      try {
+        const res = await fetch('/api/capeverde/flood/layers');
+        if (!res.ok) throw new Error('no data');
+        const layers = await res.json();
+        renderLayers(layers);
+        setStatus('Live');
+      } catch (_) {
+        const container = document.getElementById('layer-list');
+        container.textContent = '';
+        const p = document.createElement('p');
+        p.className = 'sidebar-message';
+        p.textContent = 'No data yet - run fetch_chirps.py --country capeverde first.';
+        container.appendChild(p);
+        setStatus('Pending data');
+      }
+    }
+
+    function renderLayers(layers) {
+      const container = document.getElementById('layer-list');
+      container.textContent = '';
+      if (!layers.length) {
+        const p = document.createElement('p');
+        p.className = 'sidebar-message';
+        p.textContent = 'No rainfall data available.';
+        container.appendChild(p);
+        return;
+      }
+      layers.forEach((layer) => {
+        const btn = document.createElement('button');
+        btn.className = 'layer-btn';
+        btn.textContent = layer.name;
+        const date = document.createElement('span');
+        date.className = 'layer-date';
+        date.textContent = layer.date || '';
+        btn.appendChild(date);
+        container.appendChild(btn);
+      });
+    }
+
+    loadLayers();
+  </script>
+  <script>
+    function toggleTheme() {
+      var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ia-theme', next);
+      document.getElementById('theme-toggle').textContent = next === 'dark' ? '\u2600' : '\u263e';
+    }
+    document.getElementById('theme-toggle').textContent =
+      document.documentElement.getAttribute('data-theme') === 'dark' ? '\u2600' : '\u263e';
+  </script>
+</body>
+</html>

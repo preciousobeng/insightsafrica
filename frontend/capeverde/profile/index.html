@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cape Verde Country Profile — InsightsAfrica</title>
+  <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0f1e;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #0d1527;
+      border-bottom: 1px solid #1e3a5f;
+      padding: 0 1.5rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .brand-logo { width: 28px; height: 28px; background: linear-gradient(135deg, #0ea5e9, #06b6d4); border-radius: 6px; }
+    .brand-name { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; letter-spacing: -0.02em; }
+    .brand-sub  { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+    .back-link { font-size: 0.72rem; color: #475569; text-decoration: none; }
+    .back-link:hover { color: #0ea5e9; }
+    .theme-toggle {
+      background: none; border: 1px solid #1e3a5f; border-radius: 6px;
+      color: #475569; cursor: pointer; font-size: 0.85rem;
+      padding: 0.2rem 0.5rem; line-height: 1;
+    }
+    .theme-toggle:hover { border-color: #0ea5e9; color: #e2e8f0; }
+
+    .hero {
+      background: linear-gradient(135deg, #0d1527 0%, #021020 100%);
+      border-bottom: 1px solid #1e3a5f;
+      padding: 2rem 2rem 1.75rem;
+    }
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: #021020; border: 1px solid #0a3a5a; border-radius: 99px;
+      padding: 0.3rem 0.85rem; font-size: 0.7rem; font-weight: 700;
+      color: #0ea5e9; text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 0.85rem;
+    }
+    .hero-title { font-size: 2rem; font-weight: 800; color: #f1f5f9; letter-spacing: -0.04em; margin-bottom: 0.5rem; }
+    .hero-title span { color: #0ea5e9; }
+    .hero-summary {
+      font-size: 0.9rem; color: #64748b; max-width: 680px; line-height: 1.6;
+      min-height: 1.4em;
+    }
+
+    .kpi-strip {
+      background: #0d1221;
+      border-bottom: 1px solid #1e2d45;
+      display: flex;
+    }
+    .kpi-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 0.9rem 1rem; gap: 0.15rem;
+      border-right: 1px solid #1e2d45;
+    }
+    .kpi-item:last-child { border-right: none; }
+    .kpi-label { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #475569; text-align: center; }
+    .kpi-value { font-size: 1.25rem; font-weight: 800; color: #0ea5e9; letter-spacing: -0.03em; line-height: 1; }
+    .kpi-sub   { font-size: 0.6rem; color: #64748b; text-align: center; }
+
+    .content {
+      flex: 1; padding: 2rem;
+      max-width: 1200px; width: 100%; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 2rem;
+    }
+    @media (max-width: 600px) { .content { padding: 1rem; gap: 1.25rem; } }
+
+    .section-heading {
+      font-size: 0.65rem; font-weight: 700;
+      color: #0ea5e9; text-transform: uppercase; letter-spacing: 0.12em;
+      margin-bottom: 1rem;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+
+    .env-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+    }
+    @media (max-width: 500px) { .env-grid { grid-template-columns: 1fr; } }
+    .env-card {
+      background: #0d1527;
+      border: 1px solid #1e3a5f;
+      border-radius: 12px;
+      padding: 1.1rem;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s, transform 0.15s;
+      display: flex; flex-direction: column; gap: 0.4rem;
+    }
+    .env-card:hover { border-color: #0ea5e9; transform: translateY(-1px); }
+    .env-card-icon  { font-size: 1.3rem; line-height: 1; }
+    .env-card-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #475569; }
+    .env-card-name  { font-size: 0.95rem; font-weight: 700; color: #f1f5f9; }
+    .env-card-stat  { font-size: 1.3rem; font-weight: 800; color: #0ea5e9; letter-spacing: -0.03em; line-height: 1; margin-top: 0.25rem; }
+    .env-card-sub   { font-size: 0.68rem; color: #64748b; }
+    .env-card-link  { font-size: 0.68rem; color: #0ea5e9; margin-top: auto; }
+
+    .risk-callout {
+      background: #0d1527;
+      border: 1px solid #1e3a5f;
+      border-left: 4px solid #0ea5e9;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+    .risk-callout.high   { border-left-color: #ef4444; }
+    .risk-callout.medium { border-left-color: #f59e0b; }
+    .risk-callout.low    { border-left-color: #22c55e; }
+    .risk-label {
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.12em; color: #475569; margin-bottom: 0.5rem;
+    }
+    .risk-heading { font-size: 1rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.5rem; }
+    .risk-body    { font-size: 0.82rem; color: #64748b; line-height: 1.65; }
+    .risk-tags    { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.85rem; }
+    .risk-tag {
+      font-size: 0.65rem; font-weight: 700; padding: 0.2rem 0.6rem;
+      border-radius: 99px; border: 1px solid;
+    }
+    .risk-tag.flood { background: rgba(59,130,246,0.12);  color: #60a5fa; border-color: rgba(59,130,246,0.3); }
+    .risk-tag.crop  { background: rgba(34,197,94,0.1);   color: #4ade80; border-color: rgba(34,197,94,0.25); }
+    .risk-tag.heat  { background: rgba(239,68,68,0.1);   color: #f87171; border-color: rgba(239,68,68,0.25); }
+    .risk-tag.human { background: rgba(168,85,247,0.1);  color: #c084fc; border-color: rgba(168,85,247,0.25); }
+
+    .attribution {
+      background: #0d1527; border: 1px solid #1e2d45; border-radius: 10px;
+      padding: 0.85rem 1.1rem; font-size: 0.7rem; color: #475569; line-height: 1.6;
+    }
+
+    footer {
+      border-top: 1px solid #1e2d45; padding: 1rem 2rem;
+    }
+
+    [data-theme="light"] body { background: #f1f5f9; color: #1e293b; }
+    [data-theme="light"] header { background: #ffffff; border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .brand-name { color: #0f172a; }
+    [data-theme="light"] .back-link { color: #64748b; }
+    [data-theme="light"] .back-link:hover { color: #0284c7; }
+    [data-theme="light"] .theme-toggle { border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .hero { background: linear-gradient(135deg,#ffffff 0%,#f0f9ff 100%); border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .hero-pill { background: #f0f9ff; border-color: #bfdbfe; color: #0284c7; }
+    [data-theme="light"] .hero-title { color: #0f172a; }
+    [data-theme="light"] .hero-title span { color: #0284c7; }
+    [data-theme="light"] .hero-summary { color: #475569; }
+    [data-theme="light"] .kpi-strip { background: #ffffff; border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .kpi-item { border-right-color: #e2e8f0; }
+    [data-theme="light"] .kpi-label { color: #94a3b8; }
+    [data-theme="light"] .kpi-value { color: #0284c7; }
+    [data-theme="light"] .kpi-sub { color: #94a3b8; }
+    [data-theme="light"] .section-heading { color: #0284c7; }
+    [data-theme="light"] .env-card { background: #ffffff; border-color: #e2e8f0; }
+    [data-theme="light"] .env-card:hover { border-color: #0284c7; }
+    [data-theme="light"] .env-card-label { color: #94a3b8; }
+    [data-theme="light"] .env-card-stat { color: #0284c7; }
+    [data-theme="light"] .env-card-link { color: #0284c7; }
+    [data-theme="light"] .risk-callout { background: #ffffff; border-color: #e2e8f0; border-left-color: #0284c7; }
+    [data-theme="light"] .risk-callout.high { border-left-color: #dc2626; }
+    [data-theme="light"] .risk-heading { color: #0f172a; }
+    [data-theme="light"] .risk-body { color: #475569; }
+    [data-theme="light"] .attribution { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="/capeverde/hub.html">
+    <div class="brand-logo"></div>
+    <div>
+      <div class="brand-name">InsightsAfrica</div>
+      <div class="brand-sub">Cape Verde Country Profile</div>
+    </div>
+  </a>
+  <div class="header-right">
+    <a class="back-link" href="/capeverde/hub.html">← Back to Hub</a>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">◑</button>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-pill">🇨🇻 Archipelago of 10 Islands</div>
+  <h1 class="hero-title">Cape Verde — <span>Atlantic Island Nation</span></h1>
+  <p class="hero-summary">Semi-arid volcanic archipelago in the Atlantic. Population ~600,000 (Praia, Santiago). Strategic waters; economy driven by fishing, remittances, tourism, and volcanic quarrying.</p>
+</div>
+
+<div class="kpi-strip">
+  <div class="kpi-item">
+    <div class="kpi-label">Population</div>
+    <div class="kpi-value">600k</div>
+    <div class="kpi-sub">Estimate 2024</div>
+  </div>
+  <div class="kpi-item">
+    <div class="kpi-label">Annual Rainfall</div>
+    <div class="kpi-value">250mm</div>
+    <div class="kpi-sub">Praia average</div>
+  </div>
+  <div class="kpi-item">
+    <div class="kpi-label">Rainy Season</div>
+    <div class="kpi-value">Aug–Oct</div>
+    <div class="kpi-sub">Short & intense</div>
+  </div>
+  <div class="kpi-item">
+    <div class="kpi-label">Inhabited Islands</div>
+    <div class="kpi-value">9</div>
+    <div class="kpi-sub">Of 10 total</div>
+  </div>
+</div>
+
+<main class="content">
+
+  <section class="two-col">
+    <div>
+      <div class="section-heading">Geography & Climate</div>
+      <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.65; margin-bottom: 1rem;">
+        Cape Verde is a semi-arid volcanic archipelago 500km west of Senegal. 10 islands (9 inhabited) across three clusters: Windward (Barlavento) and Leeward (Sotavento) groups. Narrow volcanic gorges called <strong>ribeiras</strong> are prone to flash flooding during the Aug–Oct rainy season. Climate: tropical savanna; average rainfall 250mm/year in Praia.
+      </p>
+      <div class="section-heading" style="margin-top: 1.5rem;">Economic Drivers</div>
+      <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.65;">
+        <strong>Tourism:</strong> Sal, Boa Vista (beaches, diving). <strong>Fishing:</strong> Rich Atlantic stocks; EU agreements. <strong>Remittances:</strong> Large diaspora (Portugal, Africa, USA). <strong>Quarrying:</strong> Basalt, pozzolana, salt extraction. <strong>Renewable energy:</strong> Wind & solar projects emerging.
+      </p>
+    </div>
+    <div>
+      <div class="section-heading">Environmental Pressures</div>
+      <div class="risk-callout high">
+        <div class="risk-label">High Risk</div>
+        <div class="risk-heading">Water Scarcity</div>
+        <div class="risk-body">Only ~250mm annual rainfall. Droughts frequent. Desalination and rainwater harvesting critical for potable water and agriculture.</div>
+      </div>
+      <div class="risk-callout high" style="margin-top: 1rem;">
+        <div class="risk-label">High Risk</div>
+        <div class="risk-heading">Flash Flooding in Ribeiras</div>
+        <div class="risk-body">Narrow volcanic gorges funnel concentrated runoff. Aug–Oct storms create sudden floods; infrastructure & lives at risk.</div>
+        <div class="risk-tags">
+          <span class="risk-tag flood">FloodWatch</span>
+          <span class="risk-tag crop">Crop Stress</span>
+        </div>
+      </div>
+      <div class="risk-callout medium" style="margin-top: 1rem;">
+        <div class="risk-label">Medium Risk</div>
+        <div class="risk-heading">Coastal Erosion & Invasive Species</div>
+        <div class="risk-body">Santo Antão (northern islands) faces erosion; invasive plant species degrade agricultural land and local ecosystems.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-heading">InsightsAfrica Products</div>
+    <div class="env-grid">
+      <a href="/capeverde/flood/index.html" class="env-card">
+        <div class="env-card-icon">💧</div>
+        <div class="env-card-label">Hazard Monitoring</div>
+        <div class="env-card-name">FloodWatch</div>
+        <div class="env-card-sub">CHIRPS rainfall tracking across 9 islands; flash flood risk via ribeiras</div>
+        <div class="env-card-link">→ View layer</div>
+      </a>
+      <a href="/capeverde/crop/index.html" class="env-card">
+        <div class="env-card-icon">🌾</div>
+        <div class="env-card-label">Agricultural Stress</div>
+        <div class="env-card-name">CropWatch</div>
+        <div class="env-card-sub">MODIS NDVI drought monitoring; subsistence farming zones</div>
+        <div class="env-card-link">→ View layer</div>
+      </a>
+      <a href="/capeverde/heat/index.html" class="env-card">
+        <div class="env-card-icon">🔥</div>
+        <div class="env-card-label">Urban Heat</div>
+        <div class="env-card-name">HeatWatch</div>
+        <div class="env-card-sub">Urban heat island tracking in Praia, Mindelo, Santa Maria (data pending)</div>
+        <div class="env-card-link">→ View layer</div>
+      </a>
+      <a href="/capeverde/mine/index.html" class="env-card">
+        <div class="env-card-icon">⛏️</div>
+        <div class="env-card-label">Quarry Operations</div>
+        <div class="env-card-name">QuarryWatch</div>
+        <div class="env-card-sub">Basalt, pozzolana, salt extraction; industrial & artisanal sites</div>
+        <div class="env-card-link">→ View layer</div>
+      </a>
+    </div>
+  </section>
+
+  <div class="attribution">
+    <strong>Data sources:</strong> CHIRPS (USGS), MODIS (NASA), Sentinel-2 (ESA Copernicus), World Bank Open Data, national census and statistics offices. CC BY 4.0. 
+    Processed and presented by InsightsAfrica.
+  </div>
+
+</main>
+
+<footer>
+  <p style="font-size: 0.75rem; color: #475569; margin: 0;">InsightsAfrica · Cape Verde Country Profile</p>
+</footer>
+
+<script>
+function toggleTheme() {
+  const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('ia-theme', t);
+}
+</script>
+
+</body>
+</html>

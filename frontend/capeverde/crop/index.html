@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CropWatch Cape Verde — InsightsAfrica</title>
+  <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0f1e; color: #e2e8f0;
+      height: 100vh; display: flex; flex-direction: column;
+    }
+    header {
+      background: #0d1527; border-bottom: 1px solid #14532d33;
+      padding: 0 1.5rem; height: 56px;
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .brand-logo {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+      border-radius: 6px;
+    }
+    .brand-name { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; }
+    .brand-sub  { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+    .back-link  { font-size: 0.72rem; color: #475569; text-decoration: none; margin-right: 1rem; }
+    .back-link:hover { color: #0ea5e9; }
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #0ea5e9; animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .status-text { font-size: 0.75rem; color: #64748b; }
+
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    .sidebar {
+      width: 320px; background: #0d1527;
+      border-right: 1px solid #1e3a5f;
+      display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+    }
+    .sidebar-section { padding: 1.5rem; border-bottom: 1px solid #1e2d45; }
+    .sidebar-section:last-child { border-bottom: none; }
+
+    .section-label {
+      font-size: 0.65rem; font-weight: 700; color: #0ea5e9;
+      text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.75rem;
+    }
+
+    .stat-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+    .stat-label { font-size: 0.78rem; color: #94a3b8; }
+    .stat-value { font-size: 0.9rem; font-weight: 600; color: #f1f5f9; }
+    .stat-value.highlight { color: #0ea5e9; }
+    .stat-value.warn  { color: #f59e0b; }
+    .stat-value.alert { color: #ef4444; }
+
+    .stress-bar-wrap { margin-top: 0.25rem; }
+    .stress-bar-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.68rem; color: #64748b; margin-bottom: 0.25rem;
+    }
+    .stress-bar-track {
+      height: 8px; border-radius: 4px;
+      background: #1a2540; overflow: hidden; margin-bottom: 0.5rem;
+    }
+    .stress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s; background: #0ea5e9; }
+
+    .legend-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; }
+    .legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+    .legend-text { font-size: 0.75rem; color: #94a3b8; }
+
+    .player-year-row {
+      display: flex; gap: 0.35rem; margin-bottom: 0.75rem;
+    }
+    .year-btn {
+      flex: 1; padding: 0.3rem 0; font-size: 0.72rem; font-weight: 600;
+      border-radius: 6px; cursor: pointer;
+      background: #1a2540; border: 1px solid #1e3a5f; color: #64748b;
+      transition: all 0.15s;
+    }
+    .year-btn:hover { border-color: #0ea5e9; color: #e2e8f0; }
+    .year-btn.active { background: #f0f9ff; border-color: #0ea5e9; color: #0ea5e9; }
+
+    .play-btn {
+      width: 100%; padding: 0.45rem; font-size: 1rem;
+      border-radius: 8px; cursor: pointer;
+      background: #0ea5e9; border: none; color: #0a0f1e;
+      font-weight: 700; letter-spacing: 0.02em;
+      transition: background 0.15s, transform 0.1s;
+      margin-bottom: 0.6rem;
+    }
+    .play-btn:hover { background: #06b6d4; }
+    .play-btn:active { transform: scale(0.97); }
+
+    .progress-track {
+      height: 6px; border-radius: 3px; background: #1a2540;
+      cursor: pointer; margin-bottom: 0.65rem; position: relative;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 3px; background: #0ea5e9;
+      transition: width 0.15s; pointer-events: none;
+    }
+
+    .layer-btn {
+      width: 100%; text-align: left;
+      background: #1a2540; border: 1px solid #1e3a5f; border-radius: 8px;
+      padding: 0.5rem 0.75rem; color: #94a3b8; font-size: 0.8rem;
+      cursor: pointer; margin-bottom: 0.3rem; transition: all 0.15s;
+    }
+    .layer-btn:hover, .layer-btn.active {
+      background: #f0f9ff; border-color: #0ea5e9; color: #0a0f1e;
+    }
+    .layer-sub { display: block; font-size: 0.7rem; color: #475569; margin-top: 0.1rem; }
+
+    .info-box {
+      background: #1a2540; border: 1px solid #1e3a5f; border-radius: 8px;
+      padding: 0.75rem; font-size: 0.78rem; color: #94a3b8; line-height: 1.5;
+    }
+    .sidebar-message { font-size: 0.78rem; color: #475569; line-height: 1.5; padding: 0.5rem 0; }
+
+    .map-wrap { flex: 1; position: relative; }
+    #map { width: 100%; height: 100%; }
+    .leaflet-container { background: #0a0f1e; }
+
+    .map-date-badge {
+      display: none;
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      background: rgba(13,21,39,0.88); border: 1px solid #0ea5e955;
+      color: #0ea5e9; font-size: 0.8rem; font-weight: 700;
+      padding: 0.3rem 0.85rem; border-radius: 99px;
+      pointer-events: none; z-index: 999; white-space: nowrap;
+    }
+
+    .crop-tooltip {
+      background: rgba(13,21,39,0.92); border: 1px solid #0ea5e944;
+      color: #e2e8f0; font-size: 0.75rem; padding: 0.3rem 0.6rem;
+      border-radius: 6px; white-space: pre-line;
+    }
+    .crop-tooltip::before { display: none; }
+
+    .theme-toggle {
+      background: none; border: 1px solid #1e3a5f; border-radius: 6px;
+      color: #475569; cursor: pointer; font-size: 0.85rem;
+      padding: 0.2rem 0.5rem; line-height: 1;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-toggle:hover { border-color: #0ea5e9; color: #e2e8f0; }
+
+    [data-theme="light"] body { background: #f1f5f9; color: #1e293b; }
+    [data-theme="light"] header { background: #ffffff; border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .brand-name { color: #0f172a; }
+    [data-theme="light"] .back-link { color: #64748b; }
+    [data-theme="light"] .back-link:hover { color: #0284c7; }
+    [data-theme="light"] .status-text { color: #64748b; }
+    [data-theme="light"] .theme-toggle { border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .theme-toggle:hover { border-color: #0284c7; color: #0f172a; }
+    [data-theme="light"] .sidebar { background: #ffffff; border-right-color: #e2e8f0; }
+    [data-theme="light"] .sidebar-section { border-bottom-color: #f1f5f9; }
+    [data-theme="light"] .section-label { color: #0284c7; }
+    [data-theme="light"] .stat-label { color: #64748b; }
+    [data-theme="light"] .stat-value { color: #0f172a; }
+    [data-theme="light"] .stat-value.highlight { color: #0284c7; }
+    [data-theme="light"] .stat-value.warn { color: #d97706; }
+    [data-theme="light"] .stat-value.alert { color: #dc2626; }
+    [data-theme="light"] .stress-bar-track { background: #e2e8f0; }
+    [data-theme="light"] .year-btn { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .year-btn.active { background: #f0f9ff; border-color: #0ea5e9; color: #0284c7; }
+    [data-theme="light"] .play-btn { background: #0ea5e9; color: #ffffff; }
+    [data-theme="light"] .progress-fill { background: #0ea5e9; }
+    [data-theme="light"] .layer-btn { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .layer-btn:hover, [data-theme="light"] .layer-btn.active { background: #f0f9ff; border-color: #0ea5e9; color: #0f172a; }
+    [data-theme="light"] .info-box { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .leaflet-container { background: #f1f5f9; }
+    [data-theme="light"] .crop-tooltip { background: rgba(255,255,255,0.96); border-color: rgba(14,165,233,0.35); color: #0f172a; }
+
+    @media (max-width: 767px) {
+      header { padding: 0 0.85rem; }
+      .brand-sub { display: none; }
+      .back-link { margin-right: 0.4rem; }
+      .header-right { gap: 0.6rem; }
+      .main { flex-direction: column; overflow: hidden; }
+      .sidebar { width: 100%; order: 2; border-right: none; border-top: 1px solid #1e3a5f; flex: 1; overflow-y: auto; }
+      #map { order: 1; height: 52vh; flex: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-logo"></div>
+      <div>
+        <div class="brand-name">CropWatch</div>
+        <div class="brand-sub">InsightsAfrica · Cape Verde · Drought Stress Monitoring</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="/capeverde/hub.html" class="back-link">&#8592; Cape Verde Hub</a>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
+      <div class="status-dot"></div>
+      <span class="status-text" id="status-text">Loading...</span>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="section-label">Product</div>
+        <div style="font-size:0.72rem; color:#0ea5e9; font-weight:600;">MODIS 250m NDVI across farming zones — Cape Verde</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">Active Zone</div>
+        <div class="stat-row"><span class="stat-label">Zone</span><span class="stat-value highlight" id="zone-name">-</span></div>
+        <div class="stat-row"><span class="stat-label">NDVI</span><span class="stat-value" id="zone-ndvi">-</span></div>
+        <div class="stat-row"><span class="stat-label">Stress</span><span class="stat-value alert" id="zone-stress">-</span></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">Farming Zones</div>
+        <div id="zone-list"><p class="sidebar-message">Loading zones...</p></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">Legend</div>
+        <div class="legend-row"><div class="legend-swatch" style="background:#d73027"></div><span class="legend-text">Severe drought stress</span></div>
+        <div class="legend-row"><div class="legend-swatch" style="background:#fc8d59"></div><span class="legend-text">Moderate stress</span></div>
+        <div class="legend-row"><div class="legend-swatch" style="background:#fee08b"></div><span class="legend-text">Mild stress</span></div>
+        <div class="legend-row"><div class="legend-swatch" style="background:#d9ef8b"></div><span class="legend-text">Normal</span></div>
+        <div class="legend-row"><div class="legend-swatch" style="background:#91bfdb"></div><span class="legend-text">Vigorous growth</span></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">About</div>
+        <div class="info-box">MODIS Normalized Difference Vegetation Index (NDVI) at 250m resolution. Monitors drought stress across Cape Verde's subsistence farming zones during the short rainy season (Aug–Oct). Data: NASA USGS (free). Updated weekly.</div>
+      </div>
+    </aside>
+    <div class="map-wrap">
+      <div class="map-date-badge" id="map-date-badge">-</div>
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map', { center: [16.3, -23.6], zoom: 8 });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap © CARTO', subdomains: 'abcd', maxZoom: 20,
+    }).addTo(map);
+
+    function setStatus(t) { document.getElementById('status-text').textContent = t; }
+
+    async function loadZones() {
+      try {
+        const res = await fetch('/api/capeverde/crop/layers');
+        if (!res.ok) throw new Error('no data');
+        const zones = await res.json();
+        renderZones(zones);
+        setStatus('Live');
+      } catch (_) {
+        const container = document.getElementById('zone-list');
+        container.textContent = '';
+        const p = document.createElement('p');
+        p.className = 'sidebar-message';
+        p.textContent = 'No data yet - run fetch_modis.py --country capeverde first.';
+        container.appendChild(p);
+        setStatus('Pending data');
+      }
+    }
+
+    function renderZones(zones) {
+      const container = document.getElementById('zone-list');
+      container.textContent = '';
+      if (!zones.length) {
+        const p = document.createElement('p');
+        p.className = 'sidebar-message';
+        p.textContent = 'No farming zones available.';
+        container.appendChild(p);
+        return;
+      }
+      zones.forEach((zone) => {
+        const btn = document.createElement('button');
+        btn.className = 'layer-btn';
+        btn.textContent = zone.name;
+        const sub = document.createElement('span');
+        sub.className = 'layer-sub';
+        sub.textContent = zone.region || '';
+        btn.appendChild(sub);
+        container.appendChild(btn);
+      });
+    }
+
+    loadZones();
+  </script>
+  <script>
+    function toggleTheme() {
+      var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ia-theme', next);
+      document.getElementById('theme-toggle').textContent = next === 'dark' ? '\u2600' : '\u263e';
+    }
+    document.getElementById('theme-toggle').textContent =
+      document.documentElement.getAttribute('data-theme') === 'dark' ? '\u2600' : '\u263e';
+  </script>
+</body>
+</html>

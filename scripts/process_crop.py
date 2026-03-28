@@ -248,14 +248,22 @@ def main():
     args = parser.parse_args()
 
     pattern = f"*A{args.year}{args.doy:03d}*.hdf"
+    expected_tiles = COUNTRY_TILES.get(args.country, [])
     files = [
         f for f in RAW_DIR.glob(pattern)
-        if any(t in f.name for t in COUNTRY_TILES.get(args.country, []))
-    ] or list(RAW_DIR.glob(pattern))  # fallback to all if no filter match
+        if any(t in f.name for t in expected_tiles)
+    ]
     if not files:
-        print(f"No HDF files found for year={args.year} doy={args.doy:03d}")
-        print(f"Run: python scripts/fetch_modis_ndvi.py --country {args.country} "
-              f"--year {args.year} --doy {args.doy}")
+        all_files = list(RAW_DIR.glob(pattern))
+        if all_files and expected_tiles:
+            print(f"No {args.country} tiles ({expected_tiles}) found for {args.year}/{args.doy:03d}.")
+            print(f"Available: {[f.name for f in all_files]}")
+            print(f"Run: python scripts/fetch_modis_ndvi.py --country {args.country} "
+                  f"--year {args.year} --doy {args.doy}")
+        else:
+            print(f"No HDF files found for year={args.year} doy={args.doy:03d}")
+            print(f"Run: python scripts/fetch_modis_ndvi.py --country {args.country} "
+                  f"--year {args.year} --doy {args.doy}")
         return
 
     process(files, args.year, args.doy, args.country)
