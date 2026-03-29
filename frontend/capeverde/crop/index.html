@@ -294,10 +294,11 @@
       zones.forEach((zone) => {
         const btn = document.createElement('button');
         btn.className = 'layer-btn';
-        btn.textContent = zone.name;
+        btn.textContent = zone.label;
         const sub = document.createElement('span');
         sub.className = 'layer-sub';
-        sub.textContent = zone.region || '';
+        const s = zone.stress_score || {};
+        sub.textContent = s.mean_ndvi != null ? 'NDVI mean: ' + s.mean_ndvi.toFixed(3) : '';
         btn.appendChild(sub);
         container.appendChild(btn);
       });
