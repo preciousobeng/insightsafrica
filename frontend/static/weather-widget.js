@@ -129,6 +129,12 @@
     const latitude = host.dataset.latitude;
     const longitude = host.dataset.longitude;
     const timezone = host.dataset.timezone || "Africa/Accra";
+    const location = host.dataset.location;
+
+    if (location) {
+      const label = host.querySelector(".section-label");
+      if (label) label.textContent = "Weather Context \u00b7 " + location;
+    }
 
     const url = "https://api.open-meteo.com/v1/forecast" +
       "?latitude=" + encodeURIComponent(latitude) +
@@ -151,6 +157,7 @@
         buildForecast(data),
       ]);
     } catch (error) {
+      console.warn("WeatherWidget:", error.message);
       renderFallback(container);
     }
   }
