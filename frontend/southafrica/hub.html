@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>InsightsAfrica — Nigeria Intelligence Hub</title>
-  <meta name="description" content="Explore Nigeria's environmental data — FloodWatch across 37 states, oil/gas MineWatch, CropWatch, and HeatWatch for Lagos, Kano, and Abuja — powered by satellite imagery." />
-  <link rel="canonical" href="https://insightsafrica.org/nigeria/hub.html" />
+  <title>InsightsAfrica — South Africa Intelligence Hub</title>
+  <meta name="description" content="Explore South Africa's environmental data — FloodWatch across 9 provinces, mining intelligence, CropWatch, and HeatWatch for Johannesburg, Cape Town, and Durban — powered by satellite imagery." />
+  <link rel="canonical" href="https://insightsafrica.org/southafrica/hub.html" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://insightsafrica.org/nigeria/hub.html" />
-  <meta property="og:title" content="InsightsAfrica — Nigeria Intelligence Hub" />
-  <meta property="og:description" content="Nigeria satellite intelligence — flood risk across 37 states, oil and artisanal mining watch, crop health, and urban heat for Lagos, Kano, and Abuja." />
+  <meta property="og:url" content="https://insightsafrica.org/southafrica/hub.html" />
+  <meta property="og:title" content="InsightsAfrica — South Africa Intelligence Hub" />
+  <meta property="og:description" content="South Africa satellite intelligence — flood risk across 9 provinces, formal and illegal mining watch, crop health, and urban heat for Johannesburg, Cape Town, and Durban." />
   <meta property="og:image" content="https://insightsafrica.org/static/og-image.png" />
   <meta property="og:site_name" content="InsightsAfrica" />
 
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="InsightsAfrica — Nigeria Intelligence Hub" />
-  <meta name="twitter:description" content="Nigeria satellite intelligence — flood risk across 37 states, oil and artisanal mining watch, crop health, and urban heat for Lagos, Kano, and Abuja." />
+  <meta name="twitter:title" content="InsightsAfrica — South Africa Intelligence Hub" />
+  <meta name="twitter:description" content="South Africa satellite intelligence — flood risk across 9 provinces, formal and illegal mining watch, crop health, and urban heat for Johannesburg, Cape Town, and Durban." />
   <meta name="twitter:image" content="https://insightsafrica.org/static/og-image.png" />
 
   <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
@@ -242,7 +242,7 @@
     @media (max-width: 540px) {
       .profile-card { flex-direction: column !important; gap: 0.75rem !important; }
     }
-    
+
     .card-arrow { font-size: 0.85rem; color: #3b82f6; }
 
     footer {
@@ -391,13 +391,13 @@
       </div>
       <div class="header-actions">
       <div class="cs-dropdown" id="cs-dropdown">
-        <button class="cs-btn" onclick="toggleCS()">&#127475;&#127468; Nigeria &#9660;</button>
+        <button class="cs-btn" onclick="toggleCS()">&#127487;&#127462; South Africa &#9660;</button>
         <div class="cs-menu" id="cs-menu">
           <a href="/hub.html">&#127468;&#127469; Ghana</a>
+          <a href="/nigeria/hub.html">&#127475;&#127468; Nigeria</a>
           <a href="/ivorycoast/hub.html">&#127464;&#127470; Côte d'Ivoire</a>
           <a href="/senegal/hub.html">&#127480;&#127475; Senegal</a>
           <a href="/capeverde/hub.html">&#127464;&#127483; Cape Verde</a>
-          <a href="/southafrica/hub.html">&#127487;&#127462; South Africa</a>
         </div>
       </div>
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme">&#9680;</button>
@@ -405,12 +405,12 @@
       </div></header>
 
   <div class="country-banner">
-    <div class="country-pill">&#127475;&#127468; Nigeria</div>
-    <h1 class="country-title">Nigeria <span>Intelligence Hub</span></h1>
+    <div class="country-pill">&#127487;&#127462; South Africa</div>
+    <h1 class="country-title">South Africa <span>Intelligence Hub</span></h1>
     <p class="country-desc">
-      Satellite intelligence for Nigeria's most pressing environmental and economic challenges —
-      flood exposure, artisanal mining, oil/gas impact, crop stress, and urban heat.
-      Built on open data, actionable at federal and state level.
+      Satellite intelligence for South Africa's environmental and economic challenges —
+      flood exposure across KwaZulu-Natal and the Eastern Cape, illegal mining and formal mining impact, crop stress across the Highveld, and urban heat in Johannesburg, Cape Town, and Durban.
+      Built on open data, actionable at provincial and municipal level.
     </p>
   </div>
 
@@ -426,7 +426,7 @@
       <span class="kpi-sub">loading…</span>
     </div>
     <div class="kpi-item kpi-loading" id="kpi-heat">
-      <span class="kpi-label">Urban heat · Lagos</span>
+      <span class="kpi-label">Urban heat · Johannesburg</span>
       <span class="kpi-value">—</span>
       <span class="kpi-sub">loading…</span>
     </div>
@@ -441,11 +441,11 @@
     <div class="section-heading">Available Products</div>
 
     <!-- Country Profile — featured full-width card -->
-    <a href="/nigeria/profile/" class="product-card profile-card">
+    <a href="/southafrica/profile/" class="product-card profile-card">
       <div class="card-icon green" style="flex-shrink:0;width:48px;height:48px;font-size:1.5rem">&#127760;</div>
       <div style="flex:1">
         <div class="card-label">Intelligence Briefing</div>
-        <div class="card-title">Nigeria Country Profile</div>
+        <div class="card-title">South Africa Country Profile</div>
         <p class="card-desc" style="margin-top:0.35rem">All five data products unified — satellite intelligence and socioeconomic indicators combined into a single country risk briefing.</p>
       </div>
       <span class="card-arrow" style="font-size:1.1rem;flex-shrink:0">&#8594;</span>
@@ -453,15 +453,16 @@
 
     <div class="product-grid">
 
-      <a href="/nigeria/flood/" class="product-card">
+      <a href="/southafrica/flood/" class="product-card">
         <div class="card-icon blue">&#127783;</div>
         <div>
           <div class="card-label">Hydrology</div>
           <div class="card-title">FloodWatch</div>
         </div>
         <p class="card-desc">
-          Monthly rainfall intelligence across all 37 states and 774 LGAs.
+          Monthly rainfall intelligence across all 9 provinces and 257 municipalities.
           CHIRPS satellite data, year-on-year comparison, zonal statistics per boundary.
+          KwaZulu-Natal and Eastern Cape flood corridors highlighted.
         </p>
         <div class="card-footer">
           <span class="card-status status-live">Live &mdash; 2024&ndash;2025</span>
@@ -469,15 +470,14 @@
         </div>
       </a>
 
-      <a href="/nigeria/mine/" class="product-card">
+      <a href="/southafrica/mine/" class="product-card">
         <div class="card-icon amber">&#9889;</div>
         <div>
-          <div class="card-label">Mining &amp; Oil/Gas</div>
+          <div class="card-label">Mining &amp; Resources</div>
           <div class="card-title">MineWatch</div>
         </div>
         <p class="card-desc">
-          Sentinel-2 change detection across artisanal mining sites (north)
-          and oil/gas impact zones (Niger Delta). NDVI and NDWI shift analysis.
+          Sentinel-2 change detection across the Witwatersrand gold belt, Bushveld Complex platinum/chrome operations, and illegal artisanal mining (zama zama) activity. NDVI and NDWI shift analysis.
         </p>
         <div class="card-footer">
           <span class="card-status status-live">Live &mdash; 2024&ndash;2026</span>
@@ -485,7 +485,7 @@
         </div>
       </a>
 
-      <a href="/nigeria/crop/" class="product-card">
+      <a href="/southafrica/crop/" class="product-card">
         <div class="card-icon green">&#127807;</div>
         <div>
           <div class="card-label">Agriculture</div>
@@ -493,7 +493,7 @@
         </div>
         <p class="card-desc">
           MODIS 250m NDVI 16-day composites for crop stress monitoring across
-          Kano Plains, Middle Belt, Sokoto Basin, Niger Valley, and Cross River.
+          the Free State maize belt, Western Cape viticulture zones, and KwaZulu-Natal sugarcane corridor.
         </p>
         <div class="card-footer">
           <span class="card-status status-beta">In Development</span>
@@ -501,7 +501,7 @@
         </div>
       </a>
 
-      <a href="/nigeria/heat/" class="product-card">
+      <a href="/southafrica/heat/" class="product-card">
         <div class="card-icon red">&#127774;</div>
         <div>
           <div class="card-label">Urban Climate</div>
@@ -509,7 +509,7 @@
         </div>
         <p class="card-desc">
           Urban heat island mapping using Landsat thermal bands.
-          Targeting Lagos, Kano, and Abuja for city planning and public health use.
+          Targeting Johannesburg, Cape Town, and Durban for city planning and public health use.
         </p>
         <div class="card-footer">
           <span class="card-status status-beta">In Development</span>
@@ -517,7 +517,7 @@
         </div>
       </a>
 
-      <a href="/nigeria/human/" class="product-card">
+      <a href="/southafrica/human/" class="product-card">
         <div class="card-icon" style="background:rgba(168,85,247,0.15)">&#128101;</div>
         <div>
           <div class="card-label">Human Development</div>
@@ -539,7 +539,7 @@
   <div class="flex-spacer"></div>
 
   <footer>
-    <div class="footer-brand">InsightsAfrica &mdash; Nigeria</div>
+    <div class="footer-brand">InsightsAfrica &mdash; South Africa</div>
     <div class="footer-note">
       Data: CHIRPS, Sentinel-2, MODIS, Landsat &mdash; all open source
     </div>
@@ -554,10 +554,10 @@
       el.querySelector('.kpi-sub').textContent   = sub;
     }
     const [floodRes, cropRes, heatRes, mineRes] = await Promise.allSettled([
-      fetch('/api/nigeria/flood/layers').then(r => r.json()),
-      fetch('/api/nigeria/crop/layers').then(r => r.json()),
-      fetch('/api/nigeria/heat/layers').then(r => r.json()),
-      fetch('/api/nigeria/mine/sites').then(r => r.json()),
+      fetch('/api/southafrica/flood/layers').then(r => r.json()),
+      fetch('/api/southafrica/crop/layers').then(r => r.json()),
+      fetch('/api/southafrica/heat/layers').then(r => r.json()),
+      fetch('/api/southafrica/mine/sites').then(r => r.json()),
     ]);
     if (floodRes.status === 'fulfilled') {
       const peak = floodRes.value.reduce((a, b) => b.rainfall_mm.mean > a.rainfall_mm.mean ? b : a);
@@ -570,7 +570,7 @@
     } else { set('kpi-crop', '—', 'unavailable'); }
 
     if (heatRes.status === 'fulfilled') {
-      const layers = heatRes.value.filter(l => l.city_id === 'lagos' && !l.demo);
+      const layers = heatRes.value.filter(l => l.city_id === 'johannesburg' && !l.demo);
       const best   = layers.length ? layers.reduce((a, b) => b.stats.uhi_intensity_c > a.stats.uhi_intensity_c ? b : a) : null;
       if (best) {
         const [y, m] = best.date.split('-');
