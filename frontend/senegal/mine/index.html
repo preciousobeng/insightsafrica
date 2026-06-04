@@ -129,7 +129,7 @@
       </div>
       <div class="sidebar-section" id="change-chart-section" style="display:none;">
         <div class="section-label" id="chart-title">Vegetation &amp; Water Change Index</div>
-        <div style="position:relative; height:140px; width:100%;"><canvas id="change-chart"></canvas></div>
+        <div style="position:relative; height:200px; width:100%;"><canvas id="change-chart"></canvas></div>
       </div>
       <div class="sidebar-section">
         <div class="section-label">Index View</div>
@@ -215,7 +215,7 @@
       if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
       const imgKey = currentIndex + '_png';
       if (site[imgKey]) {
-        currentOverlay = L.imageOverlay('/ic-tiles/' + site[imgKey], site.leaflet_bounds, { opacity: 0.85 });
+        currentOverlay = L.imageOverlay('/sn-tiles/' + site[imgKey], site.leaflet_bounds, { opacity: 0.85 });
         currentOverlay.addTo(map);
         map.fitBounds(site.leaflet_bounds, { padding: [40, 40] });
       } else {

@@ -36,6 +36,10 @@ COUNTRY_BBOXES = {
         "west": -25.50, "east": -22.60,
         "south": 14.75, "north": 17.25,
     },
+    "southafrica": {
+        "west": 16.0, "east": 33.0,
+        "south": -35.0, "north": -22.0,
+    },
 }
 
 CHIRPS_BASE = "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_monthly/tifs"

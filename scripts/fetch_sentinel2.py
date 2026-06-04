@@ -33,6 +33,8 @@ PROCESSED_DIR     = BASE_DIR / "data" / "processed"
 NIGERIA_DIR       = BASE_DIR / "data" / "processed_nigeria"
 IVORYCOAST_DIR    = BASE_DIR / "data" / "processed_ivorycoast"
 CAPEVERDE_DIR     = BASE_DIR / "data" / "processed_capeverde"
+SENEGAL_DIR       = BASE_DIR / "data" / "processed_senegal"
+SOUTHAFRICA_DIR   = BASE_DIR / "data" / "processed_southafrica"
 
 # Ghana artisanal mining (galamsey) hotspots — (lon_min, lat_min, lon_max, lat_max)
 GHANA_SITES = [
@@ -299,12 +301,52 @@ CAPEVERDE_SITES = [
     },
 ]
 
+
+SOUTHAFRICA_SITES = [
+    {
+        "id":       "witwatersrand_gold",
+        "name":     "Witwatersrand Gold Belt",
+        "region":   "Gauteng",
+        "category": "industrial",
+        "bbox":     [27.0, -26.7, 28.5, -25.8],
+        "centre":   [27.75, -26.25],
+        "notes":    "World's largest gold deposit — AngloGold, Gold Fields, Sibanye-Stillwater operations",
+    },
+    {
+        "id":       "bushveld_platinum",
+        "name":     "Bushveld Complex — Rustenburg Platinum Belt",
+        "region":   "North West",
+        "category": "industrial",
+        "bbox":     [26.8, -25.8, 27.6, -25.2],
+        "centre":   [27.2, -25.5],
+        "notes":    "Largest platinum group metals deposit in the world — Amplats, Impala Platinum",
+    },
+    {
+        "id":       "kimberley_diamonds",
+        "name":     "Kimberley Diamond Fields",
+        "region":   "Northern Cape",
+        "category": "industrial",
+        "bbox":     [24.5, -29.2, 25.2, -28.5],
+        "centre":   [24.77, -28.74],
+        "notes":    "Historic Kimberley mine (Big Hole) and surrounding De Beers operations",
+    },
+    {
+        "id":       "zama_zama_gauteng",
+        "name":     "Zama Zama Illegal Mining — West Rand",
+        "region":   "Gauteng",
+        "category": "artisanal",
+        "bbox":     [27.3, -26.5, 27.9, -26.1],
+        "centre":   [27.6, -26.3],
+        "notes":    "Illegal artisanal mining in disused deep-level gold mines — West Rand / City of Ekurhuleni",
+    },
+]
 COUNTRY_SITES = {
     "ghana":      GHANA_SITES,
     "nigeria":    NIGERIA_SITES,
     "ivorycoast": IVORYCOAST_SITES,
     "senegal":    SENEGAL_SITES,
     "capeverde":  CAPEVERDE_SITES,
+    "southafrica": SOUTHAFRICA_SITES,
 }
 
 CDSE_TOKEN_URL  = "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"
@@ -365,11 +407,25 @@ def search_products(bbox: list, date_start: str, date_end: str,
 
 
 def save_sites_json(sites: list, out_path: Path):
-    """Write mining sites JSON for the MineWatch API."""
+    """Write mining sites JSON for the MineWatch API.
+    Preserves existing processed values (ndvi_change etc.) if present.
+    """
     out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Load existing processed values so re-fetching does not wipe them
+    existing = {}
+    if out_path.exists():
+        try:
+            with open(out_path) as f:
+                for s in json.load(f):
+                    existing[s["id"]] = s
+        except Exception:
+            pass
+
     out = []
     for site in sites:
         bbox = site["bbox"]
+        prev = existing.get(site["id"], {})
         out.append({
             "id":       site["id"],
             "name":     site["name"],
@@ -378,16 +434,16 @@ def save_sites_json(sites: list, out_path: Path):
             "centre":   site["centre"],
             "bbox":     bbox,
             "notes":    site["notes"],
-            "leaflet_bounds": [
+            "leaflet_bounds": prev.get("leaflet_bounds") or [
                 [bbox[1], bbox[0]],
                 [bbox[3], bbox[2]],
             ],
-            "ndvi_change": None,
-            "ndwi_change": None,
-            "period":      None,
-            "ndvi_png":    None,
-            "ndwi_png":    None,
-            "change_png":  None,
+            "ndvi_change": prev.get("ndvi_change"),
+            "ndwi_change": prev.get("ndwi_change"),
+            "period":      prev.get("period"),
+            "ndvi_png":    prev.get("ndvi_png"),
+            "ndwi_png":    prev.get("ndwi_png"),
+            "change_png":  prev.get("change_png"),
         })
     with open(out_path, "w") as f:
         json.dump(out, f, indent=2)
@@ -404,11 +460,17 @@ def main():
         "nigeria":    NIGERIA_DIR,
         "ivorycoast": IVORYCOAST_DIR,
         "capeverde":  CAPEVERDE_DIR,
+        "southafrica": SOUTHAFRICA_DIR,
+        "senegal":    SENEGAL_DIR,
+        "ghana":      PROCESSED_DIR,
     }.get(args.country, PROCESSED_DIR)
     sites_filename = {
         "nigeria":    "nigeria_mining_sites.json",
         "ivorycoast": "ivorycoast_mining_sites.json",
         "capeverde":  "capeverde_mining_sites.json",
+        "southafrica": "southafrica_mining_sites.json",
+        "senegal":    "senegal_mining_sites.json",
+        "ghana":      "galamsey_sites.json",
     }.get(args.country, "galamsey_sites.json")
     sites_path = processed_dir / sites_filename
 

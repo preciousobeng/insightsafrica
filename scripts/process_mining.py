@@ -48,6 +48,7 @@ NIGERIA_DIR      = BASE_DIR / "data" / "processed_nigeria"
 IVORYCOAST_DIR   = BASE_DIR / "data" / "processed_ivorycoast"
 SENEGAL_DIR   = BASE_DIR / "data" / "processed_senegal"
 CAPEVERDE_DIR = BASE_DIR / "data" / "processed_capeverde"
+SOUTHAFRICA_DIR   = BASE_DIR / "data" / "processed_southafrica"
 
 COUNTRY_SITES_FILE = {
     "ghana":      PROCESSED_DIR  / "galamsey_sites.json",
@@ -55,6 +56,7 @@ COUNTRY_SITES_FILE = {
     "ivorycoast": IVORYCOAST_DIR / "ivorycoast_mining_sites.json",
     "senegal":    SENEGAL_DIR    / "senegal_mining_sites.json",
     "capeverde":  CAPEVERDE_DIR  / "capeverde_mining_sites.json",
+    "southafrica": SOUTHAFRICA_DIR / "southafrica_mining_sites.json",
 }
 
 COUNTRY_OUT_DIR = {
@@ -63,6 +65,7 @@ COUNTRY_OUT_DIR = {
     "ivorycoast": IVORYCOAST_DIR,
     "senegal":    SENEGAL_DIR,
     "capeverde":  CAPEVERDE_DIR,
+    "southafrica": SOUTHAFRICA_DIR,
 }
 
 # PNG prefix per country
@@ -72,6 +75,7 @@ COUNTRY_PNG_PREFIX = {
     "ivorycoast": "ivorycoast",
     "senegal":    "senegal",
     "capeverde":  "capeverde",
+    "southafrica": "southafrica",
 }
 
 CDSE_TOKEN_URL   = "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"

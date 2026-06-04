@@ -36,12 +36,16 @@ PROCESSED_DIR     = BASE_DIR / "data" / "processed"
 NIGERIA_DIR       = BASE_DIR / "data" / "processed_nigeria"
 IVORYCOAST_DIR    = BASE_DIR / "data" / "processed_ivorycoast"
 SENEGAL_DIR       = BASE_DIR / "data" / "processed_senegal"
+CAPEVERDE_DIR     = BASE_DIR / "data" / "processed_capeverde"
+SOUTHAFRICA_DIR   = BASE_DIR / "data" / "processed_southafrica"
 
 COUNTRY_OUT_DIRS = {
     "ghana":      PROCESSED_DIR,
     "nigeria":    NIGERIA_DIR,
     "ivorycoast": IVORYCOAST_DIR,
     "senegal":    SENEGAL_DIR,
+    "capeverde":  CAPEVERDE_DIR,
+    "southafrica": SOUTHAFRICA_DIR,
 }
 
 COUNTRY_CITIES = {
@@ -84,6 +88,14 @@ COUNTRY_CITIES = {
                         "bbox": [-25.10, 16.82, -24.90, 16.98]},
         "santa_maria": {"name": "Santa Maria", "region": "Sal",
                         "bbox": [-22.97, 16.56, -22.82, 16.68]},
+    },
+    "southafrica": {
+        "johannesburg": {"name": "Johannesburg", "region": "Gauteng",
+                         "bbox": [27.85, -26.40, 28.30, -26.00]},
+        "capetown":     {"name": "Cape Town",    "region": "Western Cape",
+                         "bbox": [18.20, -34.05, 18.65, -33.75]},
+        "durban":       {"name": "Durban",       "region": "KwaZulu-Natal",
+                         "bbox": [30.80, -30.00, 31.20, -29.70]},
     },
 }
 

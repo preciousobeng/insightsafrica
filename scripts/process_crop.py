@@ -27,6 +27,7 @@ NIGERIA_DIR       = BASE_DIR / "data" / "processed_nigeria"
 IVORYCOAST_DIR    = BASE_DIR / "data" / "processed_ivorycoast"
 SENEGAL_DIR       = BASE_DIR / "data" / "processed_senegal"
 CAPEVERDE_DIR     = BASE_DIR / "data" / "processed_capeverde"
+SOUTHAFRICA_DIR   = BASE_DIR / "data" / "processed_southafrica"
 
 COUNTRY_OUT_DIRS = {
     "ghana":      PROCESSED_DIR,
@@ -34,6 +35,7 @@ COUNTRY_OUT_DIRS = {
     "ivorycoast": IVORYCOAST_DIR,
     "senegal":    SENEGAL_DIR,
     "capeverde":  CAPEVERDE_DIR,
+    "southafrica": SOUTHAFRICA_DIR,
 }
 
 COUNTRY_BBOXES = {
@@ -42,6 +44,7 @@ COUNTRY_BBOXES = {
     "ivorycoast": {"west": -8.601,  "east": -2.493,  "south":  4.341,  "north": 10.740},
     "senegal":    {"west": -17.535, "east": -11.355, "south": 12.307, "north": 16.693},
     "capeverde":  {"west": -25.50,  "east": -22.60,  "south": 14.75,  "north": 17.25},
+    "southafrica": {"west": 16.0,   "east": 33.0,   "south": -35.0,  "north": -22.0},
 }
 
 COUNTRY_TILES = {
@@ -50,6 +53,7 @@ COUNTRY_TILES = {
     "ivorycoast": ["h16v07", "h16v08", "h17v07", "h17v08"],
     "senegal":    ["h16v07", "h16v08"],
     "capeverde":  ["h15v07"],
+    "southafrica": ["h19v11", "h20v11", "h19v12", "h20v12"],
 }
 
 DOY_TO_MONTH = {
@@ -86,6 +90,10 @@ def extract_ndvi(hdf_paths: list, bbox: dict) -> np.ndarray:
         "h17v08": {"west":  -5.0, "east":  8.4, "south":  0.0, "north": 10.0},
         "h18v07": {"west":   8.0, "east": 21.5, "south": 10.0, "north": 20.0},
         "h18v08": {"west":   8.0, "east": 21.5, "south":  0.0, "north": 10.0},
+        "h19v11": {"west":  20.0, "east": 35.0, "south": -30.0, "north": -20.0},
+        "h20v11": {"west":  35.0, "east": 50.0, "south": -30.0, "north": -20.0},
+        "h19v12": {"west":  20.0, "east": 35.0, "south": -40.0, "north": -30.0},
+        "h20v12": {"west":  35.0, "east": 50.0, "south": -40.0, "north": -30.0},
     }
 
     tiles = {}
@@ -133,8 +141,23 @@ def extract_ndvi(hdf_paths: list, bbox: dict) -> np.ndarray:
         return np.hstack([col_w, col_e])
 
     has_h15 = "h15v07" in tiles or "h15v08" in tiles
+    has_h19 = "h19v11" in tiles or "h19v12" in tiles
+    has_h20 = "h20v11" in tiles or "h20v12" in tiles
 
-    if has_h15 and not has_h16 and not has_h17 and not has_h18:
+    if has_h19 or has_h20:
+        # South Africa: h19 (west col) + h20 (east col), v11/v12 rows
+        col19 = col_mosaic("h19v11", "h19v12")
+        col20 = col_mosaic("h20v11", "h20v12")
+        if col19 is not None and col20 is not None:
+            mosaic = hstack_cols(col19, col20)
+            mb = {"west": 20.0, "east": 50.0, "south": -40.0, "north": -20.0}
+        elif col19 is not None:
+            mosaic = col19
+            mb = {"west": 20.0, "east": 35.0, "south": -40.0, "north": -20.0}
+        else:
+            mosaic = col20
+            mb = {"west": 35.0, "east": 50.0, "south": -40.0, "north": -20.0}
+    elif has_h15 and not has_h16 and not has_h17 and not has_h18:
         # Cape Verde: single tile h15v07
         mosaic = tiles["h15v07"] if "h15v07" in tiles else list(tiles.values())[0]
         mb = TILE_BOUNDS["h15v07"]

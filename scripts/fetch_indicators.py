@@ -114,6 +114,12 @@ COUNTRIES = {
         "iso3": "SEN",
         "output": "senegal_indicators.json",
     },
+    "southafrica": {
+        "name": "South Africa",
+        "wb_code": "ZA",
+        "iso3": "ZAF",
+        "output": "southafrica_indicators.json",
+    },
 }
 
 WB_BASE = "https://api.worldbank.org/v2/country"

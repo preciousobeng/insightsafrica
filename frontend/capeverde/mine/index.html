@@ -113,7 +113,7 @@
       </div>
       <div class="sidebar-section" id="change-chart-section" style="display:none;">
         <div class="section-label" id="chart-title">Vegetation &amp; Water Change Index</div>
-        <div style="position:relative; height:140px; width:100%;"><canvas id="change-chart"></canvas></div>
+        <div style="position:relative; height:200px; width:100%;"><canvas id="change-chart"></canvas></div>
       </div>
     </aside>
     <div id="map"></div>
@@ -126,7 +126,7 @@
       attribution: '© OpenStreetMap © CARTO', subdomains: 'abcd', maxZoom: 20,
     }).addTo(map);
 
-    let allSites = [], activeSite = null;
+    let allSites = [], activeSite = null, currentOverlay = null;
     const markerLayer = L.layerGroup().addTo(map);
 
     function setStatus(t) { document.getElementById('status-text').textContent = t; }
@@ -140,7 +140,16 @@
     function displaySite(site) {
       activeSite = site;
       updateSiteInfo(site);
-      map.setView([site.centre[1], site.centre[0]], 11);
+
+      if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
+
+      if (site.ndvi_png && site.leaflet_bounds) {
+        currentOverlay = L.imageOverlay('/cv-tiles/' + site.ndvi_png, site.leaflet_bounds, { opacity: 0.85 });
+        currentOverlay.addTo(map);
+        map.fitBounds(site.leaflet_bounds, { padding: [40, 40] });
+      } else {
+        map.setView([site.centre[1], site.centre[0]], 11);
+      }
     }
 
     function renderSiteList(sites) {

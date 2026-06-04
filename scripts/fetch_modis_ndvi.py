@@ -38,6 +38,7 @@ COUNTRY_BBOXES = {
     "nigeria":    {"west":  2.668,  "east": 14.678,  "south":  4.269,  "north": 13.872},
     "ivorycoast": {"west": -8.601,  "east": -2.493,  "south":  4.341,  "north": 10.740},
     "senegal":    {"west": -17.535, "east": -11.355, "south": 12.307, "north": 16.693},
+    "southafrica": {"west": 16.0,     "east": 33.0,    "south": -35.0,  "north": -22.0},
     "capeverde":  {"west": -25.50,  "east": -22.60,  "south": 14.75,  "north": 17.25},
 }
 
@@ -50,6 +51,7 @@ COUNTRY_TILES = {
     "nigeria":    ["h17v07", "h17v08", "h18v07", "h18v08"],
     "ivorycoast": ["h16v07", "h16v08", "h17v07", "h17v08"],
     "senegal":    ["h16v07"],
+    "southafrica": ["h19v11", "h20v11", "h19v12", "h20v12"],
     "capeverde":  ["h15v07"],
 }
 

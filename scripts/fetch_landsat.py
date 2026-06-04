@@ -143,6 +143,30 @@ COUNTRY_CITIES = {
             "centre": [16.600, -22.900],
         },
     ],
+
+    "southafrica": [
+        {
+            "id":     "johannesburg",
+            "name":   "Johannesburg",
+            "region": "Gauteng",
+            "bbox":   [27.8, -26.4, 28.3, -25.9],
+            "centre": [-26.2041, 28.0473],
+        },
+        {
+            "id":     "capetown",
+            "name":   "Cape Town",
+            "region": "Western Cape",
+            "bbox":   [18.2, -34.2, 18.8, -33.6],
+            "centre": [-33.9249, 18.4241],
+        },
+        {
+            "id":     "durban",
+            "name":   "Durban",
+            "region": "KwaZulu-Natal",
+            "bbox":   [30.8, -30.0, 31.3, -29.5],
+            "centre": [-29.8587, 31.0218],
+        },
+    ],
 }
 
 

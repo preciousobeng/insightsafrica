@@ -480,12 +480,14 @@
     }
 
     function displayLayer(layer, fromPlayer) {
-      if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
-
       if (layer.png) {
-        currentOverlay = L.imageOverlay(
-          '/ng-tiles/' + layer.png, layer.leaflet_bounds, { opacity: 0.8 }
-        ).addTo(map);
+        const prev = currentOverlay;
+        const next = L.imageOverlay('/za-tiles/' + layer.png, layer.leaflet_bounds, { opacity: 0 });
+        currentOverlay = next;
+        next.addTo(map);
+        const el = next.getElement();
+        const show = () => { next.setOpacity(0.8); if (prev) map.removeLayer(prev); };
+        if (el && el.complete) show(); else next.on('load', show);
         if (!fromPlayer) map.fitBounds(layer.leaflet_bounds, { padding: [20, 20] });
       }
 
@@ -749,6 +751,7 @@
         }
 
         renderLayerList();
+        allLayers.forEach(l => { if (l.png) { const i = new Image(); i.src = '/za-tiles/' + l.png; } });
         displayLayer(allLayers[allLayers.length - 1], false);
         setStatus('Live');
 

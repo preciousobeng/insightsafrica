@@ -191,6 +191,7 @@ NIGERIA_DIR       = BASE_DIR / "data" / "processed_nigeria"
 IVORYCOAST_DIR    = BASE_DIR / "data" / "processed_ivorycoast"
 SENEGAL_DIR       = BASE_DIR / "data" / "processed_senegal"
 CAPEVERDE_DIR     = BASE_DIR / "data" / "processed_capeverde"
+SOUTHAFRICA_DIR   = BASE_DIR / "data" / "processed_southafrica"
 INDICATORS_DIR    = BASE_DIR / "data" / "processed_indicators"
 FRONTEND_DIR      = BASE_DIR / "frontend"
 
@@ -1179,6 +1180,72 @@ def ivorycoast_indicators():
 def senegal_indicators():
     return _indicators_resp("senegal_indicators.json")
 
+@app.get("/api/indicators/southafrica")
+def southafrica_indicators():
+    return _indicators_resp("southafrica_indicators.json")
+
+
+# ── South Africa data routes ──────────────────────────────────────────────────
+@app.get("/api/southafrica/flood/layers")
+def sa_flood_layers():
+    """All processed CHIRPS rainfall layers for South Africa."""
+    layers = []
+    for f in sorted(SOUTHAFRICA_DIR.glob("chirps-*_southafrica.json")):
+        with open(f) as fh:
+            layers.append(json.load(fh))
+    return JSONResponse(content=layers)
+
+@app.get("/api/southafrica/mine/sites")
+def sa_mine_sites():
+    """Mining sites for South Africa."""
+    sites_path = SOUTHAFRICA_DIR / "southafrica_mining_sites.json"
+    if not sites_path.exists():
+        raise HTTPException(status_code=404, detail="No SA site data yet. Run fetch_sentinel2.py --country southafrica")
+    with open(sites_path) as f:
+        return JSONResponse(content=json.load(f))
+
+@app.get("/api/southafrica/crop/layers")
+def sa_crop_layers():
+    """All processed MODIS NDVI layers for South Africa."""
+    layers = []
+    for f in sorted(SOUTHAFRICA_DIR.glob("ndvi_*_southafrica.json")):
+        with open(f) as fh:
+            layers.append(json.load(fh))
+    return JSONResponse(content=layers)
+
+@app.get("/api/southafrica/heat/layers")
+def sa_heat_layers():
+    """All processed Landsat LST layers for South Africa cities."""
+    layers = []
+    for f in sorted(SOUTHAFRICA_DIR.glob("heat_*.json")):
+        with open(f) as fh:
+            layers.append(json.load(fh))
+    return JSONResponse(content=layers)
+
+@app.get("/api/southafrica/boundaries/{level}")
+def sa_boundaries(level: str):
+    if level not in ("provinces", "districts"):
+        raise HTTPException(status_code=400, detail="level must be 'provinces' or 'districts'")
+    path = SOUTHAFRICA_DIR / f"southafrica_{level}.geojson"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Boundary data not yet available")
+    with open(path) as f:
+        return JSONResponse(content=json.load(f))
+
+@app.get("/api/southafrica/flood/download/provinces.geojson")
+def sa_flood_provinces():
+    path = SOUTHAFRICA_DIR / "southafrica_provinces.geojson"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Not available")
+    return JSONResponse(content=json.loads(path.read_text()))
+
+@app.get("/api/southafrica/flood/download/districts.geojson")
+def sa_flood_districts():
+    path = SOUTHAFRICA_DIR / "southafrica_districts.geojson"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Not available")
+    return JSONResponse(content=json.loads(path.read_text()))
+
 
 # ── Static mounts — AFTER all API routes ──
 # Nigeria mounts MUST come before /nigeria root and before Ghana / root
@@ -1207,6 +1274,14 @@ app.mount("/senegal/heat",          StaticFiles(directory=str(FRONTEND_DIR / "se
 app.mount("/senegal/human",         StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "human"),    html=True), name="sn-human")
 app.mount("/senegal/profile",       StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "profile"),  html=True), name="sn-profile")
 app.mount("/senegal",               StaticFiles(directory=str(FRONTEND_DIR / "senegal"),              html=True), name="senegal")
+app.mount("/za-tiles",              StaticFiles(directory=str(SOUTHAFRICA_DIR)),                                       name="za-tiles")
+app.mount("/southafrica/flood",     StaticFiles(directory=str(FRONTEND_DIR / "southafrica" / "flood"),   html=True), name="za-flood")
+app.mount("/southafrica/mine",      StaticFiles(directory=str(FRONTEND_DIR / "southafrica" / "mine"),    html=True), name="za-mine")
+app.mount("/southafrica/crop",      StaticFiles(directory=str(FRONTEND_DIR / "southafrica" / "crop"),    html=True), name="za-crop")
+app.mount("/southafrica/heat",      StaticFiles(directory=str(FRONTEND_DIR / "southafrica" / "heat"),    html=True), name="za-heat")
+app.mount("/southafrica/human",     StaticFiles(directory=str(FRONTEND_DIR / "southafrica" / "human"),   html=True), name="za-human")
+app.mount("/southafrica/profile",   StaticFiles(directory=str(FRONTEND_DIR / "southafrica" / "profile"), html=True), name="za-profile")
+app.mount("/southafrica",           StaticFiles(directory=str(FRONTEND_DIR / "southafrica"),              html=True), name="southafrica")
 app.mount("/cv-tiles",              StaticFiles(directory=str(CAPEVERDE_DIR)),                                      name="cv-tiles")
 app.mount("/capeverde/flood",      StaticFiles(directory=str(FRONTEND_DIR / "capeverde" / "flood"),  html=True), name="cv-flood")
 app.mount("/capeverde/mine",       StaticFiles(directory=str(FRONTEND_DIR / "capeverde" / "mine"),   html=True), name="cv-mine")
