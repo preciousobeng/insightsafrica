@@ -1,0 +1,217 @@
+{
+  "meta": {
+    "version": "0.1-placeholder",
+    "note": "Drainage ratings and IFT values are preliminary estimates based on published government documents, World Bank project reports, and known infrastructure conditions. IFT (Infrastructure Failure Threshold) indicates the approximate percentage above the long-term mean monthly rainfall at which district drainage infrastructure historically fails. Values will be revised when NADMO flood event records and CHIRPS correlation analysis are completed.",
+    "sources": [
+      "AMA Annual Action Plan 2026 (Items 32, 34, 40, 49)",
+      "AMA Composite Budget 2025-2028",
+      "World Bank P119063 ISR Seq. 26 (Dec 2024) and Seq. 27 (Apr 2025)",
+      "World Bank PAD Report 76945-GH (May 2013)",
+      "Ministry of Water Resources and Sanitation MTEF PBB 2023-2026"
+    ],
+    "ratings": {
+      "Good": "Maintained drainage network with capacity broadly matching population density. Tolerates moderate rainfall anomalies without widespread flooding.",
+      "Moderate": "Partial or recently upgraded drainage. Some risk during high-anomaly months or sustained rainfall.",
+      "Poor": "Degraded, inadequate, or significantly encroached drainage. Floods at low-to-moderate rainfall anomalies.",
+      "None": "No formal drainage infrastructure recorded. Relies on surface runoff. Floods at marginal anomalies."
+    },
+    "updated": "2026-06-09"
+  },
+  "districts": {
+    "Accra|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 15,
+      "notes": "Colonial-era drainage network. Odaw River and Korle Lagoon primary corridors heavily silted and encroached. Network designed for ~200,000; population exceeds 2.5M in metro. AMA 2026 encroachment enforcement budget: GH¢85,000 (~$5,500 USD) for entire metropolis."
+    },
+    "AblekumaCentral|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 18,
+      "notes": "Dense urban residential area. Informal settlement expansion has blocked secondary and tertiary drains. Limited maintenance record."
+    },
+    "AblekumaNorth|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 20,
+      "notes": "Peri-urban mixed zone. Some newer infrastructure but patchy maintenance. Drainage condition not formally surveyed."
+    },
+    "AblekumaWest|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 17,
+      "notes": "High residential density, limited formal drainage. Flood risk elevated by proximity to Weija Dam catchment area."
+    },
+    "AdaEast|GreaterAccra": {
+      "drainage_rating": "None",
+      "ift_pct": 8,
+      "notes": "Coastal/lagoon area at Volta River estuary. Flood risk driven by tidal and riverine overflow in addition to rainfall. No formal urban drainage."
+    },
+    "AdaWest|GreaterAccra": {
+      "drainage_rating": "None",
+      "ift_pct": 8,
+      "notes": "Coastal district. Sea level and Volta backflow interaction means flooding can occur at below-normal rainfall. Minimal formal infrastructure."
+    },
+    "Adenta|GreaterAccra": {
+      "drainage_rating": "Moderate",
+      "ift_pct": 28,
+      "notes": "Planned residential suburb. Better-maintained drainage than inner-city districts. Risk rises during sustained multi-day rainfall events."
+    },
+    "Ashaiman|GreaterAccra": {
+      "drainage_rating": "Moderate",
+      "ift_pct": 25,
+      "notes": "Beneficiary of World Bank P119063 sanitation investment. Over 76,000 household toilets constructed across Greater Accra project area. Secondary drainage improved but capacity still under pressure."
+    },
+    "AyawasoCentral|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 17,
+      "notes": "Dense mid-city residential. Tertiary drains frequently blocked. Part of Odaw watershed where backflow is a recurring issue."
+    },
+    "AyawasoEast|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 16,
+      "notes": "Flood-prone low-lying areas near Accra central. Korle tributary drainage overloaded during peak wet season."
+    },
+    "AyawasoNorth|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 20,
+      "notes": "Mixed residential/commercial. Drainage infrastructure not commensurate with population density."
+    },
+    "AyawasoWest|GreaterAccra": {
+      "drainage_rating": "Moderate",
+      "ift_pct": 26,
+      "notes": "Relatively newer planned development zones in parts. Drainage varies by sub-area. Higher-income zones have better-maintained channels."
+    },
+    "GaCentral|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 15,
+      "notes": "Peri-urban coastal zone. High informal settlement density. Lagoon system limits natural drainage outlet."
+    },
+    "GaEast|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 18,
+      "notes": "Mixed urban-rural fringe. No comprehensive drainage survey. Secondary drains present but maintenance irregular."
+    },
+    "GaNorth|GreaterAccra": {
+      "drainage_rating": "None",
+      "ift_pct": 10,
+      "notes": "Largely rural fringe with minimal formal drainage. Surface runoff is primary flood pathway. Localised flooding common from moderate anomalies."
+    },
+    "GaSouth|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 14,
+      "notes": "Coastal district. Flood-prone from both rainfall overload and tidal backpressure into drainage outlets. Densifying rapidly with limited infrastructure upgrade."
+    },
+    "GaWest|GreaterAccra": {
+      "drainage_rating": "None",
+      "ift_pct": 10,
+      "notes": "Rural-urban transition zone. No formal urban drainage recorded. Weija Dam proximity adds flood risk during dam management events."
+    },
+    "Korle-Klottey|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 12,
+      "notes": "Sits on the Korle Lagoon — the primary receiving body for Accra's central drainage system. Lagoon heavily silted and encroached. Among the most flood-vulnerable districts in Ghana. Any significant rainfall anomaly results in lagoon overflow."
+    },
+    "Kpone-Katamanso|GreaterAccra": {
+      "drainage_rating": "Moderate",
+      "ift_pct": 25,
+      "notes": "Newer peri-urban development east of Tema. Some planned drainage. Industrialisation increasing impervious surface coverage."
+    },
+    "Krowor|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 14,
+      "notes": "Coastal zone with lagoon exposure. Informal fishing communities mixed with expanding urban development. Drainage investment has not tracked population growth."
+    },
+    "La-Dade-Kotopon|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 16,
+      "notes": "Coastal residential district. Lagoon and sea proximity creates compound flood risk. Tertiary drainage in poor condition."
+    },
+    "La-Nkwantanang-Madina|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 18,
+      "notes": "High-density suburban area. Rapid urbanisation has outpaced drainage provision. Flood episodes recorded in multiple wet seasons."
+    },
+    "Ledzokuku|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 14,
+      "notes": "Coastal district adjacent to Sakumono lagoon. Compound coastal-rainfall flood risk. One of Greater Accra's chronically flood-affected areas."
+    },
+    "Ningo-Prampram|GreaterAccra": {
+      "drainage_rating": "None",
+      "ift_pct": 10,
+      "notes": "Semi-rural coastal district. No formal drainage network. Designated as a growth corridor, but infrastructure provision is behind development pace."
+    },
+    "OkaikweiNorth|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 17,
+      "notes": "Dense inner-suburb. Odaw River watershed. Secondary drains regularly blocked by solid waste. Part of AMA desilting programme but condition remains poor."
+    },
+    "ShaiOsudoku|GreaterAccra": {
+      "drainage_rating": "None",
+      "ift_pct": 10,
+      "notes": "Rural district with no formal drainage. Volta River proximity creates riverine flood risk distinct from urban drainage failure."
+    },
+    "Tema|GreaterAccra": {
+      "drainage_rating": "Good",
+      "ift_pct": 38,
+      "notes": "Planned industrial city built in the 1960s with formal drainage infrastructure. Best-maintained drainage system in Greater Accra. Port infrastructure includes formal stormwater management. Risk rises under extreme events (>40% above LTM) or when silting reduces capacity."
+    },
+    "TemaWest|GreaterAccra": {
+      "drainage_rating": "Moderate",
+      "ift_pct": 28,
+      "notes": "Newer residential expansion zone west of Tema. Some planned drainage. Increasing density is eroding buffer capacity."
+    },
+    "WeijaGbawe|GreaterAccra": {
+      "drainage_rating": "Poor",
+      "ift_pct": 15,
+      "notes": "Rapidly urbanising district west of Accra. Weija Dam catchment downstream risk. Informal settlement on drainage corridors is a recorded issue."
+    },
+    "Tamale|Northern": {
+      "drainage_rating": "Poor",
+      "ift_pct": 16,
+      "notes": "Northern regional capital. Rapid population growth without commensurate drainage investment. Low-lying areas frequently flood during peak wet season (Jul-Sep). Urban drainage network inadequate for current city footprint."
+    },
+    "Kumbungu|Northern": {
+      "drainage_rating": "None",
+      "ift_pct": 10,
+      "notes": "Predominantly rural. No formal drainage. Annual flooding affects farmland and communities in lowland areas. July-September peak."
+    },
+    "Nanton|Northern": {
+      "drainage_rating": "None",
+      "ift_pct": 10,
+      "notes": "Rural district. No formal drainage infrastructure. Flood risk driven by surface runoff and seasonal river overflows."
+    },
+    "Tolon|Northern": {
+      "drainage_rating": "None",
+      "ift_pct": 10,
+      "notes": "Rural district adjacent to White Volta catchment. Seasonal flooding of farms and communities common. No urban drainage network."
+    },
+    "Kumasi|Ashanti": {
+      "drainage_rating": "Poor",
+      "ift_pct": 18,
+      "notes": "Ghana's second-largest city. Drainage network chronically overwhelmed during bimodal rainy seasons (Apr-Jun, Sep-Nov). Urbanisation of Subin and Aboabo rivers creating flood risk similar to Accra's Odaw/Korle system."
+    },
+    "HoMunicipal|Volta": {
+      "drainage_rating": "Poor",
+      "ift_pct": 18,
+      "notes": "Volta regional capital. Drainage infrastructure inadequate for urban growth. Volta River basin adds riverine flood risk component separate from urban drainage."
+    },
+    "KetaMunicipal|Volta": {
+      "drainage_rating": "None",
+      "ift_pct": 6,
+      "notes": "Coastal district on a narrow sand spit between the sea and Keta Lagoon. Existential flood risk from sea-level rise and storm surge in addition to rainfall. Among Ghana's most flood-vulnerable communities. Keta Sea Defence wall has reduced but not eliminated risk."
+    },
+    "Bolgatanga|UpperEast": {
+      "drainage_rating": "Poor",
+      "ift_pct": 16,
+      "notes": "Upper East regional capital. July-September rainfall season. Drainage underprovided relative to city growth. Compound risk from White Volta and Red Volta seasonal overflow."
+    },
+    "Bawku|UpperEast": {
+      "drainage_rating": "None",
+      "ift_pct": 10,
+      "notes": "Rural-urban frontier town. Minimal formal drainage. Flooding common in August-September. Close to Burkina Faso border — transboundary Volta catchment discharge adds risk."
+    },
+    "WaMunicipal|UpperWest": {
+      "drainage_rating": "Poor",
+      "ift_pct": 15,
+      "notes": "Upper West regional capital. Single rainy season (Jun-Sep). Drainage infrastructure minimal. Black Volta proximity adds riverine component. Annual flood displacement of communities is documented."
+    }
+  }
+}

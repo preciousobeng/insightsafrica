@@ -332,6 +332,28 @@
 
     .boundary-tooltip::before { display: none; }
 
+    /* ── Infrastructure tooltip badges ── */
+    .boundary-tooltip .tt-wrap { white-space: normal; min-width: 148px; }
+    .boundary-tooltip .tt-name { font-weight: 600; font-size: 0.8rem; }
+    .boundary-tooltip .tt-region { font-size: 0.68rem; color: #64748b; }
+    .boundary-tooltip .tt-divider { border: none; border-top: 1px solid #1e3a5f; margin: 0.3rem 0; }
+    .boundary-tooltip .tt-period { font-size: 0.68rem; color: #64748b; margin-bottom: 0.15rem; }
+    .boundary-tooltip .tt-stat { font-size: 0.75rem; }
+    .boundary-tooltip .infra-badge {
+      display: inline-block; margin-top: 0.3rem;
+      padding: 0.1rem 0.4rem; border-radius: 4px;
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.02em;
+    }
+    .boundary-tooltip .infra-badge.good     { background: rgba(34,197,94,0.15);  color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+    .boundary-tooltip .infra-badge.moderate { background: rgba(234,179,8,0.15);  color: #facc15; border: 1px solid rgba(234,179,8,0.25); }
+    .boundary-tooltip .infra-badge.poor     { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+    .boundary-tooltip .infra-badge.none-known { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.25); }
+    .boundary-tooltip .infra-ift { font-size: 0.68rem; color: #64748b; margin-top: 0.2rem; }
+    [data-theme="light"] .boundary-tooltip .tt-region,
+    [data-theme="light"] .boundary-tooltip .tt-period,
+    [data-theme="light"] .boundary-tooltip .infra-ift { color: #64748b; }
+    [data-theme="light"] .boundary-tooltip .tt-divider { border-top-color: #e2e8f0; }
+
     /* ── Theme toggle ── */
     .theme-toggle {
       background: none; border: 1px solid #1e3a5f; border-radius: 6px;
@@ -686,6 +708,7 @@
     const boundaryVisible = { regions: true, districts: false };
     const boundaryCache = {};
     let activeLayerStats = {};   // zonal_stats from the current rainfall layer
+    let infraData = {};          // district infrastructure ratings (ghana_infrastructure.json)
 
     const BOUNDARY_STYLES = {
       regions: {
@@ -711,30 +734,68 @@
       return geojson;
     }
 
+    async function loadInfraData() {
+      try {
+        const res = await fetch('/static/data/ghana_infrastructure.json');
+        if (res.ok) {
+          const json = await res.json();
+          infraData = json.districts || {};
+        }
+      } catch (e) { /* degrade gracefully — tooltip just omits infra block */ }
+    }
+
     function buildTooltipContent(feature, level, periodLabel) {
       const p = feature.properties;
       const stats = activeLayerStats[level] || {};
 
-      // Build lookup key matching Python output
       const key = (level === 'districts' && p.region)
         ? p.name + '|' + p.region
         : p.name;
 
       const areaStats = stats[key];
-      const header = level === 'districts'
-        ? p.name + '\n' + p.region + ' Region'
-        : p.name + ' Region';
 
-      if (!areaStats || areaStats.mean === null) {
-        return header + '\n\nNo data';
+      // Regions stay as plain text
+      if (level !== 'districts') {
+        const header = p.name + ' Region';
+        if (!areaStats || areaStats.mean === null) return header + '\n\nNo data';
+        return (
+          header +
+          '\n\n' + periodLabel +
+          '\nMean: ' + areaStats.mean + ' mm' +
+          '\nMax:  ' + areaStats.max  + ' mm' +
+          '\nMin:  ' + areaStats.min  + ' mm'
+        );
+      }
+
+      // Districts return HTML for richer infra context
+      const statsHtml = (!areaStats || areaStats.mean === null)
+        ? '<div class="tt-stat" style="color:#64748b">No rainfall data</div>'
+        : '<div class="tt-period">' + periodLabel + '</div>' +
+          '<div class="tt-stat">Mean: ' + areaStats.mean + ' mm</div>' +
+          '<div class="tt-stat">Max:&nbsp; ' + areaStats.max  + ' mm</div>' +
+          '<div class="tt-stat">Min:&nbsp; ' + areaStats.min  + ' mm</div>';
+
+      const infra = infraData[key];
+      let infraHtml = '';
+      if (infra) {
+        const ratingClass = infra.drainage_rating.toLowerCase().replace(/ /g, '-');
+        const badgeClass = ratingClass === 'none' ? 'none-known' : ratingClass;
+        infraHtml =
+          '<hr class="tt-divider">' +
+          '<span class="infra-badge ' + badgeClass + '">' + infra.drainage_rating + ' Drainage</span>' +
+          (infra.ift_pct != null
+            ? '<div class="infra-ift">Fails ~+' + infra.ift_pct + '% above LTM</div>'
+            : '<div class="infra-ift">IFT: pending data</div>');
       }
 
       return (
-        header +
-        '\n\n' + periodLabel +
-        '\nMean: ' + areaStats.mean + ' mm' +
-        '\nMax:  ' + areaStats.max  + ' mm' +
-        '\nMin:  ' + areaStats.min  + ' mm'
+        '<div class="tt-wrap">' +
+        '<div class="tt-name">' + p.name + '</div>' +
+        '<div class="tt-region">' + p.region + ' Region</div>' +
+        '<hr class="tt-divider">' +
+        statsHtml +
+        infraHtml +
+        '</div>'
       );
     }
 
@@ -785,7 +846,8 @@
       }
     }
 
-    // Load regions on startup
+    // Load regions and infrastructure data on startup
+    loadInfraData();
     showBoundary('regions', '');
 
     function setStatus(text) {
