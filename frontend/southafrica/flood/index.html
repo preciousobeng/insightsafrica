@@ -922,50 +922,50 @@
 
     // ── Bar chart ──
     let rainfallChart  = null;
-    let chartByYear    = {{}};
+    let chartByYear    = {};
     let chartYears     = [];
-    let chartAreaOpts  = null;   // null = national mean; {{key, level, label}} = area focus
+    let chartAreaOpts  = null;   // null = national mean; {key, level, label} = area focus
     let chartResetTimer = null;
     const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-    const YEAR_COLOURS = {{
-      2024: {{ bar: 'rgba(59,130,246,0.75)',  border: 'rgba(59,130,246,1)'  }},
-      2025: {{ bar: 'rgba(6,182,212,0.75)',   border: 'rgba(6,182,212,1)'   }},
-      2026: {{ bar: 'rgba(168,85,247,0.75)',  border: 'rgba(168,85,247,1)'  }},
-    }};
+    const YEAR_COLOURS = {
+      2024: { bar: 'rgba(59,130,246,0.75)',  border: 'rgba(59,130,246,1)'  },
+      2025: { bar: 'rgba(6,182,212,0.75)',   border: 'rgba(6,182,212,1)'   },
+      2026: { bar: 'rgba(168,85,247,0.75)',  border: 'rgba(168,85,247,1)'  },
+    };
 
-    function _chartDataFor(l, areaOpts) {{
+    function _chartDataFor(l, areaOpts) {
       if (!l) return null;
       if (!areaOpts) return l.rainfall_mm.mean;
       return l.zonal_stats?.[areaOpts.level]?.[areaOpts.key]?.mean ?? null;
-    }}
+    }
 
-    function updateChartArea(areaOpts) {{
+    function updateChartArea(areaOpts) {
       if (!rainfallChart) return;
       chartAreaOpts = areaOpts;
-      rainfallChart.data.datasets.forEach((ds, i) => {{
+      rainfallChart.data.datasets.forEach((ds, i) => {
         const year = chartYears[i];
         ds.data = (chartByYear[year] || []).map(l => _chartDataFor(l, areaOpts));
-      }});
+      });
       const sub = document.getElementById('chart-subtitle');
       sub.textContent = areaOpts
         ? areaOpts.label + ' — move away to reset'
         : 'South Africa national mean — hover a boundary';
       rainfallChart.update('none');
-    }}
+    }
 
-    function buildChart(layerData) {{
-      chartByYear = {{}};
-      layerData.forEach(l => {{
+    function buildChart(layerData) {
+      chartByYear = {};
+      layerData.forEach(l => {
         const y = l.year;
         if (!chartByYear[y]) chartByYear[y] = Array(12).fill(null);
         chartByYear[y][(l.month || 1) - 1] = l;
-      }});
+      });
       chartYears = Object.keys(chartByYear).sort();
 
-      const datasets = chartYears.map(year => {{
-        const colour = YEAR_COLOURS[year] || {{ bar: 'rgba(148,163,184,0.7)', border: '#94a3b8' }};
-        return {{
+      const datasets = chartYears.map(year => {
+        const colour = YEAR_COLOURS[year] || { bar: 'rgba(148,163,184,0.7)', border: '#94a3b8' };
+        return {
           label: String(year),
           data: chartByYear[year].map(l => _chartDataFor(l, null)),
           backgroundColor: colour.bar,
@@ -973,63 +973,63 @@
           borderWidth: 1,
           borderRadius: 3,
           borderSkipped: false,
-        }};
-      }});
+        };
+      });
 
       const ctx = document.getElementById('rainfall-chart').getContext('2d');
       if (rainfallChart) rainfallChart.destroy();
 
-      rainfallChart = new Chart(ctx, {{
+      rainfallChart = new Chart(ctx, {
         type: 'bar',
-        data: {{ labels: MONTH_SHORT, datasets }},
-        options: {{
+        data: { labels: MONTH_SHORT, datasets },
+        options: {
           responsive: true,
           maintainAspectRatio: false,
-          onClick: (event, elements) => {{
+          onClick: (event, elements) => {
             if (!elements.length) return;
             const el = elements[0];
             const monthIdx = el.index;
             const year = parseInt(chartYears[el.datasetIndex], 10);
             const match = layers.find(l => l.year === year && l.month === monthIdx + 1);
-            if (match) {{
+            if (match) {
               pause();
               hideMapBadge();
               displayLayer(match, false);
-              document.querySelectorAll('.layer-btn[data-index]').forEach(b => {{
+              document.querySelectorAll('.layer-btn[data-index]').forEach(b => {
                 b.classList.toggle('active', layers[parseInt(b.dataset.index, 10)] === match);
-              }});
+              });
               const yearGroups = document.querySelectorAll('.year-header');
-              yearGroups.forEach(header => {{
-                if (header.firstChild.textContent === String(year)) {{
+              yearGroups.forEach(header => {
+                if (header.firstChild.textContent === String(year)) {
                   const monthList = header.nextElementSibling;
-                  if (monthList.classList.contains('collapsed')) {{
+                  if (monthList.classList.contains('collapsed')) {
                     monthList.classList.remove('collapsed');
                     header.lastChild.textContent = '▼';
-                  }}
-                }}
-              }});
-            }}
-          }},
-          plugins: {{
-            legend: {{
+                  }
+                }
+              });
+            }
+          },
+          plugins: {
+            legend: {
               display: true,
-              labels: {{ color: '#64748b', font: {{ size: 10 }}, boxWidth: 12, padding: 10 }},
-            }},
-            tooltip: {{
+              labels: { color: '#64748b', font: { size: 10 }, boxWidth: 12, padding: 10 },
+            },
+            tooltip: {
               backgroundColor: 'rgba(13,21,39,0.95)',
               borderColor: '#1e3a5f',
               borderWidth: 1,
               titleColor: '#38bdf8',
               bodyColor: '#94a3b8',
               padding: 10,
-              callbacks: {{
+              callbacks: {
                 title: (items) => MONTH_SHORT[items[0].dataIndex],
-                label: (item) => {{
+                label: (item) => {
                   const year = chartYears[item.datasetIndex];
                   const monthIdx = item.dataIndex;
                   const l = chartByYear[year][monthIdx];
                   if (!l) return item.dataset.label + ': no data';
-                  if (chartAreaOpts) {{
+                  if (chartAreaOpts) {
                     const zs = l.zonal_stats?.[chartAreaOpts.level]?.[chartAreaOpts.key];
                     if (!zs?.mean) return [year + ': no data for this area'];
                     return [
@@ -1037,29 +1037,29 @@
                       year + ' max:  ' + zs.max.toFixed(1)  + ' mm',
                       year + ' min:  ' + zs.min.toFixed(1)  + ' mm',
                     ];
-                  }}
+                  }
                   return [
                     year + ' mean: ' + l.rainfall_mm.mean.toFixed(1) + ' mm',
                     year + ' max:  ' + l.rainfall_mm.max.toFixed(1)  + ' mm',
                   ];
-                }},
-              }},
-            }},
-          }},
-          scales: {{
-            x: {{
-              grid: {{ color: 'rgba(255,255,255,0.04)' }},
-              ticks: {{ color: '#64748b', font: {{ size: 9 }} }},
-            }},
-            y: {{
-              grid: {{ color: 'rgba(255,255,255,0.06)' }},
-              ticks: {{ color: '#64748b', font: {{ size: 9 }}, callback: (v) => v + ' mm' }},
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.04)' },
+              ticks: { color: '#64748b', font: { size: 9 } },
+            },
+            y: {
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              ticks: { color: '#64748b', font: { size: 9 }, callback: (v) => v + ' mm' },
               beginAtZero: true,
-            }},
-          }},
-        }},
-      }});
-    }}
+            },
+          },
+        },
+      });
+    }
 
     async function loadLayers() {
       showLayerMessage('Loading layers\u2026');
