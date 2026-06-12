@@ -1188,10 +1188,29 @@ def southafrica_indicators():
 
 # ── Anomaly + baseline routes ────────────────────────────────────────────────
 
+_ARCHIVE_COUNTRIES = {
+    "ghana", "nigeria", "ivorycoast", "senegal", "capeverde", "southafrica"
+}
+
+
+def _validate_country(country: str) -> None:
+    if country not in _ARCHIVE_COUNTRIES:
+        raise HTTPException(status_code=404, detail=f"Unknown country: {country}")
+
+
+def _safe_path(path: Path) -> Path:
+    """Resolve path and assert it stays within ARCHIVE_DIR."""
+    resolved = path.resolve()
+    if not resolved.is_relative_to(ARCHIVE_DIR.resolve()):
+        raise HTTPException(status_code=400, detail="Invalid path")
+    return resolved
+
+
 @app.get("/api/{country}/flood/baseline")
 def flood_baseline(country: str):
     """WMO 1991-2020 LTM baseline for the given country."""
-    path = ARCHIVE_DIR / country / f"{country}_ltm_1991_2020.json"
+    _validate_country(country)
+    path = _safe_path(ARCHIVE_DIR / country / f"{country}_ltm_1991_2020.json")
     if not path.exists():
         raise HTTPException(
             status_code=404,
@@ -1203,9 +1222,12 @@ def flood_baseline(country: str):
 @app.get("/api/{country}/flood/anomaly/{year}/{month}")
 def flood_anomaly(country: str, year: int, month: int):
     """Pre-computed rainfall anomaly vs WMO LTM baseline for a given month."""
+    _validate_country(country)
     if not 1 <= month <= 12:
         raise HTTPException(status_code=400, detail="month must be 1-12")
-    path = ARCHIVE_DIR / country / "anomaly" / f"chirps-v2.0.{year}.{month:02d}_{country}_anomaly.json"
+    path = _safe_path(
+        ARCHIVE_DIR / country / "anomaly" / f"chirps-v2.0.{year}.{month:02d}_{country}_anomaly.json"
+    )
     if not path.exists():
         raise HTTPException(
             status_code=404,
@@ -1217,7 +1239,8 @@ def flood_anomaly(country: str, year: int, month: int):
 @app.get("/api/{country}/flood/anomaly")
 def flood_anomaly_index(country: str):
     """List all available anomaly months for a country."""
-    anomaly_dir = ARCHIVE_DIR / country / "anomaly"
+    _validate_country(country)
+    anomaly_dir = _safe_path(ARCHIVE_DIR / country / "anomaly")
     if not anomaly_dir.exists():
         raise HTTPException(status_code=404, detail=f"No anomaly data for {country}")
     months = []
