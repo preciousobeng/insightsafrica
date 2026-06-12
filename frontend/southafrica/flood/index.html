@@ -106,6 +106,12 @@
     .stat-value  { font-size: 0.9rem; font-weight: 600; color: #f1f5f9; }
     .stat-value.highlight { color: #38bdf8; }
 
+
+    .al-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
+    .al-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+    .al-label  { font-size: 0.73rem; color: #94a3b8; }
+    [data-theme="light"] .al-label { color: #475569; }
+
     .legend-bar {
       height: 12px;
       border-radius: 6px;
@@ -428,6 +434,7 @@
           <span class="stat-label">Period</span>
           <span class="stat-value highlight" id="layer-label">—</span>
         </div>
+        <div id="rainfall-stats-rows">
         <div class="stat-row">
           <span class="stat-label">Min rainfall</span>
           <span class="stat-value" id="rain-min">—</span>
@@ -440,15 +447,42 @@
           <span class="stat-label">Mean rainfall</span>
           <span class="stat-value" id="rain-mean">—</span>
         </div>
+        </div>
+        <div id="anomaly-stats-rows" style="display:none;">
+          <div class="stat-row">
+            <span class="stat-label">Reference</span>
+            <span class="stat-value" id="anomaly-ref" style="font-size:0.78rem;">1991–2020 LTM</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Below normal</span>
+            <span class="stat-value" id="anomaly-drought-pct">—</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Above normal</span>
+            <span class="stat-value" id="anomaly-wet-pct">—</span>
+          </div>
+        </div>
       </div>
 
-      <div class="sidebar-section">
+      <div class="sidebar-section" id="rainfall-legend-section">
         <div class="section-label">Rainfall Scale (mm)</div>
         <div class="legend-bar"></div>
         <div class="legend-labels">
           <span>0</span>
           <span id="legend-mid">—</span>
           <span id="legend-max">—</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section" id="anomaly-legend-section" style="display:none;">
+        <div class="section-label">Anomaly vs LTM (1991–2020)</div>
+        <div>
+          <div class="al-row"><span class="al-swatch" style="background:#b91c1c"></span><span class="al-label">Severe drought (&lt;&minus;50%)</span></div>
+          <div class="al-row"><span class="al-swatch" style="background:#ef4444"></span><span class="al-label">Moderate drought (&minus;50 to &minus;25%)</span></div>
+          <div class="al-row"><span class="al-swatch" style="background:#f97316"></span><span class="al-label">Mild drought (&minus;25 to &minus;10%)</span></div>
+          <div class="al-row"><span class="al-swatch" style="background:#64748b"></span><span class="al-label">Near normal (&plusmn;10%)</span></div>
+          <div class="al-row"><span class="al-swatch" style="background:#38bdf8"></span><span class="al-label">Above normal (+10 to +25%)</span></div>
+          <div class="al-row"><span class="al-swatch" style="background:#1d4ed8"></span><span class="al-label">Well above normal (&gt;+25%)</span></div>
         </div>
       </div>
 
@@ -459,6 +493,14 @@
         </div>
         <div style="position:relative; height:140px; width:100%;">
           <canvas id="rainfall-chart"></canvas>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-label">View Mode</div>
+        <div style="display:flex; gap:0.4rem;">
+          <button class="layer-btn active" id="btn-mode-rainfall" onclick="setViewMode('rainfall')" style="flex:1;text-align:center;">Rainfall</button>
+          <button class="layer-btn" id="btn-mode-anomaly" onclick="setViewMode('anomaly')" style="flex:1;text-align:center;">Anomaly vs LTM</button>
         </div>
       </div>
 
