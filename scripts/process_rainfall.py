@@ -194,6 +194,7 @@ def compute_zonal_stats(tif_path: Path, country: str = "ghana") -> dict:
             str(tif_path),
             stats=["mean", "max", "min"],
             nodata=-9999,
+            all_touched=True,
             geojson_out=False,
         )
 

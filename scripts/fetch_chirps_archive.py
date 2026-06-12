@@ -174,6 +174,7 @@ def compute_stats(clipped_tif: Path, country: str) -> dict:
             str(clipped_tif),
             stats=["mean", "max", "min"],
             nodata=-9999,
+            all_touched=True,
             geojson_out=False,
         )
 
