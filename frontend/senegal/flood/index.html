@@ -620,21 +620,13 @@
         const catLabel = ANOMALY_LABELS[(entry && entry.category)] || 'No data';
 
         if (level !== 'districts') {
-          if (!entry) return p.name + ' Region
-
-No anomaly data';
+          if (!entry) return p.name + ' Region\n\nNo anomaly data';
           const sign = entry.anomaly_pct >= 0 ? '+' : '';
-          return p.name + ' Region
-
-' + periodLabel +
-            '
-Actual: ' + entry.actual + ' mm' +
-            '
-LTM:    ' + entry.ltm    + ' mm' +
-            '
-Anomaly: ' + sign + entry.anomaly_pct + '%' +
-            '
-' + catLabel;
+          return p.name + ' Region\n\n' + periodLabel +
+            '\nActual: ' + entry.actual + ' mm' +
+            '\nLTM:    ' + entry.ltm    + ' mm' +
+            '\nAnomaly: ' + sign + entry.anomaly_pct + '%' +
+            '\n' + catLabel;
         }
         const sign = entry && entry.anomaly_pct >= 0 ? '+' : '';
         return (
@@ -660,20 +652,13 @@ Anomaly: ' + sign + entry.anomaly_pct + '%' +
 
       if (level !== 'districts') {
         const header = p.name + ' Region';
-        if (!areaStats || areaStats.mean === null) return header + '
-
-No data';
+        if (!areaStats || areaStats.mean === null) return header + '\n\nNo data';
         return (
           header +
-          '
-
-' + periodLabel +
-          '
-Mean: ' + areaStats.mean + ' mm' +
-          '
-Max:  ' + areaStats.max  + ' mm' +
-          '
-Min:  ' + areaStats.min  + ' mm'
+          '\n\n' + periodLabel +
+          '\nMean: ' + areaStats.mean + ' mm' +
+          '\nMax:  ' + areaStats.max  + ' mm' +
+          '\nMin:  ' + areaStats.min  + ' mm'
         );
       }
 
