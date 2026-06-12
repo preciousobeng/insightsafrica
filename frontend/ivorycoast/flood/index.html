@@ -609,28 +609,102 @@
 
     function buildTooltipContent(feature, level, periodLabel) {
       const p = feature.properties;
-      const stats = activeLayerStats[level] || {};
-
-      // Build lookup key matching Python output
-      const key = (level === 'regions' && p.district)
-        ? p.name + '|' + p.district
+      const key = (level === 'districts' && p.region)
+        ? p.name + '|' + p.region
         : p.name;
 
-      const areaStats = stats[key];
-      const header = level === 'regions'
-        ? p.name + '\n' + p.district + ' District'
-        : p.name + ' District';
+      // ── Anomaly mode ──
+      if (viewMode === 'anomaly' && currentAnomalyData) {
+        const entry = (currentAnomalyData.anomaly[level] || {})[key];
+        const catColor = ANOMALY_COLORS[(entry && entry.category) || 'no_baseline'];
+        const catLabel = ANOMALY_LABELS[(entry && entry.category)] || 'No data';
 
-      if (!areaStats || areaStats.mean === null) {
-        return header + '\n\nNo data';
+        if (level !== 'districts') {
+          if (!entry) return p.name + ' Region
+
+No anomaly data';
+          const sign = entry.anomaly_pct >= 0 ? '+' : '';
+          return p.name + ' Region
+
+' + periodLabel +
+            '
+Actual: ' + entry.actual + ' mm' +
+            '
+LTM:    ' + entry.ltm    + ' mm' +
+            '
+Anomaly: ' + sign + entry.anomaly_pct + '%' +
+            '
+' + catLabel;
+        }
+        const sign = entry && entry.anomaly_pct >= 0 ? '+' : '';
+        return (
+          '<div class="tt-wrap">' +
+          '<div class="tt-name">' + p.name + '</div>' +
+          '<div class="tt-region">' + p.region + ' Region</div>' +
+          '<hr class="tt-divider">' +
+          (entry
+            ? '<div class="tt-period">' + periodLabel + ' vs 1991–2020 LTM</div>' +
+              '<div class="tt-stat">Actual:&nbsp; ' + entry.actual + ' mm</div>' +
+              '<div class="tt-stat">LTM:&nbsp;&nbsp;&nbsp;&nbsp; ' + entry.ltm + ' mm</div>' +
+              '<div class="tt-stat">Anomaly: <strong style="color:' + catColor + '">' + sign + entry.anomaly_pct + '%</strong></div>' +
+              (entry.z_score !== null ? '<div class="tt-stat" style="color:#64748b">z = ' + entry.z_score + '</div>' : '') +
+              '<div class="infra-badge" style="margin-top:0.3rem;background:' + catColor + '22;color:' + catColor + ';border:1px solid ' + catColor + '44">' + catLabel + '</div>'
+            : '<div class="tt-stat" style="color:#64748b">No anomaly data</div>') +
+          '</div>'
+        );
+      }
+
+      // ── Rainfall mode ──
+      const stats = activeLayerStats[level] || {};
+      const areaStats = stats[key];
+
+      if (level !== 'districts') {
+        const header = p.name + ' Region';
+        if (!areaStats || areaStats.mean === null) return header + '
+
+No data';
+        return (
+          header +
+          '
+
+' + periodLabel +
+          '
+Mean: ' + areaStats.mean + ' mm' +
+          '
+Max:  ' + areaStats.max  + ' mm' +
+          '
+Min:  ' + areaStats.min  + ' mm'
+        );
+      }
+
+      const statsHtml = (!areaStats || areaStats.mean === null)
+        ? '<div class="tt-stat" style="color:#64748b">No rainfall data</div>'
+        : '<div class="tt-period">' + periodLabel + '</div>' +
+          '<div class="tt-stat">Mean: ' + areaStats.mean + ' mm</div>' +
+          '<div class="tt-stat">Max:&nbsp; ' + areaStats.max  + ' mm</div>' +
+          '<div class="tt-stat">Min:&nbsp; ' + areaStats.min  + ' mm</div>';
+
+      const infra = infraData[key];
+      let infraHtml = '';
+      if (infra) {
+        const ratingClass = infra.drainage_rating.toLowerCase().replace(/ /g, '-');
+        const badgeClass = ratingClass === 'none' ? 'none-known' : ratingClass;
+        infraHtml =
+          '<hr class="tt-divider">' +
+          '<span class="infra-badge ' + badgeClass + '">' + infra.drainage_rating + ' Drainage</span>' +
+          (infra.ift_pct != null
+            ? '<div class="infra-ift">Fails ~+' + infra.ift_pct + '% above LTM</div>'
+            : '<div class="infra-ift">IFT: pending data</div>');
       }
 
       return (
-        header +
-        '\n\n' + periodLabel +
-        '\nMean: ' + areaStats.mean + ' mm' +
-        '\nMax:  ' + areaStats.max  + ' mm' +
-        '\nMin:  ' + areaStats.min  + ' mm'
+        '<div class="tt-wrap">' +
+        '<div class="tt-name">' + p.name + '</div>' +
+        '<div class="tt-region">' + p.region + ' Region</div>' +
+        '<hr class="tt-divider">' +
+        statsHtml +
+        infraHtml +
+        '</div>'
       );
     }
 
@@ -1057,6 +1131,102 @@
           },
         },
       });
+    }
+
+    // ── Anomaly layer functions ────────────────────────────────────────────
+
+    function setViewMode(mode) {
+      viewMode = mode;
+      document.getElementById('btn-mode-rainfall').classList.toggle('active', mode === 'rainfall');
+      document.getElementById('btn-mode-anomaly').classList.toggle('active', mode === 'anomaly');
+      document.getElementById('rainfall-legend-section').style.display  = mode === 'rainfall' ? '' : 'none';
+      document.getElementById('anomaly-legend-section').style.display   = mode === 'anomaly'  ? '' : 'none';
+      document.getElementById('rainfall-stats-rows').style.display      = mode === 'rainfall' ? '' : 'none';
+      document.getElementById('anomaly-stats-rows').style.display       = mode === 'anomaly'  ? '' : 'none';
+
+      const activeLayer = layers.length
+        ? (playerLayers.length ? playerLayers[playerIndex] : layers[layers.length - 1])
+        : null;
+
+      if (mode === 'anomaly') {
+        if (currentOverlay) currentOverlay.setOpacity(0);
+        if (activeLayer) loadAndApplyAnomaly(activeLayer.year, activeLayer.month);
+      } else {
+        if (currentOverlay) currentOverlay.setOpacity(0.8);
+        clearAnomalyStyle('regions');
+        clearAnomalyStyle('districts');
+        currentAnomalyData = null;
+        const label = document.getElementById('layer-label').textContent;
+        refreshTooltips('regions', label);
+        refreshTooltips('districts', label);
+      }
+    }
+
+    async function loadAndApplyAnomaly(year, month) {
+      const cacheKey = year + '-' + String(month).padStart(2, '0');
+      if (!anomalyCache[cacheKey]) {
+        try {
+          const res = await fetch('/api/ivorycoast/flood/anomaly/' + year + '/' + month);
+          if (!res.ok) throw new Error(res.status);
+          anomalyCache[cacheKey] = await res.json();
+        } catch (e) {
+          console.warn('No anomaly data for', cacheKey, e);
+          return;
+        }
+      }
+      currentAnomalyData = anomalyCache[cacheKey];
+
+      if (!boundaryLayers['districts']) {
+        await showBoundary('districts', document.getElementById('layer-label').textContent);
+      }
+
+      applyAnomalyStyle('regions');
+      applyAnomalyStyle('districts');
+
+      const label = document.getElementById('layer-label').textContent;
+      refreshTooltips('regions', label);
+      refreshTooltips('districts', label);
+      updateAnomalySummary();
+    }
+
+    function applyAnomalyStyle(level) {
+      if (!boundaryLayers[level] || !currentAnomalyData) return;
+      const anomalyLevel = currentAnomalyData.anomaly[level] || {};
+      boundaryLayers[level].eachLayer(featureLayer => {
+        const p   = featureLayer.feature.properties;
+        const key = (level === 'districts' && p.region) ? p.name + '|' + p.region : p.name;
+        const entry = anomalyLevel[key];
+        const cat   = (entry && entry.category) || 'no_baseline';
+        featureLayer.setStyle({
+          fillColor:   ANOMALY_COLORS[cat],
+          fillOpacity: 0.72,
+          color:       level === 'regions' ? '#ffffff' : '#94a3b8',
+          weight:      level === 'regions' ? 1.8 : 0.6,
+          opacity:     0.8,
+        });
+      });
+    }
+
+    function clearAnomalyStyle(level) {
+      if (!boundaryLayers[level]) return;
+      boundaryLayers[level].setStyle(BOUNDARY_STYLES[level]);
+    }
+
+    function updateAnomalySummary() {
+      if (!currentAnomalyData) return;
+      const districtData = currentAnomalyData.anomaly.districts || {};
+      const counts = {};
+      Object.values(districtData).forEach(v => {
+        counts[v.category] = (counts[v.category] || 0) + 1;
+      });
+      const total = Object.values(counts).reduce((a, b) => a + b, 0);
+      if (!total) return;
+      const droughtN = (counts.severe_drought || 0) + (counts.moderate_drought || 0) + (counts.mild_drought || 0);
+      const wetN     = (counts.above_normal || 0) + (counts.well_above_normal || 0);
+      document.getElementById('anomaly-drought-pct').textContent =
+        Math.round(droughtN / total * 100) + '% of districts';
+      document.getElementById('anomaly-wet-pct').textContent =
+        Math.round(wetN / total * 100) + '% of districts';
     }
 
     async function loadLayers() {

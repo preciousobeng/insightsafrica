@@ -195,72 +195,92 @@ def compute_stats(clipped_tif: Path, country: str) -> dict:
     return result
 
 
-def process_month(year: int, month: int, country: str, archive_dir: Path, tmp_dir: Path) -> bool:
-    stem = f"chirps-v2.0.{year}.{month:02d}_{country}"
-    tif_out  = archive_dir / "tifs"  / f"{stem}.tif"
-    json_out = archive_dir / "stats" / f"{stem}.json"
+def process_month_multi(year: int, month: int, countries: list, tmp_dir: Path) -> dict:
+    """
+    Download the global TIF once, then clip + compute stats for each country.
+    Returns dict mapping country -> True/False.
+    Skips countries whose output JSON already exists.
+    """
+    # Check which countries still need processing
+    pending = []
+    for country in countries:
+        json_out = BASE_DIR / "data" / "archive" / country / "stats" / f"chirps-v2.0.{year}.{month:02d}_{country}.json"
+        if json_out.exists():
+            print(f"  {country}: already done, skipping", flush=True)
+        else:
+            pending.append(country)
 
-    if json_out.exists():
-        print(f"  {year}-{month:02d}: already done, skipping", flush=True)
-        return True
+    if not pending:
+        return {c: True for c in countries}
 
     t0 = time.time()
     global_tif = download_global_tif(year, month, tmp_dir)
     if global_tif is None:
-        return False
+        return {c: False for c in pending}
 
-    clipped = clip_to_country(global_tif, country, tif_out)
-    if clipped is None:
-        global_tif.unlink(missing_ok=True)
-        return False
+    results = {c: True for c in countries}
+    for country in pending:
+        archive_dir = BASE_DIR / "data" / "archive" / country
+        stem    = f"chirps-v2.0.{year}.{month:02d}_{country}"
+        tif_out = archive_dir / "tifs"  / f"{stem}.tif"
+        json_out = archive_dir / "stats" / f"{stem}.json"
 
-    print(f"  Computing zonal stats ...", flush=True)
-    zonal = compute_stats(clipped, country)
+        clipped = clip_to_country(global_tif, country, tif_out)
+        if clipped is None:
+            results[country] = False
+            continue
 
-    payload = {
-        "country": country,
-        "year":  year,
-        "month": month,
-        "zonal_stats": zonal,
-    }
-    json_out.parent.mkdir(parents=True, exist_ok=True)
-    with open(json_out, "w") as f:
-        json.dump(payload, f, separators=(",", ":"))
+        print(f"  [{country}] computing zonal stats ...", flush=True)
+        zonal = compute_stats(clipped, country)
+        payload = {"country": country, "year": year, "month": month, "zonal_stats": zonal}
+        json_out.parent.mkdir(parents=True, exist_ok=True)
+        with open(json_out, "w") as f:
+            json.dump(payload, f, separators=(",", ":"))
+        print(f"  [{country}] saved {json_out.name}", flush=True)
 
     global_tif.unlink(missing_ok=True)
     elapsed = time.time() - t0
-    print(f"  {year}-{month:02d} done in {elapsed:.0f}s — saved {json_out.name}", flush=True)
-    return True
+    print(f"  {year}-{month:02d} completed in {elapsed:.0f}s", flush=True)
+    return results
 
 
 def main():
     today = date.today()
     default_end = f"{today.year}-{today.month:02d}"
+    all_countries = list(COUNTRY_BBOXES.keys())
 
-    parser = argparse.ArgumentParser(description="Fetch CHIRPS archive for one country")
-    parser.add_argument("--country", choices=list(COUNTRY_BBOXES), default="ghana")
-    parser.add_argument("--start",   default="1981-01",     help="Start month YYYY-MM")
-    parser.add_argument("--end",     default=default_end,   help="End month YYYY-MM (inclusive)")
+    parser = argparse.ArgumentParser(description="Fetch CHIRPS archive — one or multiple countries")
+    parser.add_argument("--country",   choices=all_countries + ["all"], default=None,
+                        help="Single country (or 'all')")
+    parser.add_argument("--countries", nargs="+", choices=all_countries,
+                        help="Multiple countries — shares each global TIF download")
+    parser.add_argument("--start",  default="1981-01",   help="Start month YYYY-MM")
+    parser.add_argument("--end",    default=default_end, help="End month YYYY-MM (inclusive)")
     args = parser.parse_args()
 
-    archive_dir = BASE_DIR / "data" / "archive" / args.country
-    tmp_dir     = BASE_DIR / "data" / "raw" / "chirps_tmp"
+    if args.countries:
+        countries = args.countries
+    elif args.country == "all":
+        countries = all_countries
+    elif args.country:
+        countries = [args.country]
+    else:
+        countries = ["ghana"]
+
+    tmp_dir = BASE_DIR / "data" / "raw" / "chirps_tmp"
     tmp_dir.mkdir(parents=True, exist_ok=True)
 
     months = list(month_range(args.start, args.end))
-    print(f"Archive fetch: {args.country} | {args.start} → {args.end} | {len(months)} months", flush=True)
+    print(f"Archive fetch: {', '.join(countries)} | {args.start} → {args.end} | {len(months)} months", flush=True)
 
-    done = 0
-    failed = 0
+    done = failed = 0
     for i, (year, month) in enumerate(months, 1):
         print(f"\n[{i}/{len(months)}] {year}-{month:02d}", flush=True)
-        ok = process_month(year, month, args.country, archive_dir, tmp_dir)
-        if ok:
-            done += 1
-        else:
-            failed += 1
+        results = process_month_multi(year, month, countries, tmp_dir)
+        done   += sum(1 for v in results.values() if v)
+        failed += sum(1 for v in results.values() if not v)
 
-    print(f"\nFinished: {done} done, {failed} failed out of {len(months)} months")
+    print(f"\nFinished: {done} done, {failed} failed out of {len(months) * len(countries)} total")
     if failed:
         sys.exit(1)
 
