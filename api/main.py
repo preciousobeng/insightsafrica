@@ -193,6 +193,7 @@ SENEGAL_DIR       = BASE_DIR / "data" / "processed_senegal"
 CAPEVERDE_DIR     = BASE_DIR / "data" / "processed_capeverde"
 SOUTHAFRICA_DIR   = BASE_DIR / "data" / "processed_southafrica"
 INDICATORS_DIR    = BASE_DIR / "data" / "processed_indicators"
+ARCHIVE_DIR       = BASE_DIR / "data" / "archive"
 FRONTEND_DIR      = BASE_DIR / "frontend"
 
 app = FastAPI(title="InsightsAfrica API", version="0.4.0")
@@ -1183,6 +1184,47 @@ def senegal_indicators():
 @app.get("/api/indicators/southafrica")
 def southafrica_indicators():
     return _indicators_resp("southafrica_indicators.json")
+
+
+# ── Anomaly + baseline routes ────────────────────────────────────────────────
+
+@app.get("/api/{country}/flood/baseline")
+def flood_baseline(country: str):
+    """WMO 1991-2020 LTM baseline for the given country."""
+    path = ARCHIVE_DIR / country / f"{country}_ltm_1991_2020.json"
+    if not path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail=f"Baseline not found for {country}. Run compute_ltm_baseline.py --country {country}",
+        )
+    return JSONResponse(content=json.loads(path.read_text()))
+
+
+@app.get("/api/{country}/flood/anomaly/{year}/{month}")
+def flood_anomaly(country: str, year: int, month: int):
+    """Pre-computed rainfall anomaly vs WMO LTM baseline for a given month."""
+    if not 1 <= month <= 12:
+        raise HTTPException(status_code=400, detail="month must be 1-12")
+    path = ARCHIVE_DIR / country / "anomaly" / f"chirps-v2.0.{year}.{month:02d}_{country}_anomaly.json"
+    if not path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail=f"Anomaly not found for {country} {year}-{month:02d}. Run precompute_anomalies.py --country {country}",
+        )
+    return JSONResponse(content=json.loads(path.read_text()))
+
+
+@app.get("/api/{country}/flood/anomaly")
+def flood_anomaly_index(country: str):
+    """List all available anomaly months for a country."""
+    anomaly_dir = ARCHIVE_DIR / country / "anomaly"
+    if not anomaly_dir.exists():
+        raise HTTPException(status_code=404, detail=f"No anomaly data for {country}")
+    months = []
+    for f in sorted(anomaly_dir.glob(f"chirps-v2.0.*_{country}_anomaly.json")):
+        data = json.loads(f.read_text())
+        months.append({"year": data["year"], "month": data["month"]})
+    return JSONResponse(content={"country": country, "available_months": months})
 
 
 # ── South Africa data routes ──────────────────────────────────────────────────
