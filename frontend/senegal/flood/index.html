@@ -609,7 +609,7 @@
 
     function buildTooltipContent(feature, level, periodLabel) {
       const p = feature.properties;
-      const key = (level === 'districts' && p.region)
+      const key = (level === 'departments' && p.region)
         ? p.name + '|' + p.region
         : p.name;
 
@@ -619,7 +619,7 @@
         const catColor = ANOMALY_COLORS[(entry && entry.category) || 'no_baseline'];
         const catLabel = ANOMALY_LABELS[(entry && entry.category)] || 'No data';
 
-        if (level !== 'districts') {
+        if (level !== 'departments') {
           if (!entry) return p.name + ' Region\n\nNo anomaly data';
           const sign = entry.anomaly_pct >= 0 ? '+' : '';
           return p.name + ' Region\n\n' + periodLabel +
@@ -650,7 +650,7 @@
       const stats = activeLayerStats[level] || {};
       const areaStats = stats[key];
 
-      if (level !== 'districts') {
+      if (level !== 'departments') {
         const header = p.name + ' Region';
         if (!areaStats || areaStats.mean === null) return header + '\n\nNo data';
         return (
@@ -1139,11 +1139,11 @@
       } else {
         if (currentOverlay) currentOverlay.setOpacity(0.8);
         clearAnomalyStyle('regions');
-        clearAnomalyStyle('districts');
+        clearAnomalyStyle('departments');
         currentAnomalyData = null;
         const label = document.getElementById('layer-label').textContent;
         refreshTooltips('regions', label);
-        refreshTooltips('districts', label);
+        refreshTooltips('departments', label);
       }
     }
 
@@ -1161,16 +1161,16 @@
       }
       currentAnomalyData = anomalyCache[cacheKey];
 
-      if (!boundaryLayers['districts']) {
-        await showBoundary('districts', document.getElementById('layer-label').textContent);
+      if (!boundaryLayers['departments']) {
+        await showBoundary('departments', document.getElementById('layer-label').textContent);
       }
 
       applyAnomalyStyle('regions');
-      applyAnomalyStyle('districts');
+      applyAnomalyStyle('departments');
 
       const label = document.getElementById('layer-label').textContent;
       refreshTooltips('regions', label);
-      refreshTooltips('districts', label);
+      refreshTooltips('departments', label);
       updateAnomalySummary();
     }
 
@@ -1179,7 +1179,7 @@
       const anomalyLevel = currentAnomalyData.anomaly[level] || {};
       boundaryLayers[level].eachLayer(featureLayer => {
         const p   = featureLayer.feature.properties;
-        const key = (level === 'districts' && p.region) ? p.name + '|' + p.region : p.name;
+        const key = (level === 'departments' && p.region) ? p.name + '|' + p.region : p.name;
         const entry = anomalyLevel[key];
         const cat   = (entry && entry.category) || 'no_baseline';
         featureLayer.setStyle({
@@ -1199,7 +1199,7 @@
 
     function updateAnomalySummary() {
       if (!currentAnomalyData) return;
-      const districtData = currentAnomalyData.anomaly.districts || {};
+      const districtData = currentAnomalyData.anomaly.departments || {};
       const counts = {};
       Object.values(districtData).forEach(v => {
         counts[v.category] = (counts[v.category] || 0) + 1;
@@ -1209,9 +1209,9 @@
       const droughtN = (counts.severe_drought || 0) + (counts.moderate_drought || 0) + (counts.mild_drought || 0);
       const wetN     = (counts.above_normal || 0) + (counts.well_above_normal || 0);
       document.getElementById('anomaly-drought-pct').textContent =
-        Math.round(droughtN / total * 100) + '% of districts';
+        Math.round(droughtN / total * 100) + '% of departments';
       document.getElementById('anomaly-wet-pct').textContent =
-        Math.round(wetN / total * 100) + '% of districts';
+        Math.round(wetN / total * 100) + '% of departments';
     }
 
     async function loadLayers() {

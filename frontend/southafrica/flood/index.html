@@ -607,9 +607,7 @@
 
     function buildTooltipContent(feature, level, periodLabel) {
       const p = feature.properties;
-      const key = (level === 'districts' && p.region)
-        ? p.name + '|' + p.region
-        : p.name;
+      const key = p.region ? p.name + '|' + p.region : p.name;
 
       // ── Anomaly mode ──
       if (viewMode === 'anomaly' && currentAnomalyData) {
@@ -618,9 +616,10 @@
         const catLabel = ANOMALY_LABELS[(entry && entry.category)] || 'No data';
 
         if (level !== 'districts') {
-          if (!entry) return p.name + ' Region\n\nNo anomaly data';
+          const label = p.region + ' Province';
+          if (!entry) return label + '\n\nNo anomaly data';
           const sign = entry.anomaly_pct >= 0 ? '+' : '';
-          return p.name + ' Region\n\n' + periodLabel +
+          return label + '\n\n' + periodLabel +
             '\nActual: ' + entry.actual + ' mm' +
             '\nLTM:    ' + entry.ltm    + ' mm' +
             '\nAnomaly: ' + sign + entry.anomaly_pct + '%' +
@@ -649,7 +648,7 @@
       const areaStats = stats[key];
 
       if (level !== 'districts') {
-        const header = p.name + ' Region';
+        const header = p.region + ' Province';
         if (!areaStats || areaStats.mean === null) return header + '\n\nNo data';
         return (
           header +
@@ -1140,11 +1139,11 @@
         if (activeLayer) loadAndApplyAnomaly(activeLayer.year, activeLayer.month);
       } else {
         if (currentOverlay) currentOverlay.setOpacity(0.8);
-        clearAnomalyStyle('regions');
+        clearAnomalyStyle('provinces');
         clearAnomalyStyle('districts');
         currentAnomalyData = null;
         const label = document.getElementById('layer-label').textContent;
-        refreshTooltips('regions', label);
+        refreshTooltips('provinces', label);
         refreshTooltips('districts', label);
       }
     }
@@ -1167,11 +1166,11 @@
         await showBoundary('districts', document.getElementById('layer-label').textContent);
       }
 
-      applyAnomalyStyle('regions');
+      applyAnomalyStyle('provinces');
       applyAnomalyStyle('districts');
 
       const label = document.getElementById('layer-label').textContent;
-      refreshTooltips('regions', label);
+      refreshTooltips('provinces', label);
       refreshTooltips('districts', label);
       updateAnomalySummary();
     }
@@ -1181,14 +1180,14 @@
       const anomalyLevel = currentAnomalyData.anomaly[level] || {};
       boundaryLayers[level].eachLayer(featureLayer => {
         const p   = featureLayer.feature.properties;
-        const key = (level === 'districts' && p.region) ? p.name + '|' + p.region : p.name;
+        const key = p.region ? p.name + '|' + p.region : p.name;
         const entry = anomalyLevel[key];
         const cat   = (entry && entry.category) || 'no_baseline';
         featureLayer.setStyle({
           fillColor:   ANOMALY_COLORS[cat],
           fillOpacity: 0.72,
-          color:       level === 'regions' ? '#ffffff' : '#94a3b8',
-          weight:      level === 'regions' ? 1.8 : 0.6,
+          color:       level === 'provinces' ? '#ffffff' : '#94a3b8',
+          weight:      level === 'provinces' ? 1.8 : 0.6,
           opacity:     0.8,
         });
       });
@@ -1214,6 +1213,7 @@
         Math.round(droughtN / total * 100) + '% of districts';
       document.getElementById('anomaly-wet-pct').textContent =
         Math.round(wetN / total * 100) + '% of districts';
+
     }
 
     async function loadLayers() {
