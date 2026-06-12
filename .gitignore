@@ -16,6 +16,9 @@ data/processed/
 data/processed_nigeria/
 data/processed_ivorycoast/
 data/processed_senegal/
+data/processed_capeverde/
+data/processed_southafrica/
+data/archive/
 data/cache/
 data/downloads.jsonl
 
