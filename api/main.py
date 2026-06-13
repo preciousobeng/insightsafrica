@@ -46,6 +46,7 @@ from typing import Literal
 import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -197,6 +198,14 @@ ARCHIVE_DIR       = BASE_DIR / "data" / "archive"
 FRONTEND_DIR      = BASE_DIR / "frontend"
 
 app = FastAPI(title="InsightsAfrica API", version="0.4.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://insightsafrica.org", "https://www.insightsafrica.org"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # ── Contact form ──────────────────────────────────────────────────────────────
