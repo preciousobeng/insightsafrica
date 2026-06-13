@@ -34,6 +34,7 @@ import csv
 import hashlib
 import io
 import json
+import logging
 import os
 import secrets
 import smtplib
@@ -47,6 +48,10 @@ import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi.errors import RateLimitExceeded
 from fastapi.responses import JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -79,8 +84,8 @@ async def _get_user(token: str) -> dict | None:
             )
         if r.status_code == 200:
             return r.json()
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("auth user lookup failed: %s", e)
     return None
 
 
@@ -99,8 +104,8 @@ async def _get_tier(user_id: str) -> str:
             rows = r.json()
             if rows:
                 return rows[0].get("tier", "free")
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("tier lookup failed: %s", e)
     return "free"
 
 
@@ -132,8 +137,8 @@ async def _log_download(
                 headers=_supa_headers_service,
                 json=payload,
             )
-    except Exception:
-        pass  # logging must never break a download
+    except Exception as e:
+        logger.warning("download log failed: %s", e)
 
 
 def _extract_token(request: Request) -> str | None:
@@ -175,7 +180,8 @@ async def _verify_api_key(key: str) -> dict | None:
         if not row:
             return None
         return row
-    except Exception:
+    except Exception as e:
+        logger.warning("API key verification failed: %s", e)
         return None
 
 def _clamp_free(from_ym: str | None, to_ym: str | None) -> tuple[str, str | None]:
@@ -197,7 +203,21 @@ INDICATORS_DIR    = BASE_DIR / "data" / "processed_indicators"
 ARCHIVE_DIR       = BASE_DIR / "data" / "archive"
 FRONTEND_DIR      = BASE_DIR / "frontend"
 
+limiter = Limiter(key_func=get_remote_address, default_limits=["200/minute"])
 app = FastAPI(title="InsightsAfrica API", version="0.4.0")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logger = logging.getLogger("insightsafrica")
+
+
+@app.middleware("http")
+async def redirect_https(request: Request, call_next):
+    if request.headers.get("x-forwarded-proto") == "http":
+        url = str(request.url).replace("http://", "https://", 1)
+        return RedirectResponse(url)
+    return await call_next(request)
 
 app.add_middleware(
     CORSMiddleware,
@@ -206,6 +226,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(SlowAPIMiddleware)
 
 
 # ── Contact form ──────────────────────────────────────────────────────────────

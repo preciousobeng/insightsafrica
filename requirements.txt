@@ -22,8 +22,10 @@ uvicorn[standard]==0.41.0
 # Tile server
 titiler[full]==0.18.0
 
-# Scheduling
+# Scheduling / rate limiting
 schedule==1.2.1
+slowapi==0.1.9
+limits>=2.3
 
 # Satellite data processing
 pyhdf==0.11.0
