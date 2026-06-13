@@ -528,16 +528,48 @@
   if (window.location.search.includes('reset=1')) {
     sb.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
-        const newPw = prompt('Enter your new password (min 8 characters):');
-        if (newPw && newPw.length >= 8) {
-          sb.auth.updateUser({ password: newPw }).then(({ error }) => {
-            if (error) alert('Error: ' + error.message);
-            else { alert('Password updated. Signing you in\u2026'); window.location.href = 'hub.html'; }
-          });
-        }
+        document.getElementById('reset-modal').classList.add('open');
       }
     });
   }
+
+  async function handleReset() {
+    const newPw = document.getElementById('reset-pw-input').value;
+    if (!newPw || newPw.length < 8) {
+      document.getElementById('reset-pw-error').textContent = 'Minimum 8 characters.';
+      return;
+    }
+    const { error } = await sb.auth.updateUser({ password: newPw });
+    if (error) {
+      document.getElementById('reset-pw-error').textContent = error.message;
+    } else {
+      document.getElementById('reset-modal').classList.remove('open');
+      window.location.href = 'hub.html';
+    }
+  }
 </script>
+
+<div id="reset-modal" class="reset-overlay">
+  <div class="reset-modal">
+    <h3>Reset Password</h3>
+    <p style="margin:0 0 12px;font-size:14px;color:#64748b">Enter your new password.</p>
+    <input id="reset-pw-input" type="password" placeholder="New password (min 8 chars)" style="width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:6px;font-size:14px;box-sizing:border-box">
+    <p id="reset-pw-error" style="color:#dc2626;font-size:13px;margin:6px 0 0"></p>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button onclick="handleReset()" style="flex:1;padding:10px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer">Update Password</button>
+      <button onclick="document.getElementById('reset-modal').classList.remove('open')" style="padding:10px 16px;background:#f1f5f9;color:#475569;border:none;border-radius:6px;font-size:14px;cursor:pointer">Cancel</button>
+    </div>
+  </div>
+</div>
+<style>
+.reset-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); align-items:center; justify-content:center; z-index:1000; }
+.reset-overlay.open { display:flex; }
+.reset-modal { background:#fff; padding:28px; border-radius:12px; width:360px; max-width:90vw; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+[data-theme="dark"] .reset-modal { background:#1e293b; }
+[data-theme="dark"] .reset-modal h3 { color:#f1f5f9; }
+[data-theme="dark"] .reset-modal input { background:#0f172a; border-color:#334155; color:#f1f5f9; }
+[data-theme="dark"] .reset-modal button:last-child { background:#334155; color:#cbd5e1; }
+</style>
+
 </body>
 </html>
