@@ -8,10 +8,10 @@
 #   - southafrica: province boundaries have EMPTY p.name; province name in p.region.
 #   - capeverde:  single level `islands`, no compound keys.
 #
-# KNOWN PRE-EXISTING BUGS reproduced verbatim for byte-identical refactor
-# (fix separately after generator is proven):
-#   - southafrica.flood weather widget points to Lagos (should be a SA city)
-#   - senegal map_center is Ivory Coast's [7.5, -5.5] (should be ~[14.5, -14.5])
+# Previously-buggy values now FIXED on the live pages (commit de4065a) and reflected here:
+#   - southafrica.flood weather widget: Lagos -> Johannesburg (-26.2041, 28.0473)
+#   - senegal map_center: Ivory Coast's [7.5, -5.5] -> [14.5, -14.5]
+# NOTE for the generator: verify against the CURRENT (fixed) committed pages, not the old ones.
 
 ghana:
   slug: ghana
@@ -70,7 +70,7 @@ senegal:
   api_prefix: /api/senegal
   api_country: senegal
   tile_prefix: /sn-tiles
-  map_center: [7.5, -5.5]        # BUG (pre-existing): should be ~[14.5, -14.5]
+  map_center: [14.5, -14.5]      # fixed 2026-06-13 (was IC's [7.5, -5.5])
   map_zoom: 7
   weather: { lat: "14.6928", lng: "-17.4467", location: Dakar, timezone: Africa/Dakar }
   levels:
@@ -88,7 +88,7 @@ southafrica:
   tile_prefix: /za-tiles
   map_center: [-29.0, 25.0]
   map_zoom: 6
-  weather: { lat: "6.5244", lng: "3.3792", location: Lagos, timezone: Africa/Lagos }  # BUG (pre-existing): Lagos, should be SA city
+  weather: { lat: "-26.2041", lng: "28.0473", location: Johannesburg, timezone: Africa/Johannesburg }  # fixed 2026-06-13 (was Lagos)
   levels:
     coarse: { key: provinces, label: Provinces,     count: 9 }
     fine:   { key: districts, label: Municipalities, count: 257 }   # NOTE: key=districts but DISPLAY label=Municipalities
