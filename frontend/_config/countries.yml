@@ -13,16 +13,14 @@
 #   - senegal map_center: Ivory Coast's [7.5, -5.5] -> [14.5, -14.5]
 # NOTE for the generator: verify against the CURRENT (fixed) committed pages, not the old ones.
 #
-# MORE PRE-EXISTING BUGS found while mapping flood-page tokens (NOT yet fixed — decide
-# whether to fix before or after the generator reproduces them; flagged so the template
-# author captures them deliberately rather than by accident):
-#   - southafrica.flood "About" text is NIGERIA's ("Lagos, Niger Delta, and the
-#     North-Central flood plains") — wrong country.
-#   - southafrica fine level: button label "Municipalities (257)" but summary noun is
-#     "% of districts" and the level key is `districts` — inconsistent naming.
-#   - ivorycoast & senegal share identical generic About text ("the coastal south,
-#     central basins, and the northern savanna plains") — likely copy-paste.
-# about_text below is captured VERBATIM (bugs included) for byte-identical generation.
+# 3 more pre-existing bugs found while mapping flood-page tokens — NOW FIXED 2026-06-13:
+#   - southafrica.flood About text was NIGERIA's -> "KwaZulu-Natal, the Eastern Cape, and the Highveld."
+#   - southafrica fine summary noun "% of districts" -> "% of municipalities" (matches button label)
+#   - ivorycoast/senegal shared generic About text -> country-specific
+#     (IC: Abidjan lagoon belt / central basins / northern savanna;
+#      SN: Senegal River valley / groundnut basin / Casamance)
+# Generator must verify against these CURRENT (fixed) pages. about_text + summary noun
+# are per-page strings the template will pull from config (to be added when templates are authored).
 
 ghana:
   slug: ghana

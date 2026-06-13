@@ -567,7 +567,7 @@
         <div class="info-box">
           Rainfall data from CHIRPS v2.0 (Climate Hazards Group, UC Santa Barbara).
           Monthly totals at ~5km resolution. Covering South Africa's major flood corridors:
-          Lagos, Niger Delta, and the North-Central flood plains.
+          KwaZulu-Natal, the Eastern Cape, and the Highveld.
         </div>
       </div>
 
@@ -1276,9 +1276,9 @@
       const droughtN = (counts.severe_drought || 0) + (counts.moderate_drought || 0) + (counts.mild_drought || 0);
       const wetN     = (counts.above_normal || 0) + (counts.well_above_normal || 0);
       document.getElementById('anomaly-drought-pct').textContent =
-        Math.round(droughtN / total * 100) + '% of districts';
+        Math.round(droughtN / total * 100) + '% of municipalities';
       document.getElementById('anomaly-wet-pct').textContent =
-        Math.round(wetN / total * 100) + '% of districts';
+        Math.round(wetN / total * 100) + '% of municipalities';
 
     }
 
