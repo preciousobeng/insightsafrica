@@ -647,6 +647,25 @@
       return geojson;
     }
 
+    const ANOMALY_COLORS = {
+      severe_drought:    '#b91c1c',
+      moderate_drought:  '#ef4444',
+      mild_drought:      '#f97316',
+      near_normal:       '#64748b',
+      above_normal:      '#38bdf8',
+      well_above_normal: '#1d4ed8',
+      no_baseline:       '#1e293b',
+    };
+
+    const ANOMALY_LABELS = {
+      severe_drought:    'Severe drought',
+      moderate_drought:  'Moderate drought',
+      mild_drought:      'Mild drought',
+      near_normal:       'Near normal',
+      above_normal:      'Above normal',
+      well_above_normal: 'Well above normal',
+    };
+
     function buildTooltipContent(feature, level, periodLabel) {
       const p = feature.properties;
       const key = p.region ? p.name + '|' + p.region : p.name;
