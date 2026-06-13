@@ -606,22 +606,22 @@
       fetch('/api/capeverde/mine/sites').then(r => r.json()),
     ]);
 
-    if (floodRes.status === 'fulfilled') {
+    if (floodRes.status === 'fulfilled' && Array.isArray(floodRes.value) && floodRes.value.length) {
       const layers = floodRes.value;
       const peak   = layers.reduce((a, b) =>
         b.rainfall_mm.mean > a.rainfall_mm.mean ? b : a);
       set('kpi-flood', `${Math.round(peak.rainfall_mm.mean)}mm`, `${peak.label} \u00b7 national mean`);
     } else {
-      set('kpi-flood', '\u2014', 'unavailable');
+      set('kpi-flood', '\u2014', 'no data');
     }
 
-    if (cropRes.status === 'fulfilled') {
+    if (cropRes.status === 'fulfilled' && Array.isArray(cropRes.value) && cropRes.value.length) {
       const layers = cropRes.value;
       const worst  = layers.reduce((a, b) =>
         b.stress_score.severe_stress > a.stress_score.severe_stress ? b : a);
       set('kpi-crop', `${Math.round(worst.stress_score.severe_stress)}%`, `${worst.label} \u00b7 severe stress`);
     } else {
-      set('kpi-crop', '\u2014', 'unavailable');
+      set('kpi-crop', '\u2014', 'no data');
     }
 
     if (heatRes.status === 'fulfilled') {
@@ -641,11 +641,11 @@
       set('kpi-heat', '\u2014', 'unavailable');
     }
 
-    if (mineRes.status === 'fulfilled') {
+    if (mineRes.status === 'fulfilled' && Array.isArray(mineRes.value)) {
       const sites = mineRes.value;
       set('kpi-mine', `${sites.length}`, 'extraction sites monitored');
     } else {
-      set('kpi-mine', '\u2014', 'unavailable');
+      set('kpi-mine', '\u2014', 'no data');
     }
   })();
 </script>

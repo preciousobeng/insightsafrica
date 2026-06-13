@@ -559,15 +559,15 @@
       fetch('/api/southafrica/heat/layers').then(r => r.json()),
       fetch('/api/southafrica/mine/sites').then(r => r.json()),
     ]);
-    if (floodRes.status === 'fulfilled') {
+    if (floodRes.status === 'fulfilled' && Array.isArray(floodRes.value) && floodRes.value.length) {
       const peak = floodRes.value.reduce((a, b) => b.rainfall_mm.mean > a.rainfall_mm.mean ? b : a);
       set('kpi-flood', `${Math.round(peak.rainfall_mm.mean)}mm`, `${peak.label} · national mean`);
-    } else { set('kpi-flood', '—', 'unavailable'); }
+    } else { set('kpi-flood', '—', 'no data'); }
 
-    if (cropRes.status === 'fulfilled') {
+    if (cropRes.status === 'fulfilled' && Array.isArray(cropRes.value) && cropRes.value.length) {
       const worst = cropRes.value.reduce((a, b) => b.stress_score.severe_stress > a.stress_score.severe_stress ? b : a);
       set('kpi-crop', `${Math.round(worst.stress_score.severe_stress)}%`, `${worst.label} · severe stress`);
-    } else { set('kpi-crop', '—', 'unavailable'); }
+    } else { set('kpi-crop', '—', 'no data'); }
 
     if (heatRes.status === 'fulfilled') {
       const layers = heatRes.value.filter(l => l.city_id === 'johannesburg' && !l.demo);
@@ -579,9 +579,9 @@
       } else { set('kpi-heat', '—', 'no data'); }
     } else { set('kpi-heat', '—', 'unavailable'); }
 
-    if (mineRes.status === 'fulfilled') {
+    if (mineRes.status === 'fulfilled' && Array.isArray(mineRes.value)) {
       set('kpi-mine', `${mineRes.value.length}`, `sites monitored`);
-    } else { set('kpi-mine', '—', 'unavailable'); }
+    } else { set('kpi-mine', '—', 'no data'); }
   })();
   </script>
 
