@@ -569,15 +569,15 @@
       set('kpi-crop', `${Math.round(worst.stress_score.severe_stress)}%`, `${worst.label} · severe stress`);
     } else { set('kpi-crop', '—', 'no data'); }
 
-    if (heatRes.status === 'fulfilled') {
-      const layers = heatRes.value.filter(l => l.city_id === 'johannesburg' && !l.demo);
+    if (heatRes.status === 'fulfilled' && Array.isArray(heatRes.value)) {
+      const layers = heatRes.value.filter(l => l.city_id === 'johannesburg' && !l.demo && l.stats && l.stats.uhi_intensity_c != null);
       const best   = layers.length ? layers.reduce((a, b) => b.stats.uhi_intensity_c > a.stats.uhi_intensity_c ? b : a) : null;
       if (best) {
         const [y, m] = best.date.split('-');
         const mon = new Date(+y, +m - 1).toLocaleString('en-GB', { month: 'short' });
-        set('kpi-heat', `+${best.stats.uhi_intensity_c.toFixed(1)}°C`, `${mon} ${y} · UHI intensity`);
+        set('kpi-heat', `${Math.round(best.stats.uhi_intensity_c)}°C UHI`, `${mon} ${y} · peak intensity`);
       } else { set('kpi-heat', '—', 'no data'); }
-    } else { set('kpi-heat', '—', 'unavailable'); }
+    } else { set('kpi-heat', '—', 'no data'); }
 
     if (mineRes.status === 'fulfilled' && Array.isArray(mineRes.value)) {
       set('kpi-mine', `${mineRes.value.length}`, `sites monitored`);
