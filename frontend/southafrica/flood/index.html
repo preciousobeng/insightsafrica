@@ -666,6 +666,11 @@
       well_above_normal: 'Well above normal',
     };
 
+    let viewMode = 'rainfall';
+    let currentAnomalyData = null;
+    const anomalyCache = {};
+    let infraData = {};
+
     function buildTooltipContent(feature, level, periodLabel) {
       const p = feature.properties;
       const key = p.region ? p.name + '|' + p.region : p.name;
