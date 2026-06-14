@@ -566,6 +566,10 @@
         const res = await fetch('/api/mine/sites');
         if (!res.ok) throw new Error('no data');
         sites = await res.json();
+
+        // Warm the browser cache so the flicker-free swap has tiles ready.
+        sites.forEach(s => { ['0_png','1_png','2_png'].forEach(k => { if (s[k]) { const i = new Image(); i.src = '/tiles/' + s[k]; } }); });
+
         renderSiteList();
         if (sites.length) displaySite(sites[0]);
         buildChangeChart(sites);
