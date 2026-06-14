@@ -141,12 +141,20 @@
       activeSite = site;
       updateSiteInfo(site);
 
-      if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
-
       if (site.ndvi_png && site.leaflet_bounds) {
-        currentOverlay = L.imageOverlay('/cv-tiles/' + site.ndvi_png, site.leaflet_bounds, { opacity: 0.85 });
-        currentOverlay.addTo(map);
-        map.fitBounds(site.leaflet_bounds, { padding: [40, 40] });
+        const bounds = site.leaflet_bounds;
+        const prev = currentOverlay;
+        const next = L.imageOverlay('/cv-tiles/' + site.ndvi_png, bounds, { opacity: 0 });
+        currentOverlay = next;
+        next.addTo(map);
+        map.fitBounds(bounds, { padding: [40, 40] });
+        const el = next.getElement();
+        if (el && el.complete) {
+          next.setOpacity(0.85);
+          if (prev) map.removeLayer(prev);
+        } else {
+          next.on('load', () => { next.setOpacity(0.85); if (prev) map.removeLayer(prev); });
+        }
       } else {
         map.setView([site.centre[1], site.centre[0]], 11);
       }

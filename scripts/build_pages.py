@@ -122,7 +122,7 @@ def main():
                             print(dl.encode('utf-8', errors='replace').decode('utf-8', errors='replace'))
             else:
                 out.parent.mkdir(parents=True, exist_ok=True)
-                out.write_text(generated)
+                out.write_bytes(generated.encode('utf-8'))
                 written += 1
                 print(f"[write] {out.relative_to(FRONTEND)}")
 

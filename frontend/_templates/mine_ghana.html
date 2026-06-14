@@ -394,14 +394,21 @@
       activeSite = site;
       updateSiteInfo(site);
 
-      if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
-
       const imgKey = currentIndex + '_png';
       if (site[imgKey]) {
         const bounds = site.leaflet_bounds;
-        currentOverlay = L.imageOverlay('/tiles/' + site[imgKey], bounds, { opacity: 0.85 });
-        currentOverlay.addTo(map);
+        const prev = currentOverlay;
+        const next = L.imageOverlay('/tiles/' + site[imgKey], bounds, { opacity: 0 });
+        currentOverlay = next;
+        next.addTo(map);
         map.fitBounds(bounds, { padding: [40, 40] });
+        const el = next.getElement();
+        if (el && el.complete) {
+          next.setOpacity(0.85);
+          if (prev) map.removeLayer(prev);
+        } else {
+          next.on('load', () => { next.setOpacity(0.85); if (prev) map.removeLayer(prev); });
+        }
       } else {
         const c = site.centre;
         map.setView([c[1], c[0]], 12);

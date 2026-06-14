@@ -480,13 +480,20 @@
     }
 
     function displayLayer(layer, fromPlayer) {
-      if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
+      const imgUrl = '/ic-tiles/' + layer.png;
+      const bounds = layer.leaflet_bounds;
+      const prev = currentOverlay;
 
-      if (layer.png) {
-        currentOverlay = L.imageOverlay(
-          '/ic-tiles/' + layer.png, layer.leaflet_bounds, { opacity: 0.8 }
-        ).addTo(map);
-        if (!fromPlayer) map.fitBounds(layer.leaflet_bounds, { padding: [20, 20] });
+      const next = L.imageOverlay(imgUrl, bounds, { opacity: 0 });
+      currentOverlay = next;
+      next.addTo(map);
+      if (!fromPlayer) map.fitBounds(bounds, { padding: [20, 20] });
+      const el = next.getElement();
+      if (el && el.complete) {
+        next.setOpacity(0.8);
+        if (prev) map.removeLayer(prev);
+      } else {
+        next.on('load', () => { next.setOpacity(0.8); if (prev) map.removeLayer(prev); });
       }
 
       document.getElementById('layer-label').textContent = layer.label;
@@ -747,6 +754,9 @@
           setStatus('Pending data');
           return;
         }
+
+        // Warm the browser cache so the flicker-free swap has tiles ready.
+        layers.forEach(l => { const i = new Image(); i.src = '/ic-tiles/' + l.png; });
 
         renderLayerList();
         displayLayer(allLayers[allLayers.length - 1], false);
