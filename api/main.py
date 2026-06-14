@@ -373,17 +373,123 @@ async def revoke_api_key(key_id: str, request: Request):
     return {"revoked": True}
 
 
+# ── Country data-route factory ────────────────────────────────────────────────
+# Replaces ~30 copy-pasted flood/crop/heat layer + mine/sites + boundaries routes
+# (6 countries) with one registry + 3 factory functions. Each generated route is
+# byte-identical to the hand-written original it replaces (same dir, glob, sort,
+# JSONResponse, and 400/404 messages). Ghana's unique /api/flood/layers/latest and
+# /api/mine/changes are NOT part of this pattern and remain hand-written below.
+# Adding a country = one COUNTRY_DATA entry instead of ~50 lines.
+
+COUNTRY_DATA = {
+    "ghana": {
+        "base": "/api", "dir": PROCESSED_DIR,
+        "flood": "chirps-*.json", "crop": "ndvi_*.json", "heat": "heat_*.json",
+        "mine_file": "galamsey_sites.json",
+        "mine_404": "No site data yet. Run fetch_sentinel2.py",
+        "b_prefix": "ghana",
+        "b_aliases": {"regions": "regions", "districts": "districts"},
+        "b_400": "level must be 'regions' or 'districts'",
+        "b_404": "{r} not found. Run fetch_boundaries.py",
+    },
+    "nigeria": {
+        "base": "/api/nigeria", "dir": NIGERIA_DIR,
+        "flood": "chirps-*_nigeria.json", "crop": "ndvi_*_nigeria.json", "heat": "heat_*.json",
+        "mine_file": "nigeria_mining_sites.json",
+        "mine_404": "No Nigeria site data yet. Run fetch_sentinel2.py --country nigeria",
+        "b_prefix": "nigeria",
+        "b_aliases": {"states": "states", "lgas": "lgas"},
+        "b_400": "level must be 'states' or 'lgas'",
+        "b_404": "{r} not found. Run fetch_boundaries.py --country nigeria",
+    },
+    "ivorycoast": {
+        "base": "/api/ivorycoast", "dir": IVORYCOAST_DIR,
+        "flood": "chirps-*_ivorycoast.json", "crop": "ndvi_*_ivorycoast.json", "heat": "heat_*.json",
+        "mine_file": "ivorycoast_mining_sites.json",
+        "mine_404": "No Ivory Coast site data yet. Run fetch_sentinel2.py --country ivorycoast",
+        "b_prefix": "ivorycoast",
+        "b_aliases": {"districts": "districts", "regions": "regions"},
+        "b_400": "level must be 'districts' or 'regions'",
+        "b_404": "{r} not found. Run fetch_boundaries.py --country ivorycoast",
+    },
+    "senegal": {
+        "base": "/api/senegal", "dir": SENEGAL_DIR,
+        "flood": "chirps-*_senegal.json", "crop": "ndvi_*_senegal.json", "heat": "heat_*.json",
+        "mine_file": "senegal_mining_sites.json",
+        "mine_404": "No Senegal site data yet.",
+        "b_prefix": "senegal",
+        "b_aliases": {"districts": "departments", "departments": "departments", "regions": "regions"},
+        "b_400": "level must be 'regions' or 'departments'",
+        "b_404": "{r} not found. Run fetch_boundaries.py --country senegal",
+    },
+    "capeverde": {
+        "base": "/api/capeverde", "dir": CAPEVERDE_DIR,
+        "flood": "chirps-*_capeverde.json", "crop": "ndvi_*_capeverde.json", "heat": "heat_*.json",
+        "mine_file": "capeverde_mining_sites.json",
+        "mine_404": "No Cape Verde site data yet. Run fetch_sentinel2.py --country capeverde",
+        "b_prefix": "capeverde",
+        "b_aliases": {"islands": "islands"},
+        "b_400": "level must be 'islands'",
+        "b_404": "{r} not found. Run fetch_boundaries.py --country capeverde",
+    },
+    "southafrica": {
+        "base": "/api/southafrica", "dir": SOUTHAFRICA_DIR,
+        "flood": "chirps-*_southafrica.json", "crop": "ndvi_*_southafrica.json", "heat": "heat_*.json",
+        "mine_file": "southafrica_mining_sites.json",
+        "mine_404": "No SA site data yet. Run fetch_sentinel2.py --country southafrica",
+        "b_prefix": "southafrica",
+        "b_aliases": {"provinces": "provinces", "districts": "districts"},
+        "b_400": "level must be 'provinces' or 'districts'",
+        "b_404": "Boundary data not yet available",
+    },
+}
+
+
+def _make_layers_route(directory, pattern):
+    def handler():
+        layers = []
+        for f in sorted(directory.glob(pattern)):
+            with open(f) as fh:
+                layers.append(json.load(fh))
+        return JSONResponse(content=layers)
+    return handler
+
+
+def _make_sites_route(directory, filename, not_found_detail):
+    def handler():
+        sites_path = directory / filename
+        if not sites_path.exists():
+            raise HTTPException(status_code=404, detail=not_found_detail)
+        with open(sites_path) as f:
+            return JSONResponse(content=json.load(f))
+    return handler
+
+
+def _make_boundaries_route(directory, file_prefix, aliases, bad_level_detail, not_found_tmpl):
+    def handler(level: str):
+        resolved = aliases.get(level)
+        if resolved is None:
+            raise HTTPException(status_code=400, detail=bad_level_detail)
+        path = directory / f"{file_prefix}_{resolved}.geojson"
+        if not path.exists():
+            raise HTTPException(status_code=404, detail=not_found_tmpl.format(r=resolved))
+        with open(path) as f:
+            return JSONResponse(content=json.load(f))
+    return handler
+
+
+for _slug, _cfg in COUNTRY_DATA.items():
+    _base = _cfg["base"]
+    app.get(f"{_base}/flood/layers")(_make_layers_route(_cfg["dir"], _cfg["flood"]))
+    app.get(f"{_base}/crop/layers")(_make_layers_route(_cfg["dir"], _cfg["crop"]))
+    app.get(f"{_base}/heat/layers")(_make_layers_route(_cfg["dir"], _cfg["heat"]))
+    app.get(f"{_base}/mine/sites")(_make_sites_route(_cfg["dir"], _cfg["mine_file"], _cfg["mine_404"]))
+    app.get(f"{_base}/boundaries/{{level}}")(
+        _make_boundaries_route(_cfg["dir"], _cfg["b_prefix"], _cfg["b_aliases"], _cfg["b_400"], _cfg["b_404"])
+    )
+
+
 # --- FloodWatch ---
-
-@app.get("/api/flood/layers")
-def flood_layers():
-    """All processed CHIRPS rainfall layers."""
-    layers = []
-    for f in sorted(PROCESSED_DIR.glob("chirps-*.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
 
 @app.get("/api/flood/layers/latest")
 def flood_latest():
@@ -394,29 +500,7 @@ def flood_latest():
         return JSONResponse(content=json.load(f))
 
 
-# --- CropWatch ---
-
-@app.get("/api/crop/layers")
-def crop_layers():
-    """All processed MODIS NDVI layers."""
-    layers = []
-    for f in sorted(PROCESSED_DIR.glob("ndvi_*.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-
 # --- MineWatch ---
-
-@app.get("/api/mine/sites")
-def mine_sites():
-    """Known galamsey hotspot sites with metadata."""
-    sites_path = PROCESSED_DIR / "galamsey_sites.json"
-    if not sites_path.exists():
-        raise HTTPException(status_code=404, detail="No site data yet. Run fetch_sentinel2.py")
-    with open(sites_path) as f:
-        return JSONResponse(content=json.load(f))
-
 
 @app.get("/api/mine/changes")
 def mine_changes():
@@ -428,31 +512,6 @@ def mine_changes():
         with open(f) as fh:
             changes.append(json.load(fh))
     return JSONResponse(content=changes)
-
-
-# --- Shared ---
-
-@app.get("/api/boundaries/{level}")
-def get_boundaries(level: str):
-    if level not in ("regions", "districts"):
-        raise HTTPException(status_code=400, detail="level must be 'regions' or 'districts'")
-    path = PROCESSED_DIR / f"ghana_{level}.geojson"
-    if not path.exists():
-        raise HTTPException(status_code=404, detail=f"{level} not found. Run fetch_boundaries.py")
-    with open(path) as f:
-        return JSONResponse(content=json.load(f))
-
-
-# ── HeatWatch ──
-
-@app.get("/api/heat/layers")
-def heat_layers():
-    """All processed Landsat LST layers for Ghana cities."""
-    layers = []
-    for f in sorted(PROCESSED_DIR.glob("heat_*.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
 
 
 # ── Nigeria hub redirect ──────────────────────────────────────────────────────
@@ -471,112 +530,6 @@ def ivorycoast_hub():
     return RedirectResponse(url="/ivorycoast/hub.html")
 
 
-# ── Nigeria API routes ────────────────────────────────────────────────────────
-
-@app.get("/api/nigeria/flood/layers")
-def nigeria_flood_layers():
-    """All processed CHIRPS rainfall layers for Nigeria."""
-    layers = []
-    for f in sorted(NIGERIA_DIR.glob("chirps-*_nigeria.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-
-@app.get("/api/nigeria/crop/layers")
-def nigeria_crop_layers():
-    """All processed MODIS NDVI layers for Nigeria."""
-    layers = []
-    for f in sorted(NIGERIA_DIR.glob("ndvi_*_nigeria.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-
-@app.get("/api/nigeria/mine/sites")
-def nigeria_mine_sites():
-    """Mining sites for Nigeria (artisanal + oil/gas)."""
-    sites_path = NIGERIA_DIR / "nigeria_mining_sites.json"
-    if not sites_path.exists():
-        raise HTTPException(status_code=404, detail="No Nigeria site data yet. Run fetch_sentinel2.py --country nigeria")
-    with open(sites_path) as f:
-        return JSONResponse(content=json.load(f))
-
-
-@app.get("/api/nigeria/heat/layers")
-def nigeria_heat_layers():
-    """All processed Landsat LST layers for Nigeria cities."""
-    layers = []
-    for f in sorted(NIGERIA_DIR.glob("heat_*.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-
-@app.get("/api/nigeria/boundaries/{level}")
-def nigeria_boundaries(level: str):
-    if level not in ("states", "lgas"):
-        raise HTTPException(status_code=400, detail="level must be 'states' or 'lgas'")
-    path = NIGERIA_DIR / f"nigeria_{level}.geojson"
-    if not path.exists():
-        raise HTTPException(status_code=404, detail=f"{level} not found. Run fetch_boundaries.py --country nigeria")
-    with open(path) as f:
-        return JSONResponse(content=json.load(f))
-
-
-# ── Ivory Coast API routes ────────────────────────────────────────────────────
-
-@app.get("/api/ivorycoast/flood/layers")
-def ivorycoast_flood_layers():
-    """All processed CHIRPS rainfall layers for Ivory Coast."""
-    layers = []
-    for f in sorted(IVORYCOAST_DIR.glob("chirps-*_ivorycoast.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-
-@app.get("/api/ivorycoast/crop/layers")
-def ivorycoast_crop_layers():
-    """All processed MODIS NDVI layers for Ivory Coast."""
-    layers = []
-    for f in sorted(IVORYCOAST_DIR.glob("ndvi_*_ivorycoast.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-
-@app.get("/api/ivorycoast/mine/sites")
-def ivorycoast_mine_sites():
-    """Mining sites for Ivory Coast."""
-    sites_path = IVORYCOAST_DIR / "ivorycoast_mining_sites.json"
-    if not sites_path.exists():
-        raise HTTPException(status_code=404, detail="No Ivory Coast site data yet. Run fetch_sentinel2.py --country ivorycoast")
-    with open(sites_path) as f:
-        return JSONResponse(content=json.load(f))
-
-
-@app.get("/api/ivorycoast/heat/layers")
-def ivorycoast_heat_layers():
-    """All processed Landsat LST layers for Ivory Coast cities."""
-    layers = []
-    for f in sorted(IVORYCOAST_DIR.glob("heat_*.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-
-@app.get("/api/ivorycoast/boundaries/{level}")
-def ivorycoast_boundaries(level: str):
-    if level not in ("districts", "regions"):
-        raise HTTPException(status_code=400, detail="level must be 'districts' or 'regions'")
-    path = IVORYCOAST_DIR / f"ivorycoast_{level}.geojson"
-    if not path.exists():
-        raise HTTPException(status_code=404, detail=f"{level} not found. Run fetch_boundaries.py --country ivorycoast")
-    with open(path) as f:
-        return JSONResponse(content=json.load(f))
-
-
 # ── Senegal API routes ────────────────────────────────────────────────────────
 
 @app.get("/senegal")
@@ -585,124 +538,12 @@ def senegal_hub():
     return RedirectResponse(url="/senegal/hub.html")
 
 
-@app.get("/api/senegal/flood/layers")
-def senegal_flood_layers():
-    """All processed CHIRPS rainfall layers for Senegal."""
-    layers = []
-    for f in sorted(SENEGAL_DIR.glob("chirps-*_senegal.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-
-@app.get("/api/senegal/crop/layers")
-def senegal_crop_layers():
-    """All processed MODIS NDVI layers for Senegal."""
-    layers = []
-    for f in sorted(SENEGAL_DIR.glob("ndvi_*_senegal.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-
-@app.get("/api/senegal/mine/sites")
-def senegal_mine_sites():
-    """Mining sites for Senegal (industrial + artisanal gold)."""
-    sites_path = SENEGAL_DIR / "senegal_mining_sites.json"
-    if not sites_path.exists():
-        raise HTTPException(status_code=404, detail="No Senegal site data yet.")
-    with open(sites_path) as f:
-        return JSONResponse(content=json.load(f))
-
-
-@app.get("/api/senegal/heat/layers")
-def senegal_heat_layers():
-    """All processed Landsat LST layers for Senegal cities."""
-    layers = []
-    for f in sorted(SENEGAL_DIR.glob("heat_*.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-
-@app.get("/api/senegal/boundaries/{level}")
-def senegal_boundaries(level: str):
-    aliases = {
-        "districts": "departments",
-        "departments": "departments",
-        "regions": "regions",
-    }
-    resolved = aliases.get(level)
-    if resolved is None:
-        raise HTTPException(status_code=400, detail="level must be 'regions' or 'departments'")
-    path = SENEGAL_DIR / f"senegal_{resolved}.geojson"
-    if not path.exists():
-        raise HTTPException(status_code=404, detail=f"{resolved} not found. Run fetch_boundaries.py --country senegal")
-    with open(path) as f:
-        return JSONResponse(content=json.load(f))
-
-
 # ── Cape Verde API routes ─────────────────────────────────────────────────────
 
 @app.get("/capeverde")
 @app.get("/capeverde/")
 def capeverde_hub():
     return RedirectResponse(url="/capeverde/hub.html")
-
-
-@app.get("/api/capeverde/flood/layers")
-def capeverde_flood_layers():
-    """All processed CHIRPS rainfall layers for Cape Verde."""
-    layers = []
-    for f in sorted(CAPEVERDE_DIR.glob("chirps-*_capeverde.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-
-@app.get("/api/capeverde/crop/layers")
-def capeverde_crop_layers():
-    """All processed MODIS NDVI layers for Cape Verde."""
-    layers = []
-    for f in sorted(CAPEVERDE_DIR.glob("ndvi_*_capeverde.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-
-@app.get("/api/capeverde/mine/sites")
-def capeverde_mine_sites():
-    """Quarry and extraction sites for Cape Verde."""
-    sites_path = CAPEVERDE_DIR / "capeverde_mining_sites.json"
-    if not sites_path.exists():
-        raise HTTPException(status_code=404, detail="No Cape Verde site data yet. Run fetch_sentinel2.py --country capeverde")
-    with open(sites_path) as f:
-        return JSONResponse(content=json.load(f))
-
-
-@app.get("/api/capeverde/heat/layers")
-def capeverde_heat_layers():
-    """All processed Landsat LST layers for Cape Verde cities."""
-    layers = []
-    for f in sorted(CAPEVERDE_DIR.glob("heat_*.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-
-@app.get("/api/capeverde/boundaries/{level}")
-def capeverde_boundaries(level: str):
-    aliases = {
-        "islands": "islands",
-    }
-    resolved = aliases.get(level)
-    if resolved is None:
-        raise HTTPException(status_code=400, detail="level must be 'islands'")
-    path = CAPEVERDE_DIR / f"capeverde_{resolved}.geojson"
-    if not path.exists():
-        raise HTTPException(status_code=404, detail=f"{resolved} not found. Run fetch_boundaries.py --country capeverde")
-    with open(path) as f:
-        return JSONResponse(content=json.load(f))
 
 
 # ── Downloads ────────────────────────────────────────────────────────────────
@@ -1280,53 +1121,7 @@ def flood_anomaly_index(country: str):
     return JSONResponse(content={"country": country, "available_months": months})
 
 
-# ── South Africa data routes ──────────────────────────────────────────────────
-@app.get("/api/southafrica/flood/layers")
-def sa_flood_layers():
-    """All processed CHIRPS rainfall layers for South Africa."""
-    layers = []
-    for f in sorted(SOUTHAFRICA_DIR.glob("chirps-*_southafrica.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-@app.get("/api/southafrica/mine/sites")
-def sa_mine_sites():
-    """Mining sites for South Africa."""
-    sites_path = SOUTHAFRICA_DIR / "southafrica_mining_sites.json"
-    if not sites_path.exists():
-        raise HTTPException(status_code=404, detail="No SA site data yet. Run fetch_sentinel2.py --country southafrica")
-    with open(sites_path) as f:
-        return JSONResponse(content=json.load(f))
-
-@app.get("/api/southafrica/crop/layers")
-def sa_crop_layers():
-    """All processed MODIS NDVI layers for South Africa."""
-    layers = []
-    for f in sorted(SOUTHAFRICA_DIR.glob("ndvi_*_southafrica.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-@app.get("/api/southafrica/heat/layers")
-def sa_heat_layers():
-    """All processed Landsat LST layers for South Africa cities."""
-    layers = []
-    for f in sorted(SOUTHAFRICA_DIR.glob("heat_*.json")):
-        with open(f) as fh:
-            layers.append(json.load(fh))
-    return JSONResponse(content=layers)
-
-@app.get("/api/southafrica/boundaries/{level}")
-def sa_boundaries(level: str):
-    if level not in ("provinces", "districts"):
-        raise HTTPException(status_code=400, detail="level must be 'provinces' or 'districts'")
-    path = SOUTHAFRICA_DIR / f"southafrica_{level}.geojson"
-    if not path.exists():
-        raise HTTPException(status_code=404, detail="Boundary data not yet available")
-    with open(path) as f:
-        return JSONResponse(content=json.load(f))
-
+# ── South Africa downloads (layers/sites/boundaries handled by the factory above) ──
 @app.get("/api/southafrica/flood/download/provinces.geojson")
 def sa_flood_provinces():
     path = SOUTHAFRICA_DIR / "southafrica_provinces.geojson"
