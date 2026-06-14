@@ -769,7 +769,91 @@ async def _auth_and_clamp(request, from_date, to_date):
     return user_id, tier, from_date, to_date
 
 
-# ── Ghana download endpoints ──
+# ── Download route factory ────────────────────────────────────────────────────
+# Generates the uniform crop/heat/mine CSV + geojson download routes for the 4
+# countries that have them. Byte-identical to the hand-written originals (same
+# helpers: _auth_and_clamp / _log_download / _ndvi_csv / _heat_csv / _mine_csv /
+# _geojson_resp / _csv_resp). Flood CSV (per-country Literal `level`) and South
+# Africa's geojson downloads (different content-type, no auth/log) stay hand-written.
+
+_DL_COUNTRIES = {
+    "ghana":      {"dir": PROCESSED_DIR,  "base": "/api",            "crop_glob": "ndvi_*_ghana.json",      "mine_file": "galamsey_sites.json"},
+    "nigeria":    {"dir": NIGERIA_DIR,    "base": "/api/nigeria",    "crop_glob": "ndvi_*_nigeria.json",    "mine_file": "nigeria_mining_sites.json"},
+    "ivorycoast": {"dir": IVORYCOAST_DIR, "base": "/api/ivorycoast", "crop_glob": "ndvi_*_ivorycoast.json", "mine_file": "ivorycoast_mining_sites.json"},
+    "senegal":    {"dir": SENEGAL_DIR,    "base": "/api/senegal",    "crop_glob": "ndvi_*_senegal.json",    "mine_file": "senegal_mining_sites.json"},
+}
+
+# (route_path, file_path, download_filename, country, log_label)
+_DL_GEOJSON = [
+    ("/api/flood/download/regions.geojson",              PROCESSED_DIR  / "ghana_regions.geojson",        "ghana_regions.geojson",        "ghana",      "regions.geojson"),
+    ("/api/flood/download/districts.geojson",            PROCESSED_DIR  / "ghana_districts.geojson",      "ghana_districts.geojson",      "ghana",      "districts.geojson"),
+    ("/api/nigeria/flood/download/states.geojson",       NIGERIA_DIR    / "nigeria_states.geojson",       "nigeria_states.geojson",       "nigeria",    "states.geojson"),
+    ("/api/nigeria/flood/download/lgas.geojson",         NIGERIA_DIR    / "nigeria_lgas.geojson",         "nigeria_lgas.geojson",         "nigeria",    "lgas.geojson"),
+    ("/api/ivorycoast/flood/download/districts.geojson", IVORYCOAST_DIR / "ivorycoast_districts.geojson", "ivorycoast_districts.geojson", "ivorycoast", "districts.geojson"),
+    ("/api/senegal/flood/download/districts.geojson",    SENEGAL_DIR    / "senegal_departments.geojson",  "senegal_departments.geojson",  "senegal",    "districts.geojson"),
+    ("/api/senegal/flood/download/departments.geojson",  SENEGAL_DIR    / "senegal_departments.geojson",  "senegal_departments.geojson",  "senegal",    "departments.geojson"),
+    ("/api/senegal/flood/download/regions.geojson",      SENEGAL_DIR    / "senegal_regions.geojson",      "senegal_regions.geojson",      "senegal",    "regions.geojson"),
+]
+
+
+def _make_crop_csv_dl(directory, glob, filename, country):
+    async def handler(request: Request,
+                      from_date: str | None = Query(None, alias="from"),
+                      to_date: str | None = Query(None, alias="to")):
+        user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
+        await _log_download(request, country, "crop", "csv", user_id, from_date, to_date)
+        content = _ndvi_csv(directory, glob, from_date, to_date)
+        return _csv_resp(content, filename)
+    return handler
+
+
+def _make_heat_csv_dl(directory, filename, country):
+    async def handler(request: Request,
+                      from_date: str | None = Query(None, alias="from"),
+                      to_date: str | None = Query(None, alias="to")):
+        user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
+        await _log_download(request, country, "heat", "csv", user_id, from_date, to_date)
+        content = _heat_csv(directory, "heat_*.json", from_date, to_date)
+        return _csv_resp(content, filename)
+    return handler
+
+
+def _make_mine_csv_dl(sites_path, filename, country):
+    async def handler(request: Request):
+        token = _extract_token(request)
+        user = await _get_user(token) if token else None
+        await _log_download(request, country, "mine", "csv", user["id"] if user else None)
+        content = _mine_csv(sites_path)
+        return _csv_resp(content, filename)
+    return handler
+
+
+def _make_geojson_dl(file_path, filename, country, label):
+    async def handler(request: Request):
+        token = _extract_token(request)
+        user = await _get_user(token) if token else None
+        await _log_download(request, country, "flood", label, user["id"] if user else None)
+        return _geojson_resp(file_path, filename)
+    return handler
+
+
+for _slug, _d in _DL_COUNTRIES.items():
+    _b = _d["base"]
+    app.get(f"{_b}/crop/download/csv")(
+        _make_crop_csv_dl(_d["dir"], _d["crop_glob"], f"insightsafrica_{_slug}_crop_ndvi.csv", _slug)
+    )
+    app.get(f"{_b}/heat/download/csv")(
+        _make_heat_csv_dl(_d["dir"], f"insightsafrica_{_slug}_heat.csv", _slug)
+    )
+    app.get(f"{_b}/mine/download/csv")(
+        _make_mine_csv_dl(_d["dir"] / _d["mine_file"], f"insightsafrica_{_slug}_mine_sites.csv", _slug)
+    )
+
+for _route, _fp, _fn, _ctry, _label in _DL_GEOJSON:
+    app.get(_route)(_make_geojson_dl(_fp, _fn, _ctry, _label))
+
+
+# ── Ghana download endpoints (flood CSV only; crop/heat/mine/geojson via factory) ──
 
 @app.get("/api/flood/download/csv")
 async def ghana_flood_csv(
@@ -784,56 +868,7 @@ async def ghana_flood_csv(
     return _csv_resp(content, f"insightsafrica_ghana_flood_{level}.csv")
 
 
-@app.get("/api/flood/download/regions.geojson")
-async def ghana_flood_regions_geojson(request: Request):
-    token = _extract_token(request)
-    user  = await _get_user(token) if token else None
-    await _log_download(request, "ghana", "flood", "regions.geojson", user["id"] if user else None)
-    return _geojson_resp(PROCESSED_DIR / "ghana_regions.geojson", "ghana_regions.geojson")
-
-
-@app.get("/api/flood/download/districts.geojson")
-async def ghana_flood_districts_geojson(request: Request):
-    token = _extract_token(request)
-    user  = await _get_user(token) if token else None
-    await _log_download(request, "ghana", "flood", "districts.geojson", user["id"] if user else None)
-    return _geojson_resp(PROCESSED_DIR / "ghana_districts.geojson", "ghana_districts.geojson")
-
-
-@app.get("/api/crop/download/csv")
-async def ghana_crop_csv(
-    request: Request,
-    from_date: str | None = Query(None, alias="from"),
-    to_date:   str | None = Query(None, alias="to"),
-):
-    user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
-    await _log_download(request, "ghana", "crop", "csv", user_id, from_date, to_date)
-    content = _ndvi_csv(PROCESSED_DIR, "ndvi_*_ghana.json", from_date, to_date)
-    return _csv_resp(content, "insightsafrica_ghana_crop_ndvi.csv")
-
-
-@app.get("/api/heat/download/csv")
-async def ghana_heat_csv(
-    request: Request,
-    from_date: str | None = Query(None, alias="from"),
-    to_date:   str | None = Query(None, alias="to"),
-):
-    user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
-    await _log_download(request, "ghana", "heat", "csv", user_id, from_date, to_date)
-    content = _heat_csv(PROCESSED_DIR, "heat_*.json", from_date, to_date)
-    return _csv_resp(content, "insightsafrica_ghana_heat.csv")
-
-
-@app.get("/api/mine/download/csv")
-async def ghana_mine_csv(request: Request):
-    token = _extract_token(request)
-    user  = await _get_user(token) if token else None
-    await _log_download(request, "ghana", "mine", "csv", user["id"] if user else None)
-    content = _mine_csv(PROCESSED_DIR / "galamsey_sites.json")
-    return _csv_resp(content, "insightsafrica_ghana_mine_sites.csv")
-
-
-# ── Nigeria download endpoints ──
+# ── Nigeria download endpoints (flood CSV only; rest via factory) ──
 
 @app.get("/api/nigeria/flood/download/csv")
 async def nigeria_flood_csv(
@@ -848,56 +883,7 @@ async def nigeria_flood_csv(
     return _csv_resp(content, f"insightsafrica_nigeria_flood_{level}.csv")
 
 
-@app.get("/api/nigeria/flood/download/states.geojson")
-async def nigeria_states_geojson(request: Request):
-    token = _extract_token(request)
-    user  = await _get_user(token) if token else None
-    await _log_download(request, "nigeria", "flood", "states.geojson", user["id"] if user else None)
-    return _geojson_resp(NIGERIA_DIR / "nigeria_states.geojson", "nigeria_states.geojson")
-
-
-@app.get("/api/nigeria/flood/download/lgas.geojson")
-async def nigeria_lgas_geojson(request: Request):
-    token = _extract_token(request)
-    user  = await _get_user(token) if token else None
-    await _log_download(request, "nigeria", "flood", "lgas.geojson", user["id"] if user else None)
-    return _geojson_resp(NIGERIA_DIR / "nigeria_lgas.geojson", "nigeria_lgas.geojson")
-
-
-@app.get("/api/nigeria/crop/download/csv")
-async def nigeria_crop_csv(
-    request: Request,
-    from_date: str | None = Query(None, alias="from"),
-    to_date:   str | None = Query(None, alias="to"),
-):
-    user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
-    await _log_download(request, "nigeria", "crop", "csv", user_id, from_date, to_date)
-    content = _ndvi_csv(NIGERIA_DIR, "ndvi_*_nigeria.json", from_date, to_date)
-    return _csv_resp(content, "insightsafrica_nigeria_crop_ndvi.csv")
-
-
-@app.get("/api/nigeria/heat/download/csv")
-async def nigeria_heat_csv(
-    request: Request,
-    from_date: str | None = Query(None, alias="from"),
-    to_date:   str | None = Query(None, alias="to"),
-):
-    user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
-    await _log_download(request, "nigeria", "heat", "csv", user_id, from_date, to_date)
-    content = _heat_csv(NIGERIA_DIR, "heat_*.json", from_date, to_date)
-    return _csv_resp(content, "insightsafrica_nigeria_heat.csv")
-
-
-@app.get("/api/nigeria/mine/download/csv")
-async def nigeria_mine_csv(request: Request):
-    token = _extract_token(request)
-    user  = await _get_user(token) if token else None
-    await _log_download(request, "nigeria", "mine", "csv", user["id"] if user else None)
-    content = _mine_csv(NIGERIA_DIR / "nigeria_mining_sites.json")
-    return _csv_resp(content, "insightsafrica_nigeria_mine_sites.csv")
-
-
-# ── Ivory Coast download endpoints ──
+# ── Ivory Coast download endpoints (flood CSV only; rest via factory) ──
 
 @app.get("/api/ivorycoast/flood/download/csv")
 async def ivorycoast_flood_csv(
@@ -912,48 +898,7 @@ async def ivorycoast_flood_csv(
     return _csv_resp(content, f"insightsafrica_ivorycoast_flood_{level}.csv")
 
 
-@app.get("/api/ivorycoast/flood/download/districts.geojson")
-async def ivorycoast_districts_geojson(request: Request):
-    token = _extract_token(request)
-    user  = await _get_user(token) if token else None
-    await _log_download(request, "ivorycoast", "flood", "districts.geojson", user["id"] if user else None)
-    return _geojson_resp(IVORYCOAST_DIR / "ivorycoast_districts.geojson", "ivorycoast_districts.geojson")
-
-
-@app.get("/api/ivorycoast/crop/download/csv")
-async def ivorycoast_crop_csv(
-    request: Request,
-    from_date: str | None = Query(None, alias="from"),
-    to_date:   str | None = Query(None, alias="to"),
-):
-    user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
-    await _log_download(request, "ivorycoast", "crop", "csv", user_id, from_date, to_date)
-    content = _ndvi_csv(IVORYCOAST_DIR, "ndvi_*_ivorycoast.json", from_date, to_date)
-    return _csv_resp(content, "insightsafrica_ivorycoast_crop_ndvi.csv")
-
-
-@app.get("/api/ivorycoast/heat/download/csv")
-async def ivorycoast_heat_csv(
-    request: Request,
-    from_date: str | None = Query(None, alias="from"),
-    to_date:   str | None = Query(None, alias="to"),
-):
-    user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
-    await _log_download(request, "ivorycoast", "heat", "csv", user_id, from_date, to_date)
-    content = _heat_csv(IVORYCOAST_DIR, "heat_*.json", from_date, to_date)
-    return _csv_resp(content, "insightsafrica_ivorycoast_heat.csv")
-
-
-@app.get("/api/ivorycoast/mine/download/csv")
-async def ivorycoast_mine_csv(request: Request):
-    token = _extract_token(request)
-    user  = await _get_user(token) if token else None
-    await _log_download(request, "ivorycoast", "mine", "csv", user["id"] if user else None)
-    content = _mine_csv(IVORYCOAST_DIR / "ivorycoast_mining_sites.json")
-    return _csv_resp(content, "insightsafrica_ivorycoast_mine_sites.csv")
-
-
-# ── Human Development indicators ─────────────────────────────────────────────
+# ── Senegal download endpoints (flood CSV only; rest via factory) ──
 
 @app.get("/api/senegal/flood/download/csv")
 async def senegal_flood_csv(
@@ -967,63 +912,6 @@ async def senegal_flood_csv(
     await _log_download(request, "senegal", "flood", "csv", user_id, from_date, to_date)
     content = _chirps_csv(SENEGAL_DIR, "chirps-*_senegal.json", resolved_level, from_date, to_date, country="senegal")
     return _csv_resp(content, f"insightsafrica_senegal_flood_{resolved_level}.csv")
-
-
-@app.get("/api/senegal/flood/download/districts.geojson")
-async def senegal_districts_geojson(request: Request):
-    token = _extract_token(request)
-    user  = await _get_user(token) if token else None
-    await _log_download(request, "senegal", "flood", "districts.geojson", user["id"] if user else None)
-    return _geojson_resp(SENEGAL_DIR / "senegal_departments.geojson", "senegal_departments.geojson")
-
-
-@app.get("/api/senegal/flood/download/departments.geojson")
-async def senegal_departments_geojson(request: Request):
-    token = _extract_token(request)
-    user  = await _get_user(token) if token else None
-    await _log_download(request, "senegal", "flood", "departments.geojson", user["id"] if user else None)
-    return _geojson_resp(SENEGAL_DIR / "senegal_departments.geojson", "senegal_departments.geojson")
-
-
-@app.get("/api/senegal/flood/download/regions.geojson")
-async def senegal_regions_geojson(request: Request):
-    token = _extract_token(request)
-    user  = await _get_user(token) if token else None
-    await _log_download(request, "senegal", "flood", "regions.geojson", user["id"] if user else None)
-    return _geojson_resp(SENEGAL_DIR / "senegal_regions.geojson", "senegal_regions.geojson")
-
-
-@app.get("/api/senegal/crop/download/csv")
-async def senegal_crop_csv(
-    request: Request,
-    from_date: str | None = Query(None, alias="from"),
-    to_date:   str | None = Query(None, alias="to"),
-):
-    user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
-    await _log_download(request, "senegal", "crop", "csv", user_id, from_date, to_date)
-    content = _ndvi_csv(SENEGAL_DIR, "ndvi_*_senegal.json", from_date, to_date)
-    return _csv_resp(content, "insightsafrica_senegal_crop_ndvi.csv")
-
-
-@app.get("/api/senegal/heat/download/csv")
-async def senegal_heat_csv(
-    request: Request,
-    from_date: str | None = Query(None, alias="from"),
-    to_date:   str | None = Query(None, alias="to"),
-):
-    user_id, tier, from_date, to_date = await _auth_and_clamp(request, from_date, to_date)
-    await _log_download(request, "senegal", "heat", "csv", user_id, from_date, to_date)
-    content = _heat_csv(SENEGAL_DIR, "heat_*.json", from_date, to_date)
-    return _csv_resp(content, "insightsafrica_senegal_heat.csv")
-
-
-@app.get("/api/senegal/mine/download/csv")
-async def senegal_mine_csv(request: Request):
-    token = _extract_token(request)
-    user  = await _get_user(token) if token else None
-    await _log_download(request, "senegal", "mine", "csv", user["id"] if user else None)
-    content = _mine_csv(SENEGAL_DIR / "senegal_mining_sites.json")
-    return _csv_resp(content, "insightsafrica_senegal_mine_sites.csv")
 
 
 def _indicators_resp(filename: str) -> JSONResponse:
