@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HumanWatch — InsightsAfrica Ghana</title>
+  <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0f1e;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #0d1527;
+      border-bottom: 1px solid #1e3a5f;
+      padding: 0 1.5rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .brand-logo { width: 28px; height: 28px; background: linear-gradient(135deg, #3b82f6, #06b6d4); border-radius: 6px; }
+    .brand-name { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; letter-spacing: -0.02em; }
+    .brand-sub  { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+    .back-link  { font-size: 0.72rem; color: #475569; text-decoration: none; }
+    .back-link:hover { color: #38bdf8; }
+
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+
+    .theme-toggle {
+      background: none; border: 1px solid #1e3a5f; border-radius: 6px;
+      color: #475569; cursor: pointer; font-size: 0.85rem;
+      padding: 0.2rem 0.5rem; line-height: 1;
+    }
+    .theme-toggle:hover { border-color: #3b82f6; color: #e2e8f0; }
+
+    .page-hero {
+      background: linear-gradient(135deg, #0d1527 0%, #0f2040 100%);
+      border-bottom: 1px solid #1e3a5f;
+      padding: 2rem 2rem 1.75rem;
+    }
+
+    .page-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #1e3a5f;
+      border: 1px solid #2d5a8f;
+      border-radius: 99px;
+      padding: 0.3rem 0.85rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.85rem;
+    }
+
+    .page-title { font-size: 1.9rem; font-weight: 800; color: #f1f5f9; letter-spacing: -0.03em; margin-bottom: 0.4rem; }
+    .page-title span { color: #38bdf8; }
+    .page-desc { font-size: 0.85rem; color: #64748b; max-width: 600px; line-height: 1.55; }
+
+    .content { flex: 1; padding: 2rem; max-width: 1200px; width: 100%; margin: 0 auto; }
+    @media (max-width: 600px) { .content { padding: 1rem; } }
+
+    /* KPI grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .kpi-card {
+      background: #0d1527;
+      border: 1px solid #1e3a5f;
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .kpi-card.trend-good { border-color: rgba(34,197,94,0.35); }
+    .kpi-card.trend-bad  { border-color: rgba(239,68,68,0.3); }
+
+    .kpi-label  { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #475569; }
+    .kpi-value  { font-size: 1.6rem; font-weight: 800; color: #3b82f6; letter-spacing: -0.04em; line-height: 1; }
+    .kpi-unit   { font-size: 0.68rem; color: #475569; }
+    .kpi-year   { font-size: 0.65rem; color: #334155; margin-top: 0.15rem; }
+    .kpi-trend  { font-size: 0.72rem; margin-top: 0.25rem; font-weight: 600; }
+    .kpi-trend.up   { color: #22c55e; }
+    .kpi-trend.down { color: #ef4444; }
+    .kpi-trend.flat { color: #64748b; }
+    .kpi-loading .kpi-value { color: #2d3a50; }
+
+    /* Charts section */
+    .charts-heading {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #3b82f6;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 1.25rem;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .chart-card {
+      background: #0d1527;
+      border: 1px solid #1e3a5f;
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .chart-card-title { font-size: 0.82rem; font-weight: 700; color: #94a3b8; margin-bottom: 0.25rem; }
+    .chart-card-unit  { font-size: 0.65rem; color: #475569; margin-bottom: 1rem; }
+
+    .chart-wrap { position: relative; height: 160px; }
+
+    /* Attribution */
+    .attribution {
+      background: #0d1527;
+      border: 1px solid #1e2d45;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      font-size: 0.72rem;
+      color: #475569;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .attribution strong { color: #64748b; }
+
+    footer {
+      border-top: 1px solid #1e2d45;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-brand { font-size: 0.78rem; font-weight: 700; color: #475569; }
+    .footer-note  { font-size: 0.7rem; color: #334155; }
+
+    /* Light theme */
+    [data-theme="light"] body                { background: #f1f5f9; color: #1e293b; }
+    [data-theme="light"] header              { background: #ffffff; border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .brand-name         { color: #0f172a; }
+    [data-theme="light"] .brand-sub          { color: #64748b; }
+    [data-theme="light"] .back-link          { color: #64748b; }
+    [data-theme="light"] .theme-toggle       { border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .page-hero          { background: linear-gradient(135deg,#ffffff 0%,#eff6ff 100%); border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .page-pill          { background: #dbeafe; border-color: #93c5fd; color: #1d4ed8; }
+    [data-theme="light"] .page-title         { color: #0f172a; }
+    [data-theme="light"] .page-title span    { color: #2563eb; }
+    [data-theme="light"] .page-desc          { color: #475569; }
+    [data-theme="light"] .kpi-card           { background: #ffffff; border-color: #e2e8f0; }
+    [data-theme="light"] .kpi-card.trend-good { border-color: rgba(34,197,94,0.5); }
+    [data-theme="light"] .kpi-card.trend-bad  { border-color: rgba(239,68,68,0.4); }
+    [data-theme="light"] .kpi-label          { color: #94a3b8; }
+    [data-theme="light"] .kpi-unit           { color: #94a3b8; }
+    [data-theme="light"] .kpi-year           { color: #94a3b8; }
+    [data-theme="light"] .kpi-loading .kpi-value { color: #cbd5e1; }
+    [data-theme="light"] .charts-heading     { color: #2563eb; }
+    [data-theme="light"] .chart-card         { background: #ffffff; border-color: #e2e8f0; }
+    [data-theme="light"] .chart-card-title   { color: #475569; }
+    [data-theme="light"] .chart-card-unit    { color: #94a3b8; }
+    [data-theme="light"] .attribution        { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .attribution strong { color: #475569; }
+    [data-theme="light"] footer              { border-top-color: #e2e8f0; }
+    [data-theme="light"] .footer-brand       { color: #475569; }
+    [data-theme="light"] .footer-note        { color: #94a3b8; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="/hub.html">
+    <div class="brand-logo"></div>
+    <div>
+      <div class="brand-name">InsightsAfrica</div>
+      <div class="brand-sub">HumanWatch · Ghana</div>
+    </div>
+  </a>
+  <div class="header-right">
+    <a class="back-link" href="/hub.html">← Ghana Hub</a>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">◑</button>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="page-pill">🇬🇭 Ghana · Human Development</div>
+  <h1 class="page-title">HumanWatch — <span>Ghana</span></h1>
+  <p class="page-desc">Key human development indicators for Ghana — child mortality, poverty, health, education, and life expectancy — sourced from the World Bank Open Data API.</p>
+</div>
+
+<main class="content">
+
+  <div class="kpi-grid" id="kpiGrid">
+    <!-- populated by JS -->
+  </div>
+
+  <div class="charts-heading">15-Year Trends</div>
+  <div class="charts-grid" id="chartsGrid">
+    <!-- populated by JS -->
+  </div>
+
+  <div class="attribution">
+    <strong>Data source:</strong> World Bank Open Data API (api.worldbank.org) — free, publicly available.
+    Indicators sourced from UNICEF, WHO, UNESCO, and national statistical offices via World Bank data pipelines.
+    Data currency varies by indicator (2021–2024). Processed and presented by InsightsAfrica.
+  </div>
+
+</main>
+
+<footer>
+  <span class="footer-brand">InsightsAfrica</span>
+  <span class="footer-note">World Bank Open Data · CC BY 4.0</span>
+</footer>
+
+<script>
+const API = '/api/indicators/ghana';
+const ACCENT = '#3b82f6';
+
+const LABELS = {
+  child_mortality:    'Child Mortality',
+  maternal_mortality: 'Maternal Mortality',
+  poverty_215:        'Poverty <$2.15/day',
+  gini:               'Gini Inequality',
+  health_expenditure: 'Health Spend/Capita',
+  clean_water:        'Clean Water Access',
+  literacy:           'Adult Literacy',
+  school_enrollment:  'Primary Enrollment',
+  life_expectancy:    'Life Expectancy',
+};
+
+function toggleTheme() {
+  const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('ia-theme', t);
+}
+
+function trendArrow(trend, higherIsBetter) {
+  if (!trend || trend.length < 2) return { dir: 'flat', text: '— no trend data' };
+  const first = trend[0].value;
+  const last  = trend[trend.length - 1].value;
+  const delta = ((last - first) / Math.abs(first) * 100).toFixed(1);
+  const improving = higherIsBetter ? (last > first) : (last < first);
+  if (Math.abs(delta) < 1) return { dir: 'flat', text: '~ stable' };
+  return {
+    dir:  improving ? 'up' : 'down',
+    text: `${improving ? '↓' : '↑'} ${Math.abs(delta)}% since ${trend[0].year}`,
+  };
+}
+
+function renderKPIs(data) {
+  const grid = document.getElementById('kpiGrid');
+  grid.innerHTML = '';
+  for (const [key, ind] of Object.entries(data.indicators)) {
+    const cur = ind.current;
+    const { dir, text } = trendArrow(ind.trend, ind.higher_is_better);
+    const cardClass = dir === 'flat' ? '' : (dir === 'up' ? ' trend-good' : ' trend-bad');
+    grid.innerHTML += `
+      <div class="kpi-card${cardClass}">
+        <div class="kpi-label">${LABELS[key] || ind.label}</div>
+        <div class="kpi-value">${cur ? cur.value.toLocaleString() : '—'}</div>
+        <div class="kpi-unit">${ind.unit}</div>
+        <div class="kpi-year">${cur ? 'as of ' + cur.year : 'no data'}</div>
+        <div class="kpi-trend ${dir}">${text}</div>
+      </div>`;
+  }
+}
+
+function renderCharts(data) {
+  const grid = document.getElementById('chartsGrid');
+  grid.innerHTML = '';
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
+  const tickColor = isDark ? '#475569' : '#94a3b8';
+
+  for (const [key, ind] of Object.entries(data.indicators)) {
+    if (!ind.trend || ind.trend.length < 2) continue;
+    const id = `chart-${key}`;
+    grid.innerHTML += `
+      <div class="chart-card">
+        <div class="chart-card-title">${LABELS[key] || ind.label}</div>
+        <div class="chart-card-unit">${ind.unit}</div>
+        <div class="chart-wrap"><canvas id="${id}"></canvas></div>
+      </div>`;
+
+    // defer to next tick so the canvas is in the DOM
+    setTimeout(() => {
+      const ctx = document.getElementById(id);
+      if (!ctx) return;
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ind.trend.map(p => p.year),
+          datasets: [{
+            data: ind.trend.map(p => p.value),
+            borderColor: ACCENT,
+            backgroundColor: 'rgba(59,130,246,0.08)',
+            borderWidth: 2,
+            pointRadius: 3,
+            pointBackgroundColor: ACCENT,
+            fill: true,
+            tension: 0.3,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+          scales: {
+            x: { grid: { color: gridColor }, ticks: { color: tickColor, font: { size: 10 } } },
+            y: { grid: { color: gridColor }, ticks: { color: tickColor, font: { size: 10 } } },
+          },
+        },
+      });
+    }, 0);
+  }
+}
+
+fetch(API)
+  .then(r => r.json())
+  .then(data => {
+    renderKPIs(data);
+    renderCharts(data);
+  })
+  .catch(() => {
+    document.getElementById('kpiGrid').innerHTML = '<p style="color:#ef4444;font-size:0.85rem">Failed to load indicators. Is the server running?</p>';
+  });
+</script>
+</body>
+</html>

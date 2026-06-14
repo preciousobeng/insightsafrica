@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CropWatch — InsightsAfrica Ghana</title>
+  <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0f1e; color: #e2e8f0;
+      height: 100vh; display: flex; flex-direction: column;
+    }
+    header {
+      background: #0d1527; border-bottom: 1px solid #14532d33;
+      padding: 0 1.5rem; height: 56px;
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .brand-logo {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border-radius: 6px;
+    }
+    .brand-name { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; }
+    .brand-sub  { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+    .back-link  { font-size: 0.72rem; color: #475569; text-decoration: none; margin-right: 1rem; }
+    .back-link:hover { color: #22c55e; }
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #22c55e; animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .status-text { font-size: 0.75rem; color: #64748b; }
+
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    .sidebar {
+      width: 320px; background: #0d1527;
+      border-right: 1px solid #1e3a5f;
+      display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+    }
+    .sidebar-section { padding: 1.5rem; border-bottom: 1px solid #1e2d45; }
+    .sidebar-section:last-child { border-bottom: none; }
+
+    .section-label {
+      font-size: 0.65rem; font-weight: 700; color: #22c55e;
+      text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.75rem;
+    }
+
+    .stat-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+    .stat-label { font-size: 0.78rem; color: #94a3b8; }
+    .stat-value { font-size: 0.9rem; font-weight: 600; color: #f1f5f9; }
+    .stat-value.highlight { color: #22c55e; }
+    .stat-value.warn  { color: #f59e0b; }
+    .stat-value.alert { color: #ef4444; }
+
+    /* Stress bar */
+    .stress-bar-wrap { margin-top: 0.25rem; }
+    .stress-bar-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.68rem; color: #64748b; margin-bottom: 0.25rem;
+    }
+    .stress-bar-track {
+      height: 8px; border-radius: 4px;
+      background: #1a2540; overflow: hidden; margin-bottom: 0.5rem;
+    }
+    .stress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+
+    /* Legend */
+    .legend-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; }
+    .legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+    .legend-text { font-size: 0.75rem; color: #94a3b8; }
+
+    /* ── Time-lapse player ── */
+    .player-year-row {
+      display: flex; gap: 0.35rem; margin-bottom: 0.75rem;
+    }
+    .year-btn {
+      flex: 1; padding: 0.3rem 0; font-size: 0.72rem; font-weight: 600;
+      border-radius: 6px; cursor: pointer;
+      background: #1a2540; border: 1px solid #1e3a5f; color: #64748b;
+      transition: all 0.15s;
+    }
+    .year-btn:hover { border-color: #22c55e; color: #e2e8f0; }
+    .year-btn.active { background: #0d2012; border-color: #22c55e; color: #22c55e; }
+
+    .play-btn {
+      width: 100%; padding: 0.45rem; font-size: 1rem;
+      border-radius: 8px; cursor: pointer;
+      background: #22c55e; border: none; color: #0a0f1e;
+      font-weight: 700; letter-spacing: 0.02em;
+      transition: background 0.15s, transform 0.1s;
+      margin-bottom: 0.6rem;
+    }
+    .play-btn:hover { background: #16a34a; }
+    .play-btn:active { transform: scale(0.97); }
+
+    .player-info {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 0.35rem;
+    }
+    .player-frame { font-size: 0.78rem; color: #f1f5f9; font-weight: 600; flex: 1; }
+    .player-counter { font-size: 0.7rem; color: #475569; }
+
+    .progress-track {
+      height: 6px; border-radius: 3px; background: #1a2540;
+      cursor: pointer; margin-bottom: 0.65rem; position: relative;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 3px; background: #22c55e;
+      transition: width 0.15s; pointer-events: none;
+    }
+
+    .speed-row { display: flex; gap: 0.3rem; }
+    .speed-btn {
+      flex: 1; padding: 0.25rem 0; font-size: 0.68rem; font-weight: 600;
+      border-radius: 5px; cursor: pointer;
+      background: #1a2540; border: 1px solid #1e3a5f; color: #64748b;
+      transition: all 0.15s;
+    }
+    .speed-btn:hover { border-color: #22c55e; color: #e2e8f0; }
+    .speed-btn.active { background: #0d2012; border-color: #22c55e; color: #22c55e; }
+
+    /* Layer list — scrollable */
+    .layer-list-scroll { max-height: 200px; overflow-y: auto; }
+
+    /* Layer list buttons */
+    .layer-btn {
+      width: 100%; text-align: left;
+      background: #1a2540; border: 1px solid #1e3a5f; border-radius: 8px;
+      padding: 0.5rem 0.75rem; color: #94a3b8; font-size: 0.8rem;
+      cursor: pointer; margin-bottom: 0.3rem; transition: all 0.15s;
+    }
+    .layer-btn:hover, .layer-btn.active {
+      background: #0d2012; border-color: #22c55e; color: #f1f5f9;
+    }
+    .layer-sub { display: block; font-size: 0.7rem; color: #475569; margin-top: 0.1rem; }
+
+    .info-box {
+      background: #1a2540; border: 1px solid #1e3a5f; border-radius: 8px;
+      padding: 0.75rem; font-size: 0.78rem; color: #94a3b8; line-height: 1.5;
+    }
+    .sidebar-message { font-size: 0.78rem; color: #475569; line-height: 1.5; padding: 0.5rem 0; }
+
+    /* Map container + date badge */
+    .map-wrap { flex: 1; position: relative; }
+    #map { width: 100%; height: 100%; }
+    .leaflet-container { background: #0a0f1e; }
+
+    .map-date-badge {
+      display: none;
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      background: rgba(13,21,39,0.88); border: 1px solid #22c55e55;
+      color: #22c55e; font-size: 0.8rem; font-weight: 700;
+      padding: 0.3rem 0.85rem; border-radius: 99px;
+      pointer-events: none; z-index: 999; white-space: nowrap;
+    }
+
+    .crop-tooltip {
+      background: rgba(13,21,39,0.92); border: 1px solid #22c55e44;
+      color: #e2e8f0; font-size: 0.75rem; padding: 0.3rem 0.6rem;
+      border-radius: 6px; white-space: pre-line;
+    }
+    .crop-tooltip::before { display: none; }
+
+    /* ── Theme toggle ── */
+    .theme-toggle {
+      background: none; border: 1px solid #1e3a5f; border-radius: 6px;
+      color: #475569; cursor: pointer; font-size: 0.85rem;
+      padding: 0.2rem 0.5rem; line-height: 1;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-toggle:hover { border-color: #22c55e; color: #e2e8f0; }
+
+    /* ── Light theme ── */
+    [data-theme="light"] body { background: #f1f5f9; color: #1e293b; }
+    [data-theme="light"] header { background: #ffffff; border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .brand-name { color: #0f172a; }
+    [data-theme="light"] .brand-sub { color: #64748b; }
+    [data-theme="light"] .back-link { color: #64748b; }
+    [data-theme="light"] .back-link:hover { color: #16a34a; }
+    [data-theme="light"] .status-text { color: #64748b; }
+    [data-theme="light"] .theme-toggle { border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .theme-toggle:hover { border-color: #16a34a; color: #0f172a; }
+    [data-theme="light"] .sidebar { background: #ffffff; border-right-color: #e2e8f0; }
+    [data-theme="light"] .sidebar-section { border-bottom-color: #f1f5f9; }
+    [data-theme="light"] .section-label { color: #15803d; }
+    [data-theme="light"] .stat-label { color: #64748b; }
+    [data-theme="light"] .stat-value { color: #0f172a; }
+    [data-theme="light"] .stat-value.highlight { color: #15803d; }
+    [data-theme="light"] .stat-value.warn { color: #d97706; }
+    [data-theme="light"] .stat-value.alert { color: #dc2626; }
+    [data-theme="light"] .stress-bar-track { background: #e2e8f0; }
+    [data-theme="light"] .year-btn { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .year-btn.active { background: #f0fdf4; border-color: #22c55e; color: #15803d; }
+    [data-theme="light"] .play-btn { background: #22c55e; color: #fff; }
+    [data-theme="light"] .play-btn:hover { background: #16a34a; }
+    [data-theme="light"] .progress-track { background: #e2e8f0; }
+    [data-theme="light"] .speed-btn { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .speed-btn.active { background: #f0fdf4; border-color: #22c55e; color: #15803d; }
+    [data-theme="light"] .layer-btn { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .layer-btn:hover,
+    [data-theme="light"] .layer-btn.active { background: #f0fdf4; border-color: #22c55e; color: #0f172a; }
+    [data-theme="light"] .layer-sub { color: #94a3b8; }
+    [data-theme="light"] .legend-text { color: #475569; }
+    [data-theme="light"] .info-box { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .sidebar-message { color: #94a3b8; }
+    [data-theme="light"] .leaflet-container { background: #f1f5f9; }
+    [data-theme="light"] .crop-tooltip { background: rgba(255,255,255,0.96); border-color: rgba(34,197,94,0.35); color: #0f172a; }
+    [data-theme="light"] .map-date-badge { background: rgba(255,255,255,0.92); border-color: rgba(34,197,94,0.4); color: #15803d; }
+
+    /* ── NDVI trend chart ── */
+    #ndvi-chart-section { display: block; }
+    @media (max-width: 767px) { #ndvi-chart-section { display: none; } }
+
+    /* ── Mobile layout ── */
+    @media (max-width: 767px) {
+      header { padding: 0 0.85rem; }
+      .brand-sub { display: none; }
+      .back-link { margin-right: 0.4rem; }
+      .header-right { gap: 0.6rem; }
+
+      .main { flex-direction: column; overflow: hidden; }
+
+      .sidebar {
+        width: 100%;
+        order: 2;
+        border-right: none;
+        border-top: 1px solid #1e3a5f;
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      /* Compact player on mobile */
+      .player-year-row { gap: 0.25rem; }
+      .year-btn { font-size: 0.68rem; }
+      .speed-row { gap: 0.2rem; }
+      .speed-btn { font-size: 0.62rem; }
+
+      .map-wrap { order: 1; height: 52vh; flex: none; }
+      #map { height: 100%; }
+    }
+
+    @media (max-width: 767px) {
+      [data-theme="light"] .sidebar { border-top-color: #e2e8f0; }
+    }
+  
+    /* ── Download buttons ── */
+    .download-buttons { display: flex; flex-direction: column; gap: 6px; }
+    .dl-btn {
+      display: block; padding: 7px 12px;
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 6px; color: #10b981; font-size: 12px;
+      text-decoration: none; text-align: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .dl-btn:hover { background: rgba(16,185,129,0.2); border-color: #10b981; }
+    [data-theme="light"] .dl-btn { background: #f0fdf4; border-color: #bbf7d0; color: #059669; }
+    [data-theme="light"] .dl-btn:hover { background: #dcfce7; border-color: #6ee7b7; }
+
+    .dl-date-range {
+      display: grid; grid-template-columns: auto 1fr; gap: 6px 8px;
+      align-items: center; margin-bottom: 8px;
+    }
+    .dl-date-range label { font-size: 11px; color: #94a3b8; white-space: nowrap; }
+    .dl-date-range input[type=month] {
+      flex: 1; min-width: 120px; padding: 4px 6px; border-radius: 5px;
+      border: 1px solid rgba(148,163,184,0.3); background: rgba(255,255,255,0.05);
+      color: inherit; font-size: 12px; cursor: pointer;
+    }
+    [data-theme="light"] .dl-date-range input[type=month] {
+      background: #f8fafc; border-color: #e2e8f0; color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo"></div>
+      <div>
+        <div class="brand-name">CropWatch</div>
+        <div class="brand-sub">InsightsAfrica &middot; Ghana &middot; Crop Stress Intelligence</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="/" class="back-link">&#8592; Ghana Hub</a>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
+      <div class="status-dot"></div>
+      <span class="status-text" id="status-text">Loading&hellip;</span>
+    </div>
+  </header>
+
+  <div class="main">
+
+    <aside class="sidebar">
+
+      <div class="sidebar-section">
+        <div class="section-label">Active Layer</div>
+        <div class="stat-row">
+          <span class="stat-label">Period</span>
+          <span class="stat-value highlight" id="layer-label">&mdash;</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Mean NDVI</span>
+          <span class="stat-value" id="ndvi-mean">&mdash;</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Min NDVI</span>
+          <span class="stat-value" id="ndvi-min">&mdash;</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-label">Crop Stress Breakdown</div>
+        <div id="stress-bars">
+          <p class="sidebar-message">Load a layer to see stress scores.</p>
+        </div>
+      </div>
+
+      <!-- NDVI Trend chart -->
+      <div class="sidebar-section" id="ndvi-chart-section" style="display:none;">
+        <div class="section-label">Mean NDVI &mdash; Year on Year</div>
+        <div style="position:relative; height:140px; width:100%;">
+          <canvas id="ndvi-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Time-lapse Player -->
+      <div class="sidebar-section" id="player-section" style="display:none;">
+        <div class="section-label">Time-lapse Player</div>
+
+        <div class="player-year-row">
+          <button class="year-btn active" id="yr-all"  onclick="setYear('all')">2024+2025</button>
+          <button class="year-btn"        id="yr-2024" onclick="setYear('2024')">2024</button>
+          <button class="year-btn"        id="yr-2025" onclick="setYear('2025')">2025</button>
+        </div>
+
+        <button class="play-btn" id="play-btn" onclick="togglePlay()">&#x25B6;  Play</button>
+
+        <div class="player-info">
+          <span class="player-frame" id="player-frame">---</span>
+          <span class="player-counter" id="player-counter">0 / 0</span>
+        </div>
+        <div class="progress-track" id="progress-track" onclick="scrubTo(event)">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+
+        <div class="speed-row">
+          <button class="speed-btn"        id="spd-slow"   onclick="setSpeed(1200)">Slow</button>
+          <button class="speed-btn active" id="spd-normal" onclick="setSpeed(700)">Normal</button>
+          <button class="speed-btn"        id="spd-fast"   onclick="setSpeed(300)">Fast</button>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-label">NDVI Scale</div>
+        <div style="height:12px; border-radius:6px; background: linear-gradient(to right, #d73027, #fc8d59, #fee08b, #d9ef8b, #1a9850); margin-bottom:0.4rem;"></div>
+        <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#64748b;">
+          <span>0.0 Bare</span><span>0.4</span><span>0.8 Healthy</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-label">Available Layers</div>
+        <div id="layer-list" class="layer-list-scroll"><p class="sidebar-message">Loading&hellip;</p></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-label">About</div>
+        <div class="info-box">
+          MODIS MOD13Q1 &mdash; 250m NDVI 16-day composites. Red = stressed/bare
+          land, green = healthy vegetation. Covers Ghana's main farming regions:
+          Northern, Upper East, Upper West, Brong-Ahafo, Volta.
+          Data from NASA Earthdata (free).
+        </div>
+      </div>
+
+
+      <div class="sidebar-section">
+        <div class="section-label">Download Data</div>
+        <div class="download-buttons">
+          <div class="dl-date-range">
+            <label>From</label>
+            <input type="month" id="dl-from" value="2024-01" min="2024-01" max="2025-12">
+            <label>To</label>
+            <input type="month" id="dl-to" value="2025-12" min="2024-01" max="2025-12">
+          </div>
+          <button class="dl-btn" onclick="dlCsv('/api/crop/download/csv', 'insightsafrica_ghana_crop_ndvi.csv')">CSV — NDVI Composites</button>
+        </div>
+      </div>
+
+        </aside>
+
+    <div class="map-wrap">
+      <div class="map-date-badge" id="map-date-badge"></div>
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map', { center: [8.0, -1.0], zoom: 7 });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '\u00a9 OpenStreetMap \u00a9 CARTO',
+      subdomains: 'abcd', maxZoom: 20,
+    }).addTo(map);
+
+    // ── State ──
+    let allLayers    = [];
+    let playerLayers = [];
+    let playerIndex  = 0;
+    let playerTimer  = null;
+    let speedMs      = 700;
+    let yearFilter   = 'all';
+    let currentOverlay = null;
+
+    function setStatus(t) { document.getElementById('status-text').textContent = t; }
+
+    // Key farming region highlights
+    const FARMING_REGIONS = [
+      { name: 'Northern Region',  bounds: [[9.0,-2.8],[11.0,0.2]],  colour: '#22c55e' },
+      { name: 'Upper East',       bounds: [[10.2,-0.6],[11.2,1.2]], colour: '#16a34a' },
+      { name: 'Upper West',       bounds: [[10.0,-2.8],[11.2,-0.8]],colour: '#15803d' },
+      { name: 'Brong-Ahafo',      bounds: [[7.0,-2.8],[9.0,0.0]],   colour: '#4ade80' },
+      { name: 'Volta Region',     bounds: [[6.0,-0.2],[8.5,1.2]],   colour: '#86efac' },
+    ];
+
+    FARMING_REGIONS.forEach(r => {
+      L.rectangle(r.bounds, {
+        color: r.colour, weight: 1.2, fillOpacity: 0.05, dashArray: '4 4',
+      }).addTo(map).bindTooltip(r.name + '\nKey farming region', {
+        className: 'crop-tooltip', sticky: true,
+      });
+    });
+
+    function renderStressBars(stress) {
+      const container = document.getElementById('stress-bars');
+      container.textContent = '';
+
+      const bars = [
+        { key: 'severe_stress',   label: 'Severe stress',   colour: '#ef4444' },
+        { key: 'moderate_stress', label: 'Moderate stress', colour: '#f59e0b' },
+        { key: 'fair',            label: 'Fair',            colour: '#a3e635' },
+        { key: 'healthy',         label: 'Healthy',         colour: '#22c55e' },
+      ];
+
+      bars.forEach(({ key, label, colour }) => {
+        const val = stress[key] != null ? stress[key].toFixed(1) : '0.0';
+
+        const wrap  = document.createElement('div');
+        wrap.className = 'stress-bar-wrap';
+
+        const lbl = document.createElement('div');
+        lbl.className = 'stress-bar-label';
+        lbl.appendChild(document.createTextNode(label));
+        const pct = document.createElement('span');
+        pct.textContent = val + '%';
+        lbl.appendChild(pct);
+        wrap.appendChild(lbl);
+
+        const track = document.createElement('div');
+        track.className = 'stress-bar-track';
+        const fill = document.createElement('div');
+        fill.className = 'stress-bar-fill';
+        fill.style.width = val + '%';
+        fill.style.background = colour;
+        track.appendChild(fill);
+        wrap.appendChild(track);
+
+        container.appendChild(wrap);
+      });
+    }
+
+    function displayLayer(layer, fromPlayer) {
+      if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
+
+      if (layer.png) {
+        currentOverlay = L.imageOverlay(
+          '/tiles/' + layer.png, layer.leaflet_bounds, { opacity: 0.8 }
+        ).addTo(map);
+        if (!fromPlayer) map.fitBounds(layer.leaflet_bounds, { padding: [20, 20] });
+      }
+
+      document.getElementById('layer-label').textContent = layer.label;
+      const s = layer.stress_score || {};
+      document.getElementById('ndvi-mean').textContent = s.mean_ndvi != null ? s.mean_ndvi.toFixed(3) : '\u2014';
+      document.getElementById('ndvi-min').textContent  = s.min_ndvi  != null ? s.min_ndvi.toFixed(3)  : '\u2014';
+
+      if (Object.keys(s).length) renderStressBars(s);
+
+      // Sync layer list highlight
+      document.querySelectorAll('.layer-btn').forEach((btn, i) => {
+        const idx = parseInt(btn.dataset.index, 10);
+        if (allLayers[idx] === layer) {
+          btn.classList.add('active');
+          btn.scrollIntoView({ block: 'nearest' });
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      if (fromPlayer) showMapBadge(layer.label);
+    }
+
+    function renderLayerList() {
+      const container = document.getElementById('layer-list');
+      container.textContent = '';
+
+      allLayers.forEach((layer, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'layer-btn' + (i === allLayers.length - 1 ? ' active' : '');
+        btn.dataset.index = String(i);
+        btn.appendChild(document.createTextNode(layer.label));
+
+        const sub = document.createElement('span');
+        sub.className = 'layer-sub';
+        const s = layer.stress_score || {};
+        sub.textContent = s.mean_ndvi != null
+          ? 'NDVI mean: ' + s.mean_ndvi.toFixed(3)
+          : 'No stress data yet';
+        btn.appendChild(sub);
+
+        btn.addEventListener('click', () => {
+          pause();
+          displayLayer(layer, false);
+          hideMapBadge();
+        });
+
+        container.appendChild(btn);
+      });
+    }
+
+    // ── Player functions ──
+
+    function setYear(yr) {
+      yearFilter = yr;
+      document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('active'));
+      const map = { all: 'yr-all', '2024': 'yr-2024', '2025': 'yr-2025' };
+      document.getElementById(map[yr]).classList.add('active');
+      rebuildPlayerLayers();
+    }
+
+    function rebuildPlayerLayers() {
+      if (yearFilter === 'all') {
+        playerLayers = allLayers.slice();
+      } else {
+        playerLayers = allLayers.filter(l => l.label && l.label.includes(yearFilter));
+      }
+      playerIndex = 0;
+      updatePlayerUI();
+    }
+
+    function updatePlayerUI() {
+      const total = playerLayers.length;
+      const cur   = total ? playerIndex + 1 : 0;
+      const layer = playerLayers[playerIndex];
+      document.getElementById('player-frame').textContent   = layer ? layer.label : '---';
+      document.getElementById('player-counter').textContent = cur + ' / ' + total;
+      updateProgressBar();
+    }
+
+    function updateProgressBar() {
+      const total = playerLayers.length;
+      const pct   = total > 1 ? (playerIndex / (total - 1)) * 100 : 0;
+      document.getElementById('progress-fill').style.width = pct + '%';
+    }
+
+    function setSpeed(ms) {
+      speedMs = ms;
+      document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+      const ids = { 1200: 'spd-slow', 700: 'spd-normal', 300: 'spd-fast' };
+      if (ids[ms]) document.getElementById(ids[ms]).classList.add('active');
+      if (playerTimer) { pause(); play(); }
+    }
+
+    function play() {
+      if (!playerLayers.length) return;
+      const btn = document.getElementById('play-btn');
+      btn.textContent = '\u23F8  Pause';
+      playerTimer = setInterval(() => {
+        playerIndex = (playerIndex + 1) % playerLayers.length;
+        displayLayer(playerLayers[playerIndex], true);
+        updatePlayerUI();
+      }, speedMs);
+      displayLayer(playerLayers[playerIndex], true);
+      updatePlayerUI();
+    }
+
+    function pause() {
+      if (playerTimer) { clearInterval(playerTimer); playerTimer = null; }
+      const btn = document.getElementById('play-btn');
+      btn.textContent = '\u25B6  Play';
+    }
+
+    function togglePlay() {
+      if (playerTimer) { pause(); hideMapBadge(); }
+      else              { play(); }
+    }
+
+    function scrubTo(event) {
+      if (!playerLayers.length) return;
+      const track  = document.getElementById('progress-track');
+      const rect   = track.getBoundingClientRect();
+      const ratio  = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+      playerIndex  = Math.round(ratio * (playerLayers.length - 1));
+      displayLayer(playerLayers[playerIndex], !!playerTimer);
+      updatePlayerUI();
+    }
+
+    function showMapBadge(text) {
+      const badge = document.getElementById('map-date-badge');
+      badge.textContent = text;
+      badge.style.display = 'block';
+    }
+
+    function hideMapBadge() {
+      document.getElementById('map-date-badge').style.display = 'none';
+    }
+
+    // ── NDVI trend chart ──
+    let ndviChart = null;
+    // Standard MODIS 16-day DOYs and approximate month labels
+    const MODIS_DOYS = [1,17,33,49,65,81,97,113,129,145,161,177,193,209,225,241,257,273,289,305,321,337,353];
+    const MODIS_LABELS = MODIS_DOYS.map(d => {
+      const m = Math.min(Math.floor((d - 1) / 30.4), 11);
+      return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m];
+    });
+
+    const NDVI_YEAR_COLOURS = {
+      2024: { line: 'rgba(34,197,94,0.9)',   fill: 'rgba(34,197,94,0.12)'  },
+      2025: { line: 'rgba(20,184,166,0.9)',  fill: 'rgba(20,184,166,0.12)' },
+    };
+
+    function buildNdviChart(layerData) {
+      // Group by year, map DOY → mean_ndvi
+      const byYear = {};
+      layerData.forEach(l => {
+        const yr = l.year;
+        if (!byYear[yr]) byYear[yr] = {};
+        byYear[yr][l.doy] = l;
+      });
+
+      const years = Object.keys(byYear).sort();
+      const datasets = years.map(year => {
+        const col = NDVI_YEAR_COLOURS[year] || { line: 'rgba(148,163,184,0.85)', fill: 'rgba(148,163,184,0.1)' };
+        return {
+          label: String(year),
+          data: MODIS_DOYS.map(d => {
+            const l = byYear[year][d];
+            return l ? (l.stress_score ? l.stress_score.mean_ndvi : null) : null;
+          }),
+          borderColor: col.line,
+          backgroundColor: col.fill,
+          borderWidth: 2,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          tension: 0.35,
+          fill: true,
+          spanGaps: true,
+        };
+      });
+
+      const ctx = document.getElementById('ndvi-chart').getContext('2d');
+      if (ndviChart) ndviChart.destroy();
+
+      ndviChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: MODIS_LABELS, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          onClick: (event, elements) => {
+            if (!elements.length) return;
+            const el = elements[0];
+            const doy = MODIS_DOYS[el.index];
+            const year = parseInt(years[el.datasetIndex], 10);
+            const match = allLayers.find(l => l.year === year && l.doy === doy);
+            if (match) {
+              pause();
+              displayLayer(match, false);
+              hideMapBadge();
+            }
+          },
+          plugins: {
+            legend: {
+              display: true,
+              labels: { color: '#64748b', font: { size: 10 }, boxWidth: 12, padding: 8 },
+            },
+            tooltip: {
+              backgroundColor: 'rgba(13,21,39,0.95)',
+              borderColor: '#1e3a5f', borderWidth: 1,
+              titleColor: '#22c55e', bodyColor: '#94a3b8', padding: 9,
+              callbacks: {
+                title: (items) => MODIS_LABELS[items[0].dataIndex],
+                label: (item) => {
+                  const year = years[item.datasetIndex];
+                  const doy = MODIS_DOYS[item.dataIndex];
+                  const l = byYear[year] && byYear[year][doy];
+                  if (!l || !l.stress_score) return year + ': no data';
+                  const s = l.stress_score;
+                  return [
+                    year + ' NDVI mean: ' + s.mean_ndvi.toFixed(3),
+                    'Healthy: ' + s.healthy.toFixed(1) + '%',
+                    'Severe stress: ' + s.severe_stress.toFixed(1) + '%',
+                  ];
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.04)' },
+              ticks: { color: '#64748b', font: { size: 9 }, maxRotation: 0 },
+            },
+            y: {
+              min: 0.2, max: 0.85,
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              ticks: { color: '#64748b', font: { size: 9 }, callback: v => v.toFixed(2) },
+            },
+          },
+        },
+      });
+    }
+
+    // ── Load data ──
+
+    async function loadLayers() {
+      try {
+        const res = await fetch('/api/crop/layers');
+        if (!res.ok) throw new Error('no data');
+        allLayers = await res.json();
+
+        if (!allLayers.length) {
+          document.getElementById('layer-list').textContent = '';
+          const p = document.createElement('p');
+          p.className = 'sidebar-message';
+          p.textContent = 'No layers yet \u2014 run fetch_modis_ndvi.py to download NDVI data.';
+          document.getElementById('layer-list').appendChild(p);
+          setStatus('Pending data');
+          return;
+        }
+
+        renderLayerList();
+        displayLayer(allLayers[allLayers.length - 1], false);
+        setStatus('Live');
+
+        // Show player and chart
+        document.getElementById('player-section').style.display = 'block';
+        document.getElementById('ndvi-chart-section').style.display = 'block';
+        buildNdviChart(allLayers);
+        rebuildPlayerLayers();
+
+      } catch (_) {
+        document.getElementById('layer-list').textContent = '';
+        const p = document.createElement('p');
+        p.className = 'sidebar-message';
+        p.textContent = 'Run fetch_modis_ndvi.py + process_crop.py to activate this module.';
+        document.getElementById('layer-list').appendChild(p);
+        setStatus('Pending data');
+      }
+    }
+
+    loadLayers();
+  </script>
+
+  <script>
+    function toggleTheme() {
+      var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ia-theme', next);
+      document.getElementById('theme-toggle').textContent = next === 'dark' ? '\u2600' : '\u263e';
+    }
+    document.getElementById('theme-toggle').textContent =
+      document.documentElement.getAttribute('data-theme') === 'dark' ? '\u2600' : '\u263e';
+  </script>
+<script>
+  function dlCsv(baseUrl, filename) {
+    const from = document.getElementById('dl-from')?.value;
+    const to   = document.getElementById('dl-to')?.value;
+    let url = baseUrl;
+    if (from) url += (url.includes('?') ? '&' : '?') + 'from=' + from;
+    if (to)   url += (url.includes('?') ? '&' : '?') + 'to='   + to;
+    const raw   = localStorage.getItem('sb-ajkpbpiqmsmahzetfxzc-auth-token');
+    const token = raw ? JSON.parse(raw)?.access_token : null;
+    const hdrs  = token ? { 'Authorization': 'Bearer ' + token } : {};
+    fetch(url, { headers: hdrs })
+      .then(r => r.blob())
+      .then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+      });
+  }
+</script>
+</body>
+</html>

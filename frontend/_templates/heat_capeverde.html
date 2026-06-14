@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HeatWatch — InsightsAfrica Cape Verde</title>
+  <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0f1e;
+      color: #e2e8f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    header {
+      background: #0d1527;
+      border-bottom: 1px solid #1e3a5f;
+      padding: 0 1.5rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .brand-logo { width: 28px; height: 28px; background: linear-gradient(135deg, #ef4444, #f97316); border-radius: 6px; }
+    .brand-name { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; }
+    .brand-sub  { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+    .back-link  { font-size: 0.72rem; color: #475569; text-decoration: none; transition: color 0.15s; }
+    .back-link:hover { color: #ef4444; }
+
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #ef4444;
+      animation: pulse 2s infinite;
+    }
+    .status-dot.pending { background: #475569; animation: none; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .status-text { font-size: 0.75rem; color: #64748b; }
+
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    .sidebar {
+      width: 320px;
+      background: #0d1527;
+      border-right: 1px solid #1e3a5f;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .sidebar-section {
+      padding: 1.5rem;
+      border-bottom: 1px solid #1e2d45;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #ef4444;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.75rem;
+    }
+
+    .stat-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+    .stat-label { font-size: 0.78rem; color: #94a3b8; }
+    .stat-value { font-size: 0.9rem; font-weight: 600; color: #f1f5f9; }
+    .stat-value.highlight { color: #ef4444; }
+
+    .city-btn {
+      width: 100%;
+      text-align: left;
+      background: #1a2540;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      color: #94a3b8;
+      font-size: 0.82rem;
+      cursor: pointer;
+      margin-bottom: 0.4rem;
+      transition: all 0.15s;
+    }
+    .city-btn:hover, .city-btn.active {
+      background: rgba(239,68,68,0.08);
+      border-color: #ef4444;
+      color: #f1f5f9;
+    }
+    .city-region {
+      display: block;
+      font-size: 0.7rem;
+      color: #475569;
+      margin-top: 0.1rem;
+    }
+
+    .legend-gradient {
+      height: 10px;
+      border-radius: 5px;
+      background: linear-gradient(to right, #313695, #4575b4, #74add1, #abd9e9, #e0f3f8, #fee090, #fdae61, #f46d43, #d73027, #a50026);
+      margin-bottom: 0.5rem;
+    }
+    .legend-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: #64748b;
+    }
+    .legend-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.35rem; }
+    .legend-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+    .legend-text { font-size: 0.74rem; color: #94a3b8; }
+
+    .date-tag {
+      display: inline-block;
+      background: #1a2540;
+      border: 1px solid #1e3a5f;
+      border-radius: 5px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.7rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+
+    .info-box {
+      background: #1a2540;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      line-height: 1.55;
+    }
+
+    .data-gap-notice {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid #ef4444;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.8rem;
+      color: #f87171;
+      line-height: 1.6;
+    }
+    .data-gap-notice strong { color: #ef4444; }
+
+    .sidebar-message { font-size: 0.78rem; color: #475569; line-height: 1.5; padding: 0.25rem 0; }
+
+    #map { flex: 1; }
+    .leaflet-container { background: #0a0f1e; }
+
+    .heat-tooltip {
+      background: rgba(13,21,39,0.94);
+      border: 1px solid rgba(239,68,68,0.35);
+      color: #e2e8f0;
+      font-size: 0.75rem;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      white-space: pre-line;
+    }
+    .heat-tooltip::before { display: none; }
+
+    .theme-toggle {
+      background: none; border: 1px solid #1e3a5f; border-radius: 6px;
+      color: #475569; cursor: pointer; font-size: 0.85rem;
+      padding: 0.2rem 0.5rem; line-height: 1;
+    }
+    .theme-toggle:hover { border-color: #ef4444; color: #e2e8f0; }
+
+    [data-theme="light"] body { background: #f1f5f9; color: #1e293b; }
+    [data-theme="light"] header { background: #ffffff; border-bottom-color: #e2e8f0; }
+    [data-theme="light"] .brand-name { color: #0f172a; }
+    [data-theme="light"] .back-link { color: #64748b; }
+    [data-theme="light"] .back-link:hover { color: #dc2626; }
+    [data-theme="light"] .status-text { color: #64748b; }
+    [data-theme="light"] .theme-toggle { border-color: #e2e8f0; color: #64748b; }
+    [data-theme="light"] .sidebar { background: #ffffff; border-right-color: #e2e8f0; }
+    [data-theme="light"] .sidebar-section { border-bottom-color: #f1f5f9; }
+    [data-theme="light"] .section-label { color: #b91c1c; }
+    [data-theme="light"] .stat-value.highlight { color: #b91c1c; }
+    [data-theme="light"] .city-btn { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .city-btn:hover, [data-theme="light"] .city-btn.active { background: #fee2e2; border-color: #ef4444; color: #0f172a; }
+    [data-theme="light"] .info-box { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+    [data-theme="light"] .data-gap-notice { background: #fee2e2; border-color: #dc2626; color: #b91c1c; }
+    [data-theme="light"] .data-gap-notice strong { color: #b91c1c; }
+    [data-theme="light"] .leaflet-container { background: #f1f5f9; }
+    [data-theme="light"] .heat-tooltip { background: rgba(255,255,255,0.96); border-color: rgba(239,68,68,0.35); color: #0f172a; }
+
+    @media (max-width: 767px) {
+      header { padding: 0 0.85rem; }
+      .brand-sub { display: none; }
+      .back-link { margin-right: 0.4rem; }
+      .header-right { gap: 0.6rem; }
+      .main { flex-direction: column; overflow: hidden; }
+      .sidebar { width: 100%; order: 2; border-right: none; border-top: 1px solid #1e3a5f; flex: 1; overflow-y: auto; }
+      #map { order: 1; height: 52vh; flex: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-logo"></div>
+      <div>
+        <div class="brand-name">HeatWatch</div>
+        <div class="brand-sub">InsightsAfrica · Cape Verde · Urban Heat Monitoring</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="/capeverde/hub.html" class="back-link">&#8592; Cape Verde Hub</a>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode">&#9728;</button>
+      <div class="status-dot pending"></div>
+      <span class="status-text" id="status-text">No data</span>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="section-label">Product</div>
+        <div style="font-size:0.72rem; color:#ef4444; font-weight:600;">Urban heat tracking — Praia, Mindelo, Santa Maria</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="data-gap-notice">
+          <strong>Data Gap Notice:</strong> Landsat 9 L2SP thermal scenes are not produced by USGS for Cape Verde path-rows. Urban heat layer will be unavailable until USGS expands coverage or thermal data becomes available from alternative sources.
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">Target Cities</div>
+        <button class="city-btn">Praia (Santiago)<span class="city-region">capital</span></button>
+        <button class="city-btn">Mindelo (São Vicente)<span class="city-region">second city</span></button>
+        <button class="city-btn">Santa Maria (Sal)<span class="city-region">tourism hub</span></button>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">Legend</div>
+        <div class="legend-gradient"></div>
+        <div class="legend-labels">
+          <span>15°C</span>
+          <span>25°C</span>
+          <span>35°C+</span>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-label">About</div>
+        <div class="info-box">HeatWatch monitors Urban Heat Island (UHI) effects in Cape Verde's primary urban centers. Planned data source: Landsat 9 thermal infrared (100m resolution) when USGS coverage becomes available. Currently monitoring urbanisation pressure in Praia and Mindelo.</div>
+      </div>
+    </aside>
+    <div id="map"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map', { center: [16.3, -23.6], zoom: 8 });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap © CARTO', subdomains: 'abcd', maxZoom: 20,
+    }).addTo(map);
+
+    const cities = [
+      { name: 'Praia', lat: 14.9176, lng: -23.6087 },
+      { name: 'Mindelo', lat: 16.8826, lng: -25.0619 },
+      { name: 'Santa Maria', lat: 16.7384, lng: -22.9519 }
+    ];
+
+    const cityMarkers = L.layerGroup().addTo(map);
+    cities.forEach(city => {
+      L.circleMarker([city.lat, city.lng], {
+        radius: 8,
+        fillColor: '#ef4444',
+        color: '#fff',
+        weight: 1.5,
+        opacity: 0.8,
+        fillOpacity: 0.7
+      }).bindTooltip(city.name, { sticky: true, className: 'heat-tooltip' }).addTo(cityMarkers);
+    });
+  </script>
+  <script>
+    function toggleTheme() {
+      var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ia-theme', next);
+      document.getElementById('theme-toggle').textContent = next === 'dark' ? '\u2600' : '\u263e';
+    }
+    document.getElementById('theme-toggle').textContent =
+      document.documentElement.getAttribute('data-theme') === 'dark' ? '\u2600' : '\u263e';
+  </script>
+</body>
+</html>
