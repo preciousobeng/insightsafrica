@@ -916,16 +916,21 @@
     }
 
     function displayLayer(layer, fromPlayer) {
-      if (currentOverlay) {
-        map.removeLayer(currentOverlay);
-        currentOverlay = null;
-      }
-
       const imgUrl = '/sn-tiles/' + layer.png;
       const bounds = layer.leaflet_bounds; // [[south, west], [north, east]]
+      const prev = currentOverlay;
 
-      currentOverlay = L.imageOverlay(imgUrl, bounds, { opacity: 0.8 });
-      currentOverlay.addTo(map);
+      // Flicker-free swap: fade the next tile in, only drop the old one once loaded.
+      const next = L.imageOverlay(imgUrl, bounds, { opacity: 0 });
+      currentOverlay = next;
+      next.addTo(map);
+      const el = next.getElement();
+      if (el && el.complete) {
+        next.setOpacity(0.8);
+        if (prev) map.removeLayer(prev);
+      } else {
+        next.on('load', () => { next.setOpacity(0.8); if (prev) map.removeLayer(prev); });
+      }
 
       document.getElementById('layer-label').textContent = layer.label;
       document.getElementById('rain-min').textContent  = layer.rainfall_mm.min + ' mm';
@@ -1292,6 +1297,9 @@
           setStatus('No data');
           return;
         }
+
+        // Warm the browser cache so the flicker-free swap has tiles ready.
+        layers.forEach(l => { const i = new Image(); i.src = '/sn-tiles/' + l.png; });
 
         renderLayerList();
         buildChart(layers);
