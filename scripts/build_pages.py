@@ -114,7 +114,12 @@ def main():
                         lineterm="", n=1,
                     )
                     print(f"\n===== DIFF {out.relative_to(FRONTEND)} =====")
-                    print("\n".join(list(d)[:60]))
+                    diff_lines = list(d)[:60]
+                    for dl in diff_lines:
+                        try:
+                            print(dl)
+                        except UnicodeEncodeError:
+                            print(dl.encode('utf-8', errors='replace').decode('utf-8', errors='replace'))
             else:
                 out.parent.mkdir(parents=True, exist_ok=True)
                 out.write_text(generated)

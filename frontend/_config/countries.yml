@@ -25,6 +25,7 @@
 ghana:
   slug: ghana
   name: Ghana
+  display_name: Ghana
   is_root: true                 # served at /, no country subfolder
   has_infrastructure: true      # IFT/drainage layer (ghana_infrastructure.json)
   api_prefix: ""                # uses /api/flood, /api/boundaries (no country segment)
@@ -37,6 +38,25 @@ ghana:
     coarse: { key: regions,   label: Regions,   count: 16 }
     fine:   { key: districts, label: Districts, count: 260 }
   default_visible: regions       # listed first in the Boundaries button group
+  flood:
+    data_base: /api
+    anomaly_base: /api/ghana
+    coarse_noun: Region
+    region_noun: Region
+    summary_noun: districts
+    fine_mouseover_prop: region
+    about_intro: "Covering Ghana's major flood corridors:"
+    about_regions: "Accra, Volta River Basin, and Northern Region."
+    buttons:
+      - { key: regions,   label: Regions,   count: 16, active: true }
+      - { key: districts, label: Districts, count: 260, active: false }
+    downloads:
+      csv:
+        - { level: regions,   label: Regions }
+        - { level: districts, label: Districts }
+      geojson:
+        - { file: regions,   label: "Regional boundaries" }
+        - { file: districts, label: "District boundaries" }
 
 nigeria:
   slug: nigeria
@@ -95,6 +115,8 @@ ivorycoast:
     data_base: /api/ivorycoast
     endpointmap_multiline: true
     anomaly_base: /api/ivorycoast
+    compound_key_level: districts   # INVERTED: uses coarse level for compound key (districts have empty p.name)
+    bold_border_level: regions      # INVERTED: fine level gets bold white border in anomaly mode
     coarse_noun: District
     region_noun: Region
     summary_noun: districts
@@ -187,6 +209,7 @@ southafrica:
 capeverde:
   slug: capeverde
   name: Cape Verde
+  display_name: Cape Verde
   is_root: false
   has_infrastructure: false
   api_prefix: /api/capeverde
@@ -196,3 +219,18 @@ capeverde:
   map_zoom: 8
   weather: { lat: "14.9315", lng: "-23.5136", location: Praia, timezone: Atlantic/Cape_Verde }
   single_level: { key: islands, label: Islands }   # no coarse/fine, no compound keys
+  flood:
+    data_base: /api/capeverde
+    anomaly_base: /api/capeverde
+    coarse_noun: Island
+    region_noun: Island
+    summary_noun: islands
+    fine_mouseover_prop: region
+    about_intro: "Covering Cape Verde's flood-prone zones:"
+    about_regions: "the archipelago's main islands."
+    buttons:
+      - { key: islands, label: Islands, count: 10, active: true }
+    downloads:
+      csv:
+        - { level: islands, label: Islands }
+      geojson: []
