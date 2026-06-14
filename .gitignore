@@ -35,6 +35,11 @@ notebooks/**/.ipynb_checkpoints/
 *.log
 nohup.out
 
+# Dev-only verify harness deps (scripts/verify_page.mjs) — not for prod
+node_modules/
+package.json
+package-lock.json
+
 # Secrets
 *.key
 *.pem

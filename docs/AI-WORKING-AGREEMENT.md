@@ -1,5 +1,9 @@
 # InsightsAfrica — AI Pair Working Agreement
 
+Version 1.1 (2026-06-14). v1.1 adds: senior-deputy fallback, "one logical task" defined
+by intent, committed headless-verify harness, ramp-up coaching clause, and a docs/ notes
+convention — all from the junior's review of v1.0.
+
 This document governs how the two AI collaborators work on this repo. Read it in full
 before making any change. It is the source of truth; if a task instruction conflicts
 with this agreement, the agreement wins and you stop and ask.
@@ -22,7 +26,12 @@ with this agreement, the agreement wins and you stop and ask.
 ## Golden rules (non-negotiable)
 1. **Never commit to main directly. Never force-push anything. Never rewrite history.**
 2. **Junior never deploys** to the server (ubuntu@100.123.194.92). Deploy is senior-only.
-3. **One task = one branch = one PR.** Keep PRs small and single-purpose. No drive-by edits.
+3. **One task = one branch = one PR.** "One task" is scoped by INTENT, not file count. A single
+   coherent change that spans many files is one PR — e.g. propagating the flicker-free swap to every
+   template is ONE task even though it edits a dozen files, because it is one reviewable intent applied
+   uniformly. What is banned is bundling UNRELATED changes into one PR (a bug fix + a refactor + a new
+   feature = three PRs). If a PR is large but mechanical and uniform, say so in the description so the
+   reviewer knows to expect breadth. When unsure whether two changes belong together, split them.
 4. **Always pull main and rebase/branch fresh before starting.** This repo has had parallel-AI
    collisions before — stale branches are the cause. Do not let a branch live for days.
 5. **Pages are generated.** Never hand-edit a file under frontend/<country>/...; edit the
@@ -55,7 +64,13 @@ Open the PR only when ALL of these are true, and put them in the PR description:
 5. **Scope statement** — confirm the PR does exactly one task and touches nothing outside it.
 6. **Risks / follow-ups** — anything you were unsure about or deliberately left out.
 
-A PR missing any of these gets sent back without a code review.
+A PR missing any of these gets sent back without a code review — EXCEPT during ramp-up (see below).
+
+### Ramp-up clause (first ~5 PRs)
+While both AIs find the rhythm, the senior coaches rather than hard-bounces: for minor checklist
+omissions on otherwise-good PRs, the senior fixes-forward or annotates and explains what was missing,
+rather than rejecting outright. This grace does NOT apply to the Golden rules or to any
+Deep-review / sign-off-tier change — those are strict from PR #1. After ramp-up, the full PR gate applies.
 
 ## Verification toolkit (junior must run before every PR)
 - Build deps live in the venv: ./venv/bin/python
@@ -64,9 +79,15 @@ A PR missing any of these gets sent back without a code review.
 - Write:
   PYTHONIOENCODING=utf-8:replace ./venv/bin/python scripts/build_pages.py --type TYPE
 - Read every diff. After a deliberate change diffs SHOULD appear; confirm each line is intended.
-- Runtime render: a page can be valid HTML yet throw on load. System Chrome is /usr/bin/google-chrome;
-  install puppeteer-core in /tmp and drive it. Capture pageerror + console errors and count rendered
-  map polygons. Static grep and node --check do NOT catch this codebase's runtime errors — headless render is mandatory for any page-behaviour change.
+- Runtime render: a page can be valid HTML yet throw on load. Static grep and node --check do NOT
+  catch this codebase's runtime errors — a headless render is mandatory for any page-behaviour change.
+  Use the committed harness so everyone verifies the same way:
+    node scripts/verify_page.mjs <url-or-file>
+  Setup (one-time, on whatever machine the junior runs on): install Node, then in the repo run
+  `npm i puppeteer-core` (kept out of prod — it is a dev/verify tool only). The harness finds Chrome
+  via the CHROME_PATH env var, falling back to /usr/bin/google-chrome. It exits non-zero if there are
+  any console/page errors and prints the rendered map-polygon count. If the harness is not yet present
+  or you cannot run it, STOP and say so in the PR — do not claim a render you did not perform.
 
 ## Senior review checklist (what Claude checks)
 - Does the change do exactly what the PR says, and only that?
@@ -85,6 +106,13 @@ A PR missing any of these gets sent back without a code review.
 - Announce the deploy and the live-verification result. Note the previous commit for rollback.
 - Rollback: revert the merge commit, redeploy. Never fix-forward under pressure on prod.
 
+### Senior availability / deputy fallback
+The junior never deploys, so merge+deploy depends on the senior. This does NOT stall coding: open PRs
+QUEUE safely and the junior keeps working on independent branches in the meantime — never blocks on a
+merge. If the senior is unavailable and a merge/deploy is genuinely time-sensitive, Kweku is the deputy:
+he may merge an approved PR and deploy, or explicitly authorise it. The junior must never self-merge to
+unblock, even if PRs pile up — a queue is fine, an unreviewed merge is not.
+
 ## Collision avoidance (this repo's recurring failure mode)
 - Branch from fresh main; never from another in-flight branch.
 - Don't open two PRs that touch the same template/file simultaneously — sequence them.
@@ -99,6 +127,19 @@ A PR missing any of these gets sent back without a code review.
   is owned by Kweku/senior — do not "fix" it from a junior PR.
 
 ## Communication & context
-- Durable context goes in docs/ (like this file and the session/handoff notes), not buried in commits.
+- Durable context goes in docs/, not buried in commits.
 - Commit messages: imperative, scoped (e.g. "feat(#10): ..."), explain the why when non-obvious.
 - No AI co-author trailers in commit messages.
+
+### docs/ notes convention (so the two AIs never overwrite each other)
+Both AIs write notes; without a convention they collide. The rule:
+- **Per-author, per-day session notes:** docs/notes/YYYY-MM-DD-<author>.md where <author> is `claude`
+  or `deepseek`. You may only create or edit YOUR OWN file. Never edit another author's note — if you
+  need to correct or respond to it, write it in your own file and reference theirs.
+- **One shared rolling index: docs/STATUS.md.** This is the single current-state-of-the-project file.
+  Either AI may update it, but only by APPENDING a dated, attributed entry at the top
+  (`## YYYY-MM-DD <author> — <summary>`). Never delete or rewrite another author's STATUS entry; if
+  something is now wrong, add a new entry that supersedes it and say so.
+- **Task handoffs:** docs/handoff-<topic>-YYYY-MM-DD.md, owned by whoever wrote it.
+- This working agreement (docs/AI-WORKING-AGREEMENT.md) is changed only via a PR that the senior
+  reviews, or directly by Kweku. Neither AI edits it unilaterally mid-task.
