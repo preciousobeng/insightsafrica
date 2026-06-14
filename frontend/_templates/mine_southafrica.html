@@ -226,12 +226,21 @@
     function displaySite(site) {
       activeSite = site;
       updateSiteInfo(site);
-      if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
       const imgKey = currentIndex + '_png';
       if (site[imgKey]) {
-        currentOverlay = L.imageOverlay('/za-tiles/' + site[imgKey], site.leaflet_bounds, { opacity: 0.85 });
-        currentOverlay.addTo(map);
-        map.fitBounds(site.leaflet_bounds, { padding: [40, 40] });
+        const bounds = site.leaflet_bounds;
+        const prev = currentOverlay;
+        const next = L.imageOverlay('/za-tiles/' + site[imgKey], bounds, { opacity: 0 });
+        currentOverlay = next;
+        next.addTo(map);
+        map.fitBounds(bounds, { padding: [40, 40] });
+        const el = next.getElement();
+        if (el && el.complete) {
+          next.setOpacity(0.85);
+          if (prev) map.removeLayer(prev);
+        } else {
+          next.on('load', () => { next.setOpacity(0.85); if (prev) map.removeLayer(prev); });
+        }
       } else {
         map.setView([site.centre[1], site.centre[0]], 11);
       }
@@ -338,6 +347,10 @@
         const res = await fetch('/api/southafrica/mine/sites');
         if (!res.ok) throw new Error('no data');
         allSites = await res.json();
+
+        // Warm the browser cache so the flicker-free swap has tiles ready.
+        allSites.forEach(s => { ['0_png','1_png','2_png'].forEach(k => { if (s[k]) { const i = new Image(); i.src = '/za-tiles/' + s[k]; } }); });
+
         renderForTab();
         setStatus('Live');
       } catch (_) {

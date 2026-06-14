@@ -590,9 +590,6 @@
         b.classList.toggle('active', b.dataset.cityId === cityId);
       });
 
-      // Remove existing overlay
-      if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
-
       const layers = layersByCity[cityId];
       if (layers && layers.length) {
         const layer = layers[0]; // most recent
@@ -600,9 +597,18 @@
 
         if (layer.png) {
           const bounds = layer.leaflet_bounds; // [[south,west],[north,east]]
-          currentOverlay = L.imageOverlay('/ng-tiles/' + layer.png, bounds, { opacity: 0.80 });
-          currentOverlay.addTo(map);
+          const prev = currentOverlay;
+          const next = L.imageOverlay('/ng-tiles/' + layer.png, bounds, { opacity: 0 });
+          currentOverlay = next;
+          next.addTo(map);
           map.fitBounds(bounds, { padding: [30, 30] });
+          const el = next.getElement();
+          if (el && el.complete) {
+            next.setOpacity(0.80);
+            if (prev) map.removeLayer(prev);
+          } else {
+            next.on('load', () => { next.setOpacity(0.80); if (prev) map.removeLayer(prev); });
+          }
         } else {
           // No PNG yet -- zoom to city centre
           const def = CITY_DEFS.find(c => c.id === cityId);
@@ -801,11 +807,20 @@
 
     function displayScene(scene) {
       // Show a specific heat scene on the map (used by player)
-      if (currentOverlay) { map.removeLayer(currentOverlay); currentOverlay = null; }
       if (scene.png) {
-        currentOverlay = L.imageOverlay('/ng-tiles/' + scene.png, scene.leaflet_bounds, { opacity: 0.80 });
-        currentOverlay.addTo(map);
-        map.fitBounds(scene.leaflet_bounds, { padding: [30, 30] });
+        const bounds = scene.leaflet_bounds;
+        const prev = currentOverlay;
+        const next = L.imageOverlay('/ng-tiles/' + scene.png, bounds, { opacity: 0 });
+        currentOverlay = next;
+        next.addTo(map);
+        map.fitBounds(bounds, { padding: [30, 30] });
+        const el = next.getElement();
+        if (el && el.complete) {
+          next.setOpacity(0.80);
+          if (prev) map.removeLayer(prev);
+        } else {
+          next.on('load', () => { next.setOpacity(0.80); if (prev) map.removeLayer(prev); });
+        }
       }
       updateCityInfo(scene);
       activeCity = scene.city_id;
@@ -904,6 +919,9 @@
         Object.keys(layersByCity).forEach(k => {
           layersByCity[k].sort((a, b) => b.date.localeCompare(a.date));
         });
+
+        // Warm the browser cache so the flicker-free swap has tiles ready.
+        layers.forEach(l => { if (l.png) { const i = new Image(); i.src = '/ng-tiles/' + l.png; } });
 
         renderCityList(true);
         displayCity('lagos');
