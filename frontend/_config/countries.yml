@@ -53,6 +53,15 @@ nigeria:
     coarse: { key: states, label: States, count: 37 }
     fine:   { key: lgas,   label: LGAs,  count: 774 }
   default_visible: states
+  flood:
+    data_base: /api/nigeria
+    anomaly_base: /api/nigeria
+    coarse_noun: State
+    region_noun: Region
+    summary_noun: LGAs
+    fine_mouseover_prop: state      # QUIRK/BUG: should be region (chart hover broken); preserved for byte-identical
+    about_intro: "Covering Nigeria's major flood corridors:"
+    about_regions: "Lagos, Niger Delta, and the North-Central flood plains."
 
 ivorycoast:
   slug: ivorycoast
@@ -70,6 +79,15 @@ ivorycoast:
     fine:   { key: regions,   label: Regions,   count: 31 }
   default_visible: districts
   fine_empty_name: true          # IC district boundaries have empty p.name (name in p.region)
+  flood:
+    data_base: /api/ivorycoast
+    anomaly_base: /api/ivorycoast
+    coarse_noun: District
+    region_noun: Region
+    summary_noun: districts
+    fine_mouseover_prop: district   # QUIRK/BUG: should be region (chart hover broken); preserved for byte-identical
+    about_intro: "Covering Côte d'Ivoire's flood-prone zones:"
+    about_regions: "the Abidjan lagoon belt, the central basins, and the northern savanna."
 
 senegal:
   slug: senegal
@@ -86,6 +104,15 @@ senegal:
     coarse: { key: regions,      label: Regions,     count: 14 }
     fine:   { key: departments,  label: Departments, count: 46 }
   default_visible: departments
+  flood:
+    data_base: /api/senegal
+    anomaly_base: /api/senegal
+    coarse_noun: Region
+    region_noun: Region
+    summary_noun: departments
+    fine_mouseover_prop: region
+    about_intro: "Covering Senegal's flood-prone zones:"
+    about_regions: "the Senegal River valley, the groundnut basin, and the Casamance."
 
 southafrica:
   slug: southafrica
@@ -103,6 +130,15 @@ southafrica:
     fine:   { key: districts, label: Municipalities, count: 257 }   # NOTE: key=districts but DISPLAY label=Municipalities
   default_visible: provinces
   coarse_empty_name: true        # SA province boundaries have empty p.name (name in p.region)
+  flood:
+    data_base: /api/southafrica
+    anomaly_base: /api/southafrica
+    coarse_noun: Province
+    region_noun: Province
+    summary_noun: municipalities
+    fine_mouseover_prop: region
+    about_intro: "Covering South Africa's major flood corridors:"
+    about_regions: "KwaZulu-Natal, the Eastern Cape, and the Highveld."
 
 capeverde:
   slug: capeverde

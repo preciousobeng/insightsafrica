@@ -50,7 +50,12 @@ def output_path(country: dict, page_type: str) -> Path:
 
 
 def render(env: Environment, page_type: str, country: dict) -> str:
-    tmpl = env.get_template(f"{page_type}.html")
+    # Per-country template variant: <page_type>_<slug>.html takes precedence over
+    # the shared <page_type>.html. Used where a country's structure diverges too far
+    # to share (e.g. Cape Verde's single-level flood page).
+    variant = TEMPLATES / f"{page_type}_{country['slug']}.html"
+    name = variant.name if variant.exists() else f"{page_type}.html"
+    tmpl = env.get_template(name)
     return tmpl.render(c=country, country=country)
 
 
