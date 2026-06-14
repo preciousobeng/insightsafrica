@@ -75,8 +75,8 @@ def main():
         loader=FileSystemLoader(str(TEMPLATES)),
         undefined=StrictUndefined,   # fail loudly on a missing config key
         keep_trailing_newline=True,
-        trim_blocks=False,
-        lstrip_blocks=False,
+        trim_blocks=True,    # newline after a block tag is stripped — clean HTML output
+        lstrip_blocks=True,  # leading whitespace before a block tag is stripped
     )
 
     types = MODULE_TYPES + ["hub"] if args.all else [args.type]
