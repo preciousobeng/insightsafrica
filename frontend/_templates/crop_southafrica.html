@@ -761,7 +761,7 @@
         }
 
         // Warm the browser cache so the flicker-free swap has tiles ready.
-        layers.forEach(l => { const i = new Image(); i.src = '/ng-tiles/' + l.png; });
+        allLayers.forEach(l => { const i = new Image(); i.src = '/ng-tiles/' + l.png; });
 
         renderLayerList();
         allLayers.forEach(l => { if (l.png) { const i = new Image(); i.src = '/za-tiles/' + l.png; } });

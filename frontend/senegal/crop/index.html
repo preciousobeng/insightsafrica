@@ -766,7 +766,7 @@
         }
 
         // Warm the browser cache so the flicker-free swap has tiles ready.
-        layers.forEach(l => { const i = new Image(); i.src = '/ic-tiles/' + l.png; });
+        allLayers.forEach(l => { const i = new Image(); i.src = '/ic-tiles/' + l.png; });
 
         renderLayerList();
         displayLayer(allLayers[allLayers.length - 1], false);
