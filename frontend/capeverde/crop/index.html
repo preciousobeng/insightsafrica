@@ -236,7 +236,7 @@
       </div>
       <div class="sidebar-section" id="ndvi-chart-section" style="display:none;">
         <div class="section-label">Mean NDVI &mdash; Year on Year</div>
-        <div style="position:relative; height:140px; width:100%;">
+        <div style="position:relative; height:200px; width:100%;">
           <canvas id="ndvi-chart"></canvas>
         </div>
       </div>
@@ -316,9 +316,22 @@
     });
 
     const NDVI_YEAR_COLOURS = {
-      2024: { line: 'rgba(34,197,94,0.9)',   fill: 'rgba(34,197,94,0.12)'  },
-      2025: { line: 'rgba(20,184,166,0.9)',  fill: 'rgba(20,184,166,0.12)' },
+      2018: { line: 'rgba(245,158,11,0.9)',   fill: 'rgba(245,158,11,0.12)'  },
+      2019: { line: 'rgba(16,185,129,0.9)',   fill: 'rgba(16,185,129,0.12)'  },
+      2020: { line: 'rgba(239,68,68,0.9)',    fill: 'rgba(239,68,68,0.12)'   },
+      2021: { line: 'rgba(236,72,153,0.9)',   fill: 'rgba(236,72,153,0.12)'  },
+      2022: { line: 'rgba(132,204,22,0.9)',   fill: 'rgba(132,204,22,0.12)'  },
+      2023: { line: 'rgba(249,115,22,0.9)',   fill: 'rgba(249,115,22,0.12)'  },
+      2024: { line: 'rgba(34,197,94,0.9)',    fill: 'rgba(34,197,94,0.12)'   },
+      2025: { line: 'rgba(20,184,166,0.9)',   fill: 'rgba(20,184,166,0.12)'  },
+      2026: { line: 'rgba(168,85,247,0.9)',   fill: 'rgba(168,85,247,0.12)'  },
+      2027: { line: 'rgba(234,179,8,0.9)',    fill: 'rgba(234,179,8,0.12)'   },
     };
+    function ndviYearColour(year) {
+      if (NDVI_YEAR_COLOURS[year]) return NDVI_YEAR_COLOURS[year];
+      const hue = (Number(year) * 137.508) % 360;
+      return { line: 'hsla(' + hue + ',65%,55%,0.9)', fill: 'hsla(' + hue + ',65%,55%,0.12)' };
+    }
 
     function buildNdviChart(layerData) {
       // Group by year, map DOY → mean_ndvi
@@ -331,7 +344,7 @@
 
       const years = Object.keys(byYear).sort();
       const datasets = years.map(year => {
-        const col = NDVI_YEAR_COLOURS[year] || { line: 'rgba(148,163,184,0.85)', fill: 'rgba(148,163,184,0.1)' };
+        const col = ndviYearColour(year);
         return {
           label: String(year),
           data: MODIS_DOYS.map(d => {
