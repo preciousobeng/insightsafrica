@@ -682,10 +682,9 @@
         const catLabel = ANOMALY_LABELS[(entry && entry.category)] || 'No data';
 
         if (level !== 'districts') {
-          const label = p.region + ' Province';
-          if (!entry) return label + '\n\nNo anomaly data';
+          if (!entry) return p.region + ' Province\n\nNo anomaly data';
           const sign = entry.anomaly_pct >= 0 ? '+' : '';
-          return label + '\n\n' + periodLabel +
+          return p.region + ' Province\n\n' + periodLabel +
             '\nActual: ' + entry.actual + ' mm' +
             '\nLTM:    ' + entry.ltm    + ' mm' +
             '\nAnomaly: ' + sign + entry.anomaly_pct + '%' +
@@ -695,7 +694,7 @@
         return (
           '<div class="tt-wrap">' +
           '<div class="tt-name">' + p.name + '</div>' +
-          '<div class="tt-region">' + p.region + ' Region</div>' +
+          '<div class="tt-region">' + p.region + ' Province</div>' +
           '<hr class="tt-divider">' +
           (entry
             ? '<div class="tt-period">' + periodLabel + ' vs 1991–2020 LTM</div>' +
@@ -748,7 +747,7 @@
       return (
         '<div class="tt-wrap">' +
         '<div class="tt-name">' + p.name + '</div>' +
-        '<div class="tt-region">' + p.region + ' Region</div>' +
+        '<div class="tt-region">' + p.region + ' Province</div>' +
         '<hr class="tt-divider">' +
         statsHtml +
         infraHtml +
@@ -779,8 +778,8 @@
             featureLayer.on('mouseover', () => {
               clearTimeout(chartResetTimer);
               const p = feature.properties;
-              const key = (level === 'districts' && p.region) ? p.name + '|' + p.region : p.name;
-              const label = level === 'districts' ? p.name + ', ' + p.region : p.name + ' Province';
+              const key = p.region ? p.name + '|' + p.region : p.name;
+              const label = key.replace('|', ', ') + ' Province';
               updateChartArea({ key, level, label });
             });
             featureLayer.on('mouseout', () => {
@@ -814,7 +813,7 @@
       }
     }
 
-    // Load states on startup
+    // Load provinces on startup
     showBoundary('provinces', '');
 
     function setStatus(text) {
@@ -917,6 +916,7 @@
       const bounds = layer.leaflet_bounds; // [[south, west], [north, east]]
       const prev = currentOverlay;
 
+      // Flicker-free swap: fade the next tile in, only drop the old one once loaded.
       const next = L.imageOverlay(imgUrl, bounds, { opacity: 0 });
       currentOverlay = next;
       next.addTo(map);
@@ -1279,7 +1279,6 @@
         Math.round(droughtN / total * 100) + '% of municipalities';
       document.getElementById('anomaly-wet-pct').textContent =
         Math.round(wetN / total * 100) + '% of municipalities';
-
     }
 
     async function loadLayers() {
@@ -1295,10 +1294,12 @@
           return;
         }
 
+        // Warm the browser cache so the flicker-free swap has tiles ready.
+        layers.forEach(l => { const i = new Image(); i.src = '/za-tiles/' + l.png; });
+
         renderLayerList();
         buildChart(layers);
         document.getElementById('chart-section').style.display = 'block';
-        layers.forEach(l => { const i = new Image(); i.src = '/za-tiles/' + l.png; });
         displayLayer(layers[layers.length - 1], false);
         setStatus('Live');
 
