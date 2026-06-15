@@ -185,7 +185,7 @@ southafrica:
     coarse: { key: provinces, label: Provinces,     count: 9 }
     fine:   { key: districts, label: Municipalities, count: 257 }   # NOTE: key=districts but DISPLAY label=Municipalities
   default_visible: provinces
-  coarse_empty_name: true        # SA province boundaries have empty p.name (name in p.region)
+  coarse_empty_name: true        # SA province boundaries have empty p.name (name lives in p.region)
   flood:
     data_base: /api/southafrica
     anomaly_base: /api/southafrica

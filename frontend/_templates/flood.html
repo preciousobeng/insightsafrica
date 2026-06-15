@@ -615,6 +615,8 @@
     }).addTo(map);
 
     let currentOverlay = null;
+    {# empty-p.name countries (SA) use p.region for display #}
+    {% set coarse_name = 'p.region' if c.get('coarse_empty_name') else 'p.name' %}
     let layers = [];
 
     // Boundary layers
@@ -678,9 +680,13 @@
 
     function buildTooltipContent(feature, level, periodLabel) {
       const p = feature.properties;
+      {% if c.get('coarse_empty_name') %}
+      const key = p.region ? p.name + '|' + p.region : p.name;
+      {% else %}
       const key = (level === '{{ c.levels.fine.key }}' && p.region)
         ? p.name + '|' + p.region
         : p.name;
+      {% endif %}
 
       // ── Anomaly mode ──
       if (viewMode === 'anomaly' && currentAnomalyData) {
@@ -689,9 +695,9 @@
         const catLabel = ANOMALY_LABELS[(entry && entry.category)] || 'No data';
 
         if (level !== '{{ c.levels.fine.key }}') {
-          if (!entry) return p.name + ' {{ c.flood.coarse_noun }}\n\nNo anomaly data';
+          if (!entry) return {{ coarse_name }} + ' {{ c.flood.coarse_noun }}\n\nNo anomaly data';
           const sign = entry.anomaly_pct >= 0 ? '+' : '';
-          return p.name + ' {{ c.flood.coarse_noun }}\n\n' + periodLabel +
+          return {{ coarse_name }} + ' {{ c.flood.coarse_noun }}\n\n' + periodLabel +
             '\nActual: ' + entry.actual + ' mm' +
             '\nLTM:    ' + entry.ltm    + ' mm' +
             '\nAnomaly: ' + sign + entry.anomaly_pct + '%' +
@@ -720,7 +726,7 @@
       const areaStats = stats[key];
 
       if (level !== '{{ c.levels.fine.key }}') {
-        const header = p.name + ' {{ c.flood.coarse_noun }}';
+        const header = {{ coarse_name }} + ' {{ c.flood.coarse_noun }}';
         if (!areaStats || areaStats.mean === null) return header + '\n\nNo data';
         return (
           header +
@@ -785,8 +791,13 @@
             featureLayer.on('mouseover', () => {
               clearTimeout(chartResetTimer);
               const p = feature.properties;
+              {% if c.get('coarse_empty_name') %}
+              const key = p.region ? p.name + '|' + p.region : p.name;
+              const label = level === '{{ c.levels.fine.key }}' ? p.name + ', ' + p.region : p.region + ' {{ c.flood.coarse_noun }}';
+              {% else %}
               const key = (level === '{{ c.levels.fine.key }}' && p.{{ c.flood.fine_mouseover_prop }}) ? p.name + '|' + p.{{ c.flood.fine_mouseover_prop }} : p.name;
               const label = level === '{{ c.levels.fine.key }}' ? p.name + ', ' + p.{{ c.flood.fine_mouseover_prop }} : p.name + ' {{ c.flood.coarse_noun }}';
+              {% endif %}
               updateChartArea({ key, level, label });
             });
             featureLayer.on('mouseout', () => {
@@ -1253,7 +1264,11 @@
       const anomalyLevel = currentAnomalyData.anomaly[level] || {};
       boundaryLayers[level].eachLayer(featureLayer => {
         const p   = featureLayer.feature.properties;
+        {% if c.get('coarse_empty_name') %}
+        const key = p.region ? p.name + '|' + p.region : p.name;
+        {% else %}
         const key = (level === '{{ c.levels.fine.key }}' && p.region) ? p.name + '|' + p.region : p.name;
+        {% endif %}
         const entry = anomalyLevel[key];
         const cat   = (entry && entry.category) || 'no_baseline';
         featureLayer.setStyle({
