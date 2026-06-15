@@ -58,13 +58,15 @@ try {
     }
   });
 
-  const resp = await page.goto(target, { waitUntil: 'networkidle2', timeout: 30000 });
+  // domcontentloaded + a fixed settle, NOT networkidle2 — these pages keep analytics
+  // connections open, which makes networkidle2 time out spuriously.
+  const resp = await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 30000 });
   if (resp && !resp.ok() && /^https?:/.test(target)) {
     warnings.push('http ' + resp.status() + ' for ' + target);
   }
 
-  // Give Leaflet/Chart.js a moment to paint after network idle.
-  await new Promise((r) => setTimeout(r, 1500));
+  // Give the API fetch + Leaflet/Chart.js time to load and paint.
+  await new Promise((r) => setTimeout(r, 4000));
 
   const polygons = await page.evaluate(
     () => document.querySelectorAll('path.leaflet-interactive').length,
