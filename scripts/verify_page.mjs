@@ -70,6 +70,18 @@ try {
     () => document.querySelectorAll('path.leaflet-interactive').length,
   );
 
+  // Catch-block / swallowed-error detection: a module whose loadLayers/loadSites threw
+  // shows one of these fallback messages even though no pageerror fired. (This is how the
+  // crop `layers`-vs-`allLayers` regression hid from the pageerror-only check.)
+  const brokenState = await page.evaluate(() => {
+    const phrases = ['activate this module', 'Could not reach', 'Is the server running', 'API offline'];
+    const body = document.body.innerText || '';
+    return phrases.find((p) => body.includes(p)) || null;
+  });
+  if (brokenState) {
+    fatal.push('broken-state message on page: "' + brokenState + '" (a loadLayers/loadSites catch fired)');
+  }
+
   console.log('target:   ' + target);
   console.log('polygons: ' + polygons);
   console.log('fatal:    ' + fatal.length);
