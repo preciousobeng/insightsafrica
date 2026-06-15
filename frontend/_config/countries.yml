@@ -97,7 +97,7 @@ nigeria:
 ivorycoast:
   slug: ivorycoast
   name: Ivory Coast
-  display_name: "Côte d'Ivoire"
+  display_name: "C\u00f4te d'Ivoire"
   is_root: false
   has_infrastructure: false
   api_prefix: /api/ivorycoast
@@ -106,26 +106,26 @@ ivorycoast:
   map_center: [7.5, -5.5]
   map_zoom: 6
   weather: { lat: "5.3599", lng: "-4.0083", location: Abidjan, timezone: Africa/Abidjan }
+  # INVERTED on purpose: districts(14) are geographically coarse but carry the only working
+  # anomaly data, so they are mapped to fine.key; region(33) anomaly data is broken (14 wrong
+  # entries) so regions is coarse/boundary-only. See docs/handoff-ic-foldin-2026-06-15.md.
   levels:
-    coarse: { key: districts, label: Districts, count: 14 }   # INVERTED: districts coarse, regions fine
-    fine:   { key: regions,   label: Regions,   count: 31 }
+    coarse: { key: regions,   label: Regions,   count: 33 }
+    fine:   { key: districts, label: Districts, count: 14 }
   default_visible: districts
-  fine_empty_name: true          # IC district boundaries have empty p.name (name in p.region)
   flood:
     data_base: /api/ivorycoast
     endpointmap_multiline: true
     anomaly_base: /api/ivorycoast
-    compound_key_level: districts   # INVERTED: uses coarse level for compound key (districts have empty p.name)
-    bold_border_level: regions      # INVERTED: fine level gets bold white border in anomaly mode
-    coarse_noun: District
-    region_noun: Region
+    coarse_noun: Region
+    region_noun: District
     summary_noun: districts
-    fine_mouseover_prop: district   # QUIRK/BUG: should be region (chart hover broken); preserved for byte-identical
-    about_intro: "Covering Côte d'Ivoire's flood-prone zones:"
+    fine_mouseover_prop: region      # district boundaries have empty p.name; name lives in p.region
+    about_intro: "Covering C\u00f4te d'Ivoire's flood-prone zones:"
     about_regions: "the Abidjan lagoon belt, the central basins, and the northern savanna."
     buttons:
       - { key: districts, label: Districts, count: 14, active: true }
-      - { key: regions,   label: Regions,   count: 31, active: false }
+      - { key: regions,   label: Regions,   count: 33, active: false }
     downloads:
       csv:
         - { level: districts, label: Districts }
