@@ -511,7 +511,7 @@
             Districts (14)
           </button>
           <button class="layer-btn" id="btn-regions" onclick="toggleBoundary('regions')">
-            Regions (31)
+            Regions (33)
           </button>
         </div>
       </div>
@@ -698,7 +698,7 @@
         return (
           '<div class="tt-wrap">' +
           '<div class="tt-name">' + p.name + '</div>' +
-          '<div class="tt-region">' + p.region + ' Region</div>' +
+          '<div class="tt-region">' + p.region + ' District</div>' +
           '<hr class="tt-divider">' +
           (entry
             ? '<div class="tt-period">' + periodLabel + ' vs 1991–2020 LTM</div>' +
@@ -751,7 +751,7 @@
       return (
         '<div class="tt-wrap">' +
         '<div class="tt-name">' + p.name + '</div>' +
-        '<div class="tt-region">' + p.region + ' Region</div>' +
+        '<div class="tt-region">' + p.region + ' District</div>' +
         '<hr class="tt-divider">' +
         statsHtml +
         infraHtml +
@@ -782,8 +782,8 @@
             featureLayer.on('mouseover', () => {
               clearTimeout(chartResetTimer);
               const p = feature.properties;
-              const key = (level === 'regions' && p.district) ? p.name + '|' + p.district : p.name;
-              const label = level === 'regions' ? p.name + ', ' + p.district : p.name + ' District';
+              const key = (level === 'districts' && p.region) ? p.name + '|' + p.region : p.name;
+              const label = level === 'districts' ? p.name + ', ' + p.region : p.name + ' Region';
               updateChartArea({ key, level, label });
             });
             featureLayer.on('mouseout', () => {
@@ -917,7 +917,7 @@
 
     function displayLayer(layer, fromPlayer) {
       const imgUrl = '/ic-tiles/' + layer.png;
-      const bounds = layer.leaflet_bounds;
+      const bounds = layer.leaflet_bounds; // [[south, west], [north, east]]
       const prev = currentOverlay;
 
       // Flicker-free swap: fade the next tile in, only drop the old one once loaded.
