@@ -779,7 +779,7 @@
               clearTimeout(chartResetTimer);
               const p = feature.properties;
               const key = p.region ? p.name + '|' + p.region : p.name;
-              const label = key.replace('|', ', ') + ' Province';
+              const label = level === 'districts' ? p.name + ', ' + p.region : p.region + ' Province';
               updateChartArea({ key, level, label });
             });
             featureLayer.on('mouseout', () => {

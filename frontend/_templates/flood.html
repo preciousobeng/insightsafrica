@@ -793,7 +793,7 @@
               const p = feature.properties;
               {% if c.get('coarse_empty_name') %}
               const key = p.region ? p.name + '|' + p.region : p.name;
-              const label = key.replace('|', ', ') + ' {{ c.flood.coarse_noun }}';
+              const label = level === '{{ c.levels.fine.key }}' ? p.name + ', ' + p.region : p.region + ' {{ c.flood.coarse_noun }}';
               {% else %}
               const key = (level === '{{ c.levels.fine.key }}' && p.{{ c.flood.fine_mouseover_prop }}) ? p.name + '|' + p.{{ c.flood.fine_mouseover_prop }} : p.name;
               const label = level === '{{ c.levels.fine.key }}' ? p.name + ', ' + p.{{ c.flood.fine_mouseover_prop }} : p.name + ' {{ c.flood.coarse_noun }}';
