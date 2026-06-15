@@ -206,6 +206,10 @@
         const res = await fetch('/api/capeverde/mine/sites');
         if (!res.ok) throw new Error('no data');
         allSites = await res.json();
+
+        // Warm the browser cache so the flicker-free swap has tiles ready.
+        allSites.forEach(s => { if (s.ndvi_png) { const i = new Image(); i.src = '/cv-tiles/' + s.ndvi_png; } });
+
         renderSiteList(allSites);
         buildChangeChart(allSites);
         if (allSites.length) displaySite(allSites[0]);

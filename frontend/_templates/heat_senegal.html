@@ -598,7 +598,7 @@
         if (layer.png) {
           const bounds = layer.leaflet_bounds;
           const prev = currentOverlay;
-          const next = L.imageOverlay('/ic-tiles/' + layer.png, bounds, { opacity: 0 });
+          const next = L.imageOverlay('/sn-tiles/' + layer.png, bounds, { opacity: 0 });
           currentOverlay = next;
           next.addTo(map);
           map.fitBounds(bounds, { padding: [30, 30] });
@@ -810,7 +810,7 @@
       if (scene.png) {
         const bounds = scene.leaflet_bounds;
         const prev = currentOverlay;
-        const next = L.imageOverlay('/ic-tiles/' + scene.png, bounds, { opacity: 0 });
+        const next = L.imageOverlay('/sn-tiles/' + scene.png, bounds, { opacity: 0 });
         currentOverlay = next;
         next.addTo(map);
         map.fitBounds(bounds, { padding: [30, 30] });
@@ -919,7 +919,8 @@
         Object.keys(layersByCity).forEach(k => {
           layersByCity[k].sort((a, b) => b.date.localeCompare(a.date));
         });
-
+        // Warm the browser cache so the flicker-free swap has tiles ready.
+        layers.forEach(l => { if (l.png) { const i = new Image(); i.src = '/sn-tiles/' + l.png; } });
         renderCityList(true);
         displayCity('lagos');
         buildHeatChart(layers);
