@@ -1029,18 +1029,20 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      var data = await res.json();
-      if (res.ok && data.ok) {
+      var data = null;
+      try { data = await res.json(); } catch (e) { data = null; }
+      if (res.ok && data && data.ok) {
         fb.className = 'cform-msg ok';
         fb.textContent = "Message sent \u2014 we'll be in touch shortly.";
         document.getElementById('contact-form').reset();
       } else {
         fb.className = 'cform-msg err';
-        fb.textContent = data.detail || 'Something went wrong. Please try again.';
+        fb.textContent = (data && data.detail) ? data.detail
+          : 'Sorry, we could not send your message right now. Please email us directly at info@insightsafrica.org.';
       }
     } catch (err) {
       fb.className = 'cform-msg err';
-      fb.textContent = 'Network error. Please check your connection and try again.';
+      fb.textContent = 'Network error. Please try again, or email us directly at info@insightsafrica.org.';
     }
 
     btn.disabled = false;

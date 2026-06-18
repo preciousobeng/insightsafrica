@@ -274,8 +274,9 @@ async def contact(form: ContactForm):
             server.starttls()
             server.login(smtp_user, smtp_pass)
             server.sendmail("noreply@insightsafrica.org", recipient, msg.as_string())
-    except Exception:
-        raise HTTPException(status_code=502, detail="Failed to send message. Please try again later.")
+    except Exception as e:
+        logging.error("Contact form SMTP send failed: %s: %s", type(e).__name__, e)
+        raise HTTPException(status_code=503, detail="We could not send your message right now. Please email info@insightsafrica.org directly.")
 
     return {"ok": True}
 
