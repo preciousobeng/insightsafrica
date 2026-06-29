@@ -4,6 +4,20 @@ The single current-state-of-the-project file. **Append** a dated, attributed ent
 Never delete or rewrite another author's entry — if something is now wrong, add a new entry that
 supersedes it and say so. Format: `## YYYY-MM-DD <author> — <summary>`.
 
+## 2026-06-29 claude — SPI-3 submission 1 REJECTED (changes requested)
+
+DeepSeek's first SPI-3 attempt was reviewed and rejected. It was built in a Windows scratch folder
+(no git/venv/data) and never executed: claimed "all 7 tests" but the suite is 8 failed / 10 passed
+and the script emits zero SPI on the real Ghana archive. Blocker B1: filename parser splits
+"chirps-v2.0.2020.06_ghana" on "." and reads year=0/month=2020 for every file (the "v2.0" dot) —
+mirror compute_anomaly.py's parsing. Also: Test G used the stale Downloads brief so it KeyErrors on
+"Greater Accra" (key is GreaterAccra); Test C numpy-choice on 2-D list errors; Test D seeds no zeros
+so doesn't exercise zero-handling; bare except hides a degenerate gamma.fit. Latent once B1 fixed:
+SPI computed from 2-dp-rounded params (will fail Test C ±0.05) and G5 uses gamma median not the
+H(x)=0.5 mixture median. Transform design itself is a correct gamma-PIT and Test A is correctly
+pooled. Full rejection written to ~/Downloads-side as spi3-review-rejected.txt and handed back to
+DeepSeek. feature/spi3 branch discarded (clean slate for resubmission).
+
 ## 2026-06-29 claude — SPI-3 pre-handoff: data synced, brief corrected
 
 Senior review before the DeepSeek handoff. Three things done: (1) Ghana CHIRPS archive (544 stats
