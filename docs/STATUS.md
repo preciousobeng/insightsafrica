@@ -4,6 +4,20 @@ The single current-state-of-the-project file. **Append** a dated, attributed ent
 Never delete or rewrite another author's entry — if something is now wrong, add a new entry that
 supersedes it and say so. Format: `## YYYY-MM-DD <author> — <summary>`.
 
+## 2026-06-29 claude — SPI-3 submission 2: engine CORRECT; brief's Test G was wrong
+
+DeepSeek's resubmission fixed B1 (parser now regex-based) and C1 (full-precision fit) — suite is now
+15 passed / 4 failed and the engine produces correct SPI on the real archive. Crucially the engine is
+**right**: pooling the full 1991–2020 reference set gives mean −0.0003 / std 0.998 (textbook N(0,1)).
+The 4 remaining failures split: (A) test bug — it pooled year-2020-only (mean −0.33) instead of the
+reference set; (G5) brittle `<0` at a value that rounds to −0.0 on H=0.5 — mixture-median math itself
+is now correct. (G2/G4) **brief errors, not code:** 2014-06 and 2015-06 Accra floods are 17th/23rd
+percentile (below-normal) 3-month windows — short-duration cloudbursts the brief itself warned about,
+yet locked as wet assertions. Owner (Kweku) decision 2026-06-29: **reframe G2/G4 as negative controls**
+(assert SPI-3 < 0, demonstrating SPI-3 doesn't flag cloudburst floods → motivates the Risk Index).
+Brief section 6 Test A + Test G revised accordingly and pushed. Round-2 review (A, G5, reframed G2/G4)
+handed back to DeepSeek; engine file is accepted as-is.
+
 ## 2026-06-29 claude — SPI-3 submission 1 REJECTED (changes requested)
 
 DeepSeek's first SPI-3 attempt was reviewed and rejected. It was built in a Windows scratch folder
