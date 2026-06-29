@@ -4,6 +4,19 @@ The single current-state-of-the-project file. **Append** a dated, attributed ent
 Never delete or rewrite another author's entry — if something is now wrong, add a new entry that
 supersedes it and say so. Format: `## YYYY-MM-DD <author> — <summary>`.
 
+## 2026-06-29 claude — SPI-3 GREEN (A–G all pass) on feature/spi3; awaiting owner for merge/deploy
+
+All 19 tests pass (A–G + helpers) against the real Ghana archive. Engine (compute_spi.py) accepted
+unchanged from DeepSeek's submission 2; the win this round was an API-driven auto-grind harness
+(~/projects/scripts/deepseek_loop.py, DeepSeek=junior vs pytest, engine frozen each round). The harness
+caught deepseek-chat echoing an unchanged file behind a fake changelog (stall guard halted it);
+deepseek-reasoner then produced correct A/G2/G4/G5 fixes but implemented Test A as 360 compute_spi3
+calls (re-reading 544 files each → 2-min hang). Senior (claude) replaced Test A with direct
+reference-set assembly (read once): pooled n=99360, mean -0.0003, std 0.9983. Senior hand-audit:
+GreaterAccra 2024-05 spi3=2.1 recomputes exactly from its fit block. NOT yet merged to main, NOT
+deployed to free-arm2 — held for the owner's review + next-course-of-action chat. Output remains
+experimental until the Risk Index sprint.
+
 ## 2026-06-29 claude — SPI-3 submission 2: engine CORRECT; brief's Test G was wrong
 
 DeepSeek's resubmission fixed B1 (parser now regex-based) and C1 (full-precision fit) — suite is now
