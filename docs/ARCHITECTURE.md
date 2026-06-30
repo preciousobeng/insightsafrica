@@ -24,7 +24,7 @@ the Risk Index is the layer that turns rigour into danger.
        |
    L7  | ACTION TRIGGERS      per-district "if risk crosses X, do Y" (NADMO playbook)   [PLANNED]
    L6  | PREDICTION           short look-ahead: trend / ARIMA on the signal             [PLANNED]
-   L5  | RISK INDEX           SPI-3  x  drainage vulnerability  = danger score          [BRIEFED]
+   L5  | RISK INDEX           SPI-3  x  drainage vulnerability  = danger score          [DONE-prov]
    L4  | SPI-3                WMO gamma-standardised "unusually wet/dry?" one number     [DONE]
    L3  | ANOMALY vs LTM       % above/below the 30-yr normal + z-score                   [LIVE]
    L2  | LTM BASELINE         the 1991-2020 normal, per place per month (WMO ref)        [LIVE]
@@ -46,7 +46,7 @@ Each layer consumes the one(s) below it. Nothing skips a layer.
 | L2 | LTM Baseline | What is "normal" rain here for this month? | L1 over 1991-2020 (WMO) | LIVE, 6 countries | Yes |
 | L3 | Anomaly vs LTM | Is this month above/below normal, and by how much? | L1 vs L2 (%, z-score) | LIVE on all 6 FloodWatch maps | Yes |
 | L4 | **SPI-3** | Is the last 3 months unusually wet/dry, on a rigorous global standard? | L1 + L2, gamma transform | **DONE (merged, not deployed)** | Yes |
-| L5 | **Risk Index** | Does the rainfall signal mean DANGER here? | L4 + drainage/IFT ratings | **Brief drafted** | **No — provisional** |
+| L5 | **Risk Index** | Does the rainfall signal mean DANGER here? | L4 + drainage/IFT ratings | **DONE (provisional)** | **No — provisional** |
 | L6 | Prediction | What is likely next month / this season? | L3/L4 time series (trend, ARIMA) | Planned | Yes |
 | L7 | Action Triggers | What should NADMO actually do, per district? | L5 + NADMO thresholds | Planned | Needs NADMO |
 
@@ -88,8 +88,8 @@ strategy is to build the L5 plumbing now so that, when NADMO data lands, calibra
 ## 6. Build sequence (sprints)
 
 - **Sprint 1 — SPI-3 (L4): DONE.** Engine + tests, merged to main (d37fbfb). Not deployed.
-- **Sprint 2 — Risk Index (L5): BRIEFED.** docs/brief-risk-index-2026-06-30.md. Provisional model
-  (SPI x drainage), compute + tests only, Ghana first.
+- **Sprint 2 — Risk Index (L5): DONE (provisional).** docs/brief-risk-index-2026-06-30.md. Provisional
+  model (SPI x drainage), compute + tests, Ghana first, merged to main. Experimental until NADMO.
 - **Sprint 3+ (candidates, any order):**
   - SPI-3 + Risk API endpoints + a FloodWatch "Risk" view (the user-facing exposure).
   - Replicate SPI-3 (and later Risk) to the other 5 countries.
@@ -112,6 +112,11 @@ strategy is to build the L5 plumbing now so that, when NADMO data lands, calibra
 
 ## Iteration log
 
+- **2026-06-30 (later)** — Risk Index (L5) BUILT + GREEN (compute_risk_index.py + 15 tests), merged to
+  main, NOT deployed. Provisional model (BASE=0.40); Accra flags moderate when dry, severe when wet —
+  the value-add over SPI-3 proven. Built via the harness in TDD mode (senior froze tests, junior wrote
+  engine). 39/260 Ghana districts covered (drainage gap). Status table above: L5 moves BRIEFED -> DONE
+  (provisional). Next per owner: Prediction (L6), then replicate SPI-3 to the other 5 countries.
 - **2026-06-30** — Architecture doc created. SPI-3 (L4) merged to main (d37fbfb), not deployed. Risk
   Index (L5) brief drafted (docs/brief-risk-index-2026-06-30.md). Decision: hold all user-facing
   (API/frontend) exposure of L4/L5 until the Risk Index is NADMO-calibrated; lock in code on main as we

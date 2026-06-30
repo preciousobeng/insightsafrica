@@ -4,6 +4,21 @@ The single current-state-of-the-project file. **Append** a dated, attributed ent
 Never delete or rewrite another author's entry — if something is now wrong, add a new entry that
 supersedes it and say so. Format: `## YYYY-MM-DD <author> — <summary>`.
 
+## 2026-06-30 claude — Risk Index (L5) GREEN; built via TDD harness; provisional until NADMO
+
+Flood Risk Index (Sprint 2) built and green: scripts/compute_risk_index.py + tests/test_risk_index.py
+(15 tests). Model: Risk = V*(BASE + (1-BASE)*Hazard), BASE=0.40, V from drainage (Good/Mod/Poor/None =
+0.25/0.5/0.75/1.0), Hazard from SPI-3 wet tail. Built via the deepseek_loop harness in **TDD mode** —
+senior froze the acceptance tests, junior (deepseek-reasoner) wrote the engine to satisfy them. R1 got
+to 14/15 in 4 rounds then stalled on Test D; senior fixed the one bug it couldn't see (it read the SPI
+file's top level instead of zonal_stats.districts). Senior pre-calibrated BASE 0.30->0.40 (0.30 left
+Accra at 0.225=low, failing the headline). VERIFIED: Accra 2015-06 (SPI -0.39, Poor drainage) = risk
+0.30 = moderate — flags the structural danger SPI-3 read as below-normal (the L5 value-add). 2026-04
+wet case: GaWest (SPI 2.05, None) = 1.0 severe. 39/260 districts scored (drainage coverage gap), 221
+skipped (no_drainage_data). Every record tagged provisional:true; params block echoed for audit.
+NOT merged-to-prod-facing/deployed; experimental until NADMO calibration. Next: Prediction (L6), then
+replicate SPI-3 to the other 5 countries.
+
 ## 2026-06-29 claude — SPI-3 GREEN (A–G all pass) on feature/spi3; awaiting owner for merge/deploy
 
 All 19 tests pass (A–G + helpers) against the real Ghana archive. Engine (compute_spi.py) accepted
