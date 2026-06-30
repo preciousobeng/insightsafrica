@@ -159,3 +159,11 @@ Behaviour and correctness, not "it runs." These verify the MODEL, not flood-pred
   not in scope here.
 - **Q4 — API/frontend exposure.** OUT of Sprint 2 (compute + tests only), same as SPI-3. The user-facing
   "Flood Risk" view waits until the model is NADMO-calibrated.
+
+## 9. v2 calibration (post-build finding, 2026-07-01 — see docs/TECH-DEBT.md TD-2)
+
+Validating L5 against the MDPI 2024 hydrological screening of Accra showed our "high" districts match
+its Odaw-Korle hotspot corridor (good), but our placeholder drainage map over-ranks peripheral
+"None"-drainage districts above the dense central epicentre, and we have no exposure term. v2: re-weight
+the V-map / BASE against NADMO observed floods, and add a population/built-up exposure multiplier
+(no NADMO needed for the exposure layer). The "None" semantics need revisiting too.

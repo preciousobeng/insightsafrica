@@ -4,6 +4,28 @@ The single current-state-of-the-project file. **Append** a dated, attributed ent
 Never delete or rewrite another author's entry — if something is now wrong, add a new entry that
 supersedes it and say so. Format: `## YYYY-MM-DD <author> — <summary>`.
 
+## 2026-07-01 claude — Where we are: L1-L6 built; Risk Index v2 calibration flaw found (TD-2)
+
+State of the suite: analytical layers L1-L6 all exist (rainfall, LTM, anomaly, SPI-3, Risk Index,
+Seasonal Outlook). SPI-3 runs on all 6 countries. Risk Index + Outlook are merged to main but
+PROVISIONAL/EXPERIMENTAL and NOT user-facing — held pending NADMO calibration + an owner deploy/expose
+decision. The NADMO data-request packet (cover note to GMet + one-pager + methodology, all with an
+IMANI/Cudjoe-roadmap alignment line) is ready in Kweku's ~/Documents (Nextcloud).
+
+New finding (validation, honest): compared the Risk Index against an independent published flood map
+(MDPI/GeoHazards 2024 hydrological screening of Accra's Odaw basin). CONVERGENCE — our "high" districts
+match the paper's Odaw-Korle hotspot corridor. FLAW — our model ranks peripheral "None"-drainage
+districts (Ga West, Shai Osudoku, Ada, Ningo-Prampram) as SEVERE above the dense central Korle/Odaw
+core that is the documented epicentre, because the placeholder drainage map conflates "no drainage" with
+"danger" and we have no exposure/population term. Logged as **TD-2** (re-weight drainage vs NADMO + add
+an exposure multiplier). Strengthens the NADMO ask (the miscalibration is now demonstrable, not
+hypothetical) and gives a concrete v2 refinement (exposure layer, no NADMO needed).
+
+Open items (all owner-gated, none engineering-blocked): NADMO records (the calibration gate for L5/L7);
+Risk Index v2 (TD-2); L7 action triggers (needs NADMO); deploy/expose decision; a future daily-intensity
+layer for cloudburst floods. External refs tracked: IMANI/Cudjoe flood roadmap, MDPI Accra flood-prone
+paper, Accra 8-basin map (Impact analysis of flood in Accra 2015).
+
 ## 2026-06-30 claude — SPI-3 replicated to all 6 countries (+ null-mean robustness fix)
 
 SPI-3 now runs on all 6 countries (synced their stats archives from free-arm2, generated 2026-04 SPI

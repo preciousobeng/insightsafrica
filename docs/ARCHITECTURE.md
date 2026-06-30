@@ -112,6 +112,13 @@ strategy is to build the L5 plumbing now so that, when NADMO data lands, calibra
 
 ## Iteration log
 
+- **2026-07-01** — Risk Index (L5) cross-checked against an independent published flood map (MDPI 2024
+  hydrological screening, Accra Odaw basin). Our "high" districts match the paper's Odaw-Korle hotspot
+  corridor (convergence), but our model over-ranks peripheral "None"-drainage districts above the dense
+  central core that is the documented epicentre — placeholder drainage weights conflate "no drainage"
+  with "danger" and there is no exposure term. Logged as TD-2 (re-weight vs NADMO + add population/
+  built-up exposure multiplier). NADMO data-request packet (cover note to GMet + one-pager + methodology,
+  with an IMANI/Cudjoe-roadmap alignment line) prepared and sitting in ~/Documents.
 - **2026-06-30 (latest+1)** — SPI-3 (L4) replicated to ALL 6 countries (Ghana, Nigeria, Ivory Coast,
   Senegal, Cape Verde, South Africa) — works across each country's admin levels. Senior fixed a latent
   null-mean crash (Nigeria/Senegal small areas) surfaced by replication; Ghana tests unaffected. SPI
