@@ -4,6 +4,19 @@ The single current-state-of-the-project file. **Append** a dated, attributed ent
 Never delete or rewrite another author's entry — if something is now wrong, add a new entry that
 supersedes it and say so. Format: `## YYYY-MM-DD <author> — <summary>`.
 
+## 2026-06-30 claude — SPI-3 replicated to all 6 countries (+ null-mean robustness fix)
+
+SPI-3 now runs on all 6 countries (synced their stats archives from free-arm2, generated 2026-04 SPI
+each): Ghana (regions 16/districts 260), Nigeria (states 37/LGAs 767), Ivory Coast (districts 14/regions
+14*), Senegal (regions 14/departments 44), Cape Verde (islands 22), South Africa (provinces 9/districts
+52). All values in range, no NaN. Replication surfaced a latent SPI-3 bug: compute_spi.py did
+float(vals["mean"]) and crashed on Nigeria/Senegal areas with null means (small areas under a CHIRPS
+pixel — Ghana avoided it via all_touched). Fixed: null mean -> treat as a missing month (skipped in the
+3-month sum), not zero. Ghana's 19 SPI tests still green (no regression). *IC regions=14 not 33 inherits
+the documented IC region-data limitation (upstream), not an SPI issue. SPI output files are gitignored;
+full-archive regen per country is a server/deploy step (held). Next layers all done for the suite; open
+items are owner decisions (deploy/expose, Risk Index API view) + the NADMO ask.
+
 ## 2026-06-30 claude — Prediction/Seasonal Outlook (L6) GREEN; honest finding = climatology wins
 
 Seasonal Outlook (Sprint 3) built and green: scripts/compute_outlook.py + tests/test_outlook.py (12).

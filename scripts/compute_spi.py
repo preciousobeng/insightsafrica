@@ -114,8 +114,13 @@ def _build_monthly_series(
         zonal = data.get("zonal_stats", {})
         for level_name, areas in zonal.items():
             for area_name, vals in areas.items():
+                mean = vals.get("mean")
+                if mean is None:
+                    # Small areas under a CHIRPS pixel can have a null mean — treat
+                    # as a missing month (the 3-month sum will skip it), not zero.
+                    continue
                 key = f"{level_name}|{area_name}"
-                series[key].append((year, month, float(vals["mean"])))
+                series[key].append((year, month, float(mean)))
     return series
 
 

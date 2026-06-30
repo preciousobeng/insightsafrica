@@ -112,6 +112,10 @@ strategy is to build the L5 plumbing now so that, when NADMO data lands, calibra
 
 ## Iteration log
 
+- **2026-06-30 (latest+1)** — SPI-3 (L4) replicated to ALL 6 countries (Ghana, Nigeria, Ivory Coast,
+  Senegal, Cape Verde, South Africa) — works across each country's admin levels. Senior fixed a latent
+  null-mean crash (Nigeria/Senegal small areas) surfaced by replication; Ghana tests unaffected. SPI
+  output files gitignored; full per-country archive regen is a server/deploy step (held).
 - **2026-06-30 (latest)** — Prediction / Seasonal Outlook (L6) BUILT + GREEN, merged to main, not
   deployed. 3-month tercile outlook, SARIMA benchmarked vs climatology + persistence. HONEST FINDING:
   the simple fixed SARIMA beats climatology on 0% of Ghana districts (skill mean -1.43) → climatology IS
