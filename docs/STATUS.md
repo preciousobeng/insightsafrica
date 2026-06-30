@@ -4,6 +4,22 @@ The single current-state-of-the-project file. **Append** a dated, attributed ent
 Never delete or rewrite another author's entry — if something is now wrong, add a new entry that
 supersedes it and say so. Format: `## YYYY-MM-DD <author> — <summary>`.
 
+## 2026-06-30 claude — Prediction/Seasonal Outlook (L6) GREEN; honest finding = climatology wins
+
+Seasonal Outlook (Sprint 3) built and green: scripts/compute_outlook.py + tests/test_outlook.py (12).
+3-month tercile outlook per district, SARIMA(1,0,0)(1,0,0,12) benchmarked vs climatology + persistence,
+skill-scored, falls back to climatology when skill<=0, all tagged experimental. Built via the harness
+TDD loop (R1 green in 2 rounds) — BUT senior review caught a silent-degeneracy bug the green tests
+missed: the junior used model.fit(disp=False, maxiter=200) which the modern statsmodels ARIMA.fit()
+rejects, so every fit raised, the bare except swallowed it, and the whole layer collapsed to climatology
+(skill exactly 0 everywhere). Tests passed because all-fallback trivially satisfies the consistency
+rules. Senior fixed the .fit() calls and added a regression guard (test_H: skill must not be identically
+zero). **HONEST FINDING (owner pre-agreed to present this way): with the simple fixed SARIMA, the model
+beats climatology on 0% of Ghana districts (skill mean -1.43) — climatology IS the outlook at monthly
+resolution. Legitimate, publishable; better/per-district model spec is future work (brief Q1).** Perf:
+real Ghana run is minutes (260 districts x ~11 backtest fits) — fine for a monthly cron, note for scale.
+Merged to main; experimental, not deployed. Next: replicate SPI-3 to the other 5 countries.
+
 ## 2026-06-30 claude — Risk Index (L5) GREEN; built via TDD harness; provisional until NADMO
 
 Flood Risk Index (Sprint 2) built and green: scripts/compute_risk_index.py + tests/test_risk_index.py

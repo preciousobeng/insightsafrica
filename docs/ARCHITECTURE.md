@@ -23,7 +23,7 @@ the Risk Index is the layer that turns rigour into danger.
    ----+---------------------------------------------------
        |
    L7  | ACTION TRIGGERS      per-district "if risk crosses X, do Y" (NADMO playbook)   [PLANNED]
-   L6  | PREDICTION           short look-ahead: trend / ARIMA on the signal             [PLANNED]
+   L6  | PREDICTION           3-month tercile outlook (SARIMA vs climatology)          [DONE]
    L5  | RISK INDEX           SPI-3  x  drainage vulnerability  = danger score          [DONE-prov]
    L4  | SPI-3                WMO gamma-standardised "unusually wet/dry?" one number     [DONE]
    L3  | ANOMALY vs LTM       % above/below the 30-yr normal + z-score                   [LIVE]
@@ -47,7 +47,7 @@ Each layer consumes the one(s) below it. Nothing skips a layer.
 | L3 | Anomaly vs LTM | Is this month above/below normal, and by how much? | L1 vs L2 (%, z-score) | LIVE on all 6 FloodWatch maps | Yes |
 | L4 | **SPI-3** | Is the last 3 months unusually wet/dry, on a rigorous global standard? | L1 + L2, gamma transform | **DONE (merged, not deployed)** | Yes |
 | L5 | **Risk Index** | Does the rainfall signal mean DANGER here? | L4 + drainage/IFT ratings | **DONE (provisional)** | **No — provisional** |
-| L6 | Prediction | What is likely next month / this season? | L3/L4 time series (trend, ARIMA) | Planned | Yes |
+| L6 | Prediction | What is likely next month / this season? | L3/L4 time series (SARIMA) | **DONE (climatology wins)** | Yes |
 | L7 | Action Triggers | What should NADMO actually do, per district? | L5 + NADMO thresholds | Planned | Needs NADMO |
 
 **Why L4 vs L3:** the Anomaly layer (L3) and SPI-3 (L4) both answer "is rainfall unusual," but SPI-3 is
@@ -112,6 +112,11 @@ strategy is to build the L5 plumbing now so that, when NADMO data lands, calibra
 
 ## Iteration log
 
+- **2026-06-30 (latest)** — Prediction / Seasonal Outlook (L6) BUILT + GREEN, merged to main, not
+  deployed. 3-month tercile outlook, SARIMA benchmarked vs climatology + persistence. HONEST FINDING:
+  the simple fixed SARIMA beats climatology on 0% of Ghana districts (skill mean -1.43) → climatology IS
+  the outlook at monthly resolution; better model spec is future work. Senior caught a silent-fallback
+  bug (legacy fit() kwargs) the green tests missed; added a regression guard. Next: replicate SPI-3.
 - **2026-06-30 (later)** — Risk Index (L5) BUILT + GREEN (compute_risk_index.py + 15 tests), merged to
   main, NOT deployed. Provisional model (BASE=0.40); Accra flags moderate when dry, severe when wet —
   the value-add over SPI-3 proven. Built via the harness in TDD mode (senior froze tests, junior wrote
