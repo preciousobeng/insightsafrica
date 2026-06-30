@@ -48,9 +48,13 @@ A per-district monthly score combining **hazard** (rainfall excess, from SPI-3) 
    - Good = 0.25, Moderate = 0.50, Poor = 0.75, None = 1.00
    (None = no drainage infrastructure = most vulnerable. V is in (0, 1].)
 3. **Risk R** combines a STANDING vulnerability floor with rainfall amplification:
-   - R = V * (BASE + (1 - BASE) * H), with **BASE = 0.30**
+   - R = V * (BASE + (1 - BASE) * H), with **BASE = 0.40**
    - So a poor-drainage district shows meaningful risk even in a dry month (standing exposure),
      and rainfall pushes it higher. R is in [0, 1].
+   - Grounding check (real Ghana data, 2015-06): Accra has Poor drainage and SPI −0.39 (hazard 0),
+     so R = 0.75 × 0.40 = 0.30 = **moderate** — it flags despite the dry 3-month window, which is the
+     whole point. BASE=0.40 was chosen so Poor/None drainage clears the moderate line (0.25) when dry,
+     while Good drainage stays low (0.25 × 0.40 = 0.10). These constants are NADMO calibration targets.
 4. **Categories** (provisional thresholds, calibration targets for NADMO):
    - R < 0.25 = low ; 0.25 <= R < 0.50 = moderate ; 0.50 <= R < 0.75 = high ; R >= 0.75 = severe
 
@@ -88,13 +92,14 @@ NADMO calibration will later fit. Do not bury them in the logic.
         "drainage": "Poor",
         "hazard": 0.92,
         "vulnerability": 0.75,
-        "risk": 0.83,
-        "category": "severe",
+        "risk": 0.71,
+        "category": "high",
         "provisional": true
       }
+      (check: H = 1.84/2 = 0.92; R = 0.75 * (0.40 + 0.60*0.92) = 0.71 -> high)
 
 - **Top-level wrapper:** { "country", "year", "month", "model_version": "risk-v1",
-  "params": { "base": 0.30, "v_map": {...}, "h_saturation_spi": 2.0 }, "provisional": true,
+  "params": { "base": 0.40, "v_map": {...}, "h_saturation_spi": 2.0 }, "provisional": true,
   "generated_utc", "skipped_districts": <n>, "districts": { district_key: {...} } }
   (Echoing the params block makes every score auditable and records exactly what NADMO will recalibrate.)
 
@@ -134,7 +139,7 @@ Behaviour and correctness, not "it runs." These verify the MODEL, not flood-pred
   params block echoes BASE + the V map + the SPI saturation point.
 - **G — Determinism.** Two runs produce byte-identical output.
 - Plus helper unit tests for the hazard ramp (0 at spi<=0, 0.5 at spi=1, 1.0 at spi>=2), the V map, and
-  the R formula at known points (e.g. V=0.75, spi3=0 -> R=0.75*0.30=0.225 -> low/moderate boundary).
+  the R formula at known points (e.g. V=0.75, spi3=0 -> R=0.75*0.40=0.30 -> moderate).
 
 ## 7. Definition of Done
 
@@ -146,7 +151,7 @@ Behaviour and correctness, not "it runs." These verify the MODEL, not flood-pred
 
 ## 8. Open decisions (for owner before/at pickup)
 
-- **Q1 — BASE and the V/H mappings.** Proposed BASE=0.30 and Good/Mod/Poor/None = 0.25/0.5/0.75/1.0.
+- **Q1 — BASE and the V/H mappings.** Proposed BASE=0.40 and Good/Mod/Poor/None = 0.25/0.5/0.75/1.0.
   These are guesses pending NADMO. Accept as v1 placeholders (clearly labelled) or tweak now?
 - **Q2 — Coverage gap.** Only ~39/260 districts have drainage data. v1 emits null+skip for the rest.
   Acceptable, or do we want a coarse region-level fallback rating? (Recommend: null for now, honest.)
