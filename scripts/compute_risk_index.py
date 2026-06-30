@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -20,6 +21,15 @@ from pathlib import Path
 BASE = 0.40
 V_MAP = {"Good": 0.25, "Moderate": 0.50, "Poor": 0.75, "None": 1.00}
 H_SATURATION_SPI = 2.0
+
+# v2 exposure multiplier (TD-2): weight risk by people-at-risk so an empty
+# floodplain does not outrank the dense, flood-prone urban core. Population per
+# district from WorldPop (data/exposure/{country}_population.json). The factor is
+# a log-population modulator in [EXP_MIN, EXP_MAX] — the median-population district
+# is ~neutral (1.0), the densest boosted, the sparsest suppressed. Provisional;
+# the NADMO drainage re-weighting (the other half of TD-2) still applies.
+EXP_MIN = 0.7
+EXP_MAX = 1.3
 
 # ---------------------------------------------------------------------------
 # Core model primitives
@@ -72,6 +82,32 @@ def categorise_risk(r: float) -> str:
     if r < 0.75:
         return "high"
     return "severe"
+
+
+def exposure_factor(pop: float | None, pmin_log: float, pmax_log: float) -> float:
+    """Population modulator in [EXP_MIN, EXP_MAX] via log-population min-max.
+
+    Returns 1.0 (neutral) when population is missing/zero or the reference range
+    is degenerate, so the model degrades gracefully where exposure data is absent.
+    """
+    if not pop or pop <= 0 or pmax_log <= pmin_log:
+        return 1.0
+    e = (math.log(pop) - pmin_log) / (pmax_log - pmin_log)
+    e = min(1.0, max(0.0, e))
+    return EXP_MIN + (EXP_MAX - EXP_MIN) * e
+
+
+def _load_population(country: str) -> dict[str, float]:
+    """Load per-district population (data/exposure/{country}_population.json).
+
+    Returns {} if absent — exposure then degrades to neutral everywhere.
+    """
+    path = (Path(__file__).resolve().parent.parent / "data" / "exposure"
+            / f"{country}_population.json")
+    if not path.is_file():
+        return {}
+    with open(path, encoding="utf-8") as fh:
+        return {_normalise_key(k): v for k, v in json.load(fh).items()}
 
 
 # ---------------------------------------------------------------------------
@@ -323,6 +359,10 @@ def compute_risk(country: str, year: int, month: int) -> dict:
     # Load inputs
     spi_data = _load_spi_file(country, year, month)
     drainage_data = _load_drainage_file()
+    population = _load_population(country)
+    pop_vals = [v for v in population.values() if v and v > 0]
+    pmin_log = math.log(min(pop_vals)) if pop_vals else 0.0
+    pmax_log = math.log(max(pop_vals)) if pop_vals else 0.0
 
     # Build a set of drainage keys for fast lookup
     drain_keys = set(drainage_data.keys())
@@ -376,7 +416,10 @@ def compute_risk(country: str, year: int, month: int) -> dict:
                 continue
 
             H = hazard_from_spi(spi3_float)
-            R = risk_score(spi3_float, rating)
+            base_R = risk_score(spi3_float, rating)
+            pop = population.get(district_key)
+            ef = exposure_factor(pop, pmin_log, pmax_log)
+            R = round(min(1.0, max(0.0, base_R * ef)), 2)
             cat = categorise_risk(R)
 
             districts[district_key] = {
@@ -384,6 +427,9 @@ def compute_risk(country: str, year: int, month: int) -> dict:
                 "drainage": rating,
                 "hazard": round(H, 2),
                 "vulnerability": round(vuln, 2),
+                "base_risk": base_R,
+                "population": int(pop) if pop else None,
+                "exposure": round(ef, 3),
                 "risk": R,
                 "category": cat,
                 "provisional": True,
@@ -405,11 +451,14 @@ def compute_risk(country: str, year: int, month: int) -> dict:
         "country": country,
         "year": year,
         "month": month,
-        "model_version": "risk-v1",
+        "model_version": "risk-v2",
         "params": {
             "base": BASE,
             "v_map": V_MAP,
             "h_saturation_spi": H_SATURATION_SPI,
+            "exp_min": EXP_MIN,
+            "exp_max": EXP_MAX,
+            "exposure_source": "WorldPop 2020 1km" if pop_vals else None,
         },
         "provisional": True,
         "generated_utc": datetime.now(timezone.utc).isoformat(),

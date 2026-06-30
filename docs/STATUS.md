@@ -4,6 +4,22 @@ The single current-state-of-the-project file. **Append** a dated, attributed ent
 Never delete or rewrite another author's entry — if something is now wrong, add a new entry that
 supersedes it and say so. Format: `## YYYY-MM-DD <author> — <summary>`.
 
+## 2026-07-01 claude — Risk Index v2: exposure multiplier built (the buildable half of TD-2)
+
+Added a population/exposure multiplier to the Risk Index (model_version risk-v2): risk is now weighted
+by people-at-risk, so the dense flood-prone urban core outranks empty floodplains. Population from
+WorldPop 2020 1km zonal-summed per district (scripts/compute_population_exposure.py ->
+data/exposure/ghana_population.json, 260 districts, 32.9M total). Factor = log-population modulator in
+[0.7,1.3]. compute_risk_index.py updated (base_risk + population + exposure fields, audit params block);
+tests/test_risk_index.py now 18 (added exposure helper + integration tests). VERIFIED against the MDPI
+inversion: Ablekuma North (512k, Poor) -> severe; Shai Osudoku (60k, None) 1.00 -> 0.88. RESIDUAL
+(honest): Ga West/North (None drainage) still top because None(1.0)>Poor(0.75) — that drainage
+re-weighting is the NADMO-calibration half of TD-2, still pending. Exposure degrades to neutral where
+population is absent (other 5 countries until their raster is run). Lead found this session: Flowminder
+(info@flowminder.org) has a live NADMO+GSS data-for-good partnership + Oct-2023 Akosombo displacement
+data — best route to the NADMO records; IFRC DREF reports (ReliefWeb) + EM-DAT are public observed-flood
+proxies. NADMO website is fine (nadmo.gov.gh); nando-gov-gh.netlify.app is a gambling-spam impersonator.
+
 ## 2026-07-01 claude — Where we are: L1-L6 built; Risk Index v2 calibration flaw found (TD-2)
 
 State of the suite: analytical layers L1-L6 all exist (rainfall, LTM, anomaly, SPI-3, Risk Index,

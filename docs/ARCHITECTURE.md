@@ -112,6 +112,11 @@ strategy is to build the L5 plumbing now so that, when NADMO data lands, calibra
 
 ## Iteration log
 
+- **2026-07-01 (later)** — Risk Index v2: exposure multiplier built (TD-2 buildable half). Risk now
+  weighted by per-district population (WorldPop 2020 1km zonal). Dense flood-prone core rises, empty
+  floodplains fall — partially fixes the MDPI-flagged inversion; the drainage re-weighting (None>Poor)
+  remains the NADMO-calibration half. model_version risk-v2; tests 18. Lead: Flowminder (NADMO+GSS
+  partnership) as the route to NADMO records; IFRC DREF / ReliefWeb / EM-DAT as public flood proxies.
 - **2026-07-01** — Risk Index (L5) cross-checked against an independent published flood map (MDPI 2024
   hydrological screening, Accra Odaw basin). Our "high" districts match the paper's Odaw-Korle hotspot
   corridor (convergence), but our model over-ranks peripheral "None"-drainage districts above the dense

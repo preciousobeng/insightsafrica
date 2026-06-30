@@ -43,3 +43,4 @@ package-lock.json
 # Secrets
 *.key
 *.pem
+data/exposure/*.tif

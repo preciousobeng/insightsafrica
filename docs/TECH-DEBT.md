@@ -40,14 +40,16 @@ Arc-Malstrom on a 10 m DTM, covering the Odaw River basin / ~23% of GAMA) — su
    drainage infrastructure* with *flood danger*, with **no exposure/population term** to reflect
    people-and-assets at risk.
 
-**v2 actions (when NADMO data lands, and partly before):**
-- Re-weight the drainage V-map and BASE against NADMO observed-flood records (the calibration the
-  Risk Index brief already anticipates — this is the concrete target).
-- Add a population / built-up exposure multiplier so danger reflects exposure, not just drainage
-  absence (the MDPI paper was itself exposure-aware — built for a transport/roadblock study). A
-  built-up density or population raster (e.g. WorldPop / GHSL) is a candidate input, no NADMO needed.
-- Consider revisiting the "None" semantics — "no formal drainage in an empty floodplain" should not
-  outrank "failing drainage in dense Korle".
+**v2 actions:**
+- **DONE 2026-07-01 — exposure multiplier.** Risk is now weighted by population (WorldPop 2020 1km,
+  zonal-summed per district via scripts/compute_population_exposure.py -> data/exposure/
+  ghana_population.json). The factor is a log-population modulator in [0.7, 1.3] (median ~neutral),
+  model_version risk-v2. Effect verified: the densest Poor-drainage core districts (Ablekuma North 512k,
+  WeijaGbawe 476k) rose to severe while truly-sparse None districts (Shai Osudoku 60k: 1.00 -> 0.88)
+  fell. Degrades to neutral where population is absent (other countries until their raster is run).
+- **STILL PENDING (needs NADMO) — drainage re-weighting.** Even with exposure, Ga West/Ga North (None
+  drainage, ~170-207k) still top the list because None (V=1.0) > Poor (V=0.75) and the central core is
+  rated Poor. Re-weighting the V-map / BASE / "None" semantics against NADMO observed floods is the
+  remaining half — it is the calibration the Risk Index brief anticipates.
 
-This does not block anything; the Risk Index is already correctly labelled provisional. It is the
-priority refinement once NADMO records arrive (or sooner for the exposure layer).
+Does not block anything; the Risk Index remains correctly labelled provisional until the NADMO half lands.

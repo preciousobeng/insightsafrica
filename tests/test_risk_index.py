@@ -202,3 +202,53 @@ class TestG_Determinism:
         a.pop("generated_utc", None)
         b.pop("generated_utc", None)
         assert a == b
+
+
+# ---------------------------------------------------------------------------
+# Exposure multiplier (v2, TD-2) — population-weighted risk
+# ---------------------------------------------------------------------------
+
+class TestExposure:
+    def test_exposure_factor_helper(self):
+        import math
+        pmin, pmax = math.log(10_000), math.log(1_000_000)
+        # bounds
+        assert rix.exposure_factor(1_000_000, pmin, pmax) == pytest.approx(rix.EXP_MAX, abs=1e-6)
+        assert rix.exposure_factor(10_000, pmin, pmax) == pytest.approx(rix.EXP_MIN, abs=1e-6)
+        # monotonic: denser -> higher factor
+        assert rix.exposure_factor(500_000, pmin, pmax) > rix.exposure_factor(50_000, pmin, pmax)
+        # neutral when population missing or range degenerate
+        assert rix.exposure_factor(None, pmin, pmax) == 1.0
+        assert rix.exposure_factor(0, pmin, pmax) == 1.0
+        assert rix.exposure_factor(50_000, 5.0, 5.0) == 1.0
+
+    def _out(self):
+        if not _SPI_2015_06.is_file() or not _DRAINAGE.is_file():
+            pytest.skip("2015-06 SPI or drainage file not available")
+        out = rix.compute_risk("ghana", 2015, 6)
+        if out["params"].get("exposure_source") is None:
+            pytest.skip("population/exposure data not available")
+        return out
+
+    def test_scored_districts_carry_exposure(self):
+        out = self._out()
+        assert out["params"]["exp_min"] == pytest.approx(rix.EXP_MIN)
+        assert out["params"]["exp_max"] == pytest.approx(rix.EXP_MAX)
+        for k, d in out["districts"].items():
+            if d["risk"] is None:
+                continue
+            assert "population" in d and "exposure" in d and "base_risk" in d
+            assert rix.EXP_MIN - 1e-6 <= d["exposure"] <= rix.EXP_MAX + 1e-6
+            # risk is the exposure-weighted base, bounded
+            assert 0.0 <= d["risk"] <= 1.0
+
+    def test_denser_district_higher_exposure(self):
+        out = self._out()
+        d = out["districts"]
+        # AblekumaNorth (dense, ~0.5M) must have a higher exposure factor than
+        # ShaiOsudoku (sparse, ~60k) — the value-add that fixes the inversion.
+        dense = d.get("AblekumaNorth|GreaterAccra")
+        sparse = d.get("ShaiOsudoku|GreaterAccra")
+        if not dense or not sparse or dense["risk"] is None or sparse["risk"] is None:
+            pytest.skip("expected Accra districts not present")
+        assert dense["exposure"] > sparse["exposure"]
