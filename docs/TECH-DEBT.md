@@ -46,7 +46,9 @@ Arc-Malstrom on a 10 m DTM, covering the Odaw River basin / ~23% of GAMA) — su
   ghana_population.json). The factor is a log-population modulator in [0.7, 1.3] (median ~neutral),
   model_version risk-v2. Effect verified: the densest Poor-drainage core districts (Ablekuma North 512k,
   WeijaGbawe 476k) rose to severe while truly-sparse None districts (Shai Osudoku 60k: 1.00 -> 0.88)
-  fell. Degrades to neutral where population is absent (other countries until their raster is run).
+  fell. Degrades to neutral where population is absent. **Multi-country exposure rollout HELD (owner
+  decision 2026-07-01): the Risk Index is Ghana-only (drainage data exists only for Ghana), so exposure
+  for the other 5 would be unused — roll it per-country when that country gets a drainage layer.**
 - **STILL PENDING (needs NADMO) — drainage re-weighting.** Even with exposure, Ga West/Ga North (None
   drainage, ~170-207k) still top the list because None (V=1.0) > Poor (V=0.75) and the central core is
   rated Poor. Re-weighting the V-map / BASE / "None" semantics against NADMO observed floods is the
