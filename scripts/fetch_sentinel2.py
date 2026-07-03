@@ -398,12 +398,41 @@ def search_products(bbox: list, date_start: str, date_end: str,
             f"and OData.CSC.Intersects(area=geography'SRID=4326;{aoi}')"
         ),
         "$orderby": "ContentDate/Start desc",
-        "$top": "5",
+        "$top": "20",
     }
 
     resp = requests.get(CDSE_SEARCH_URL, params=params, timeout=60)
     resp.raise_for_status()
     return resp.json().get("value", [])
+
+
+def select_best_product(products: list, bbox: list) -> tuple:
+    """
+    Pick the product whose footprint covers the largest fraction of the bbox.
+
+    The catalogue query only requires *intersection*, so the newest product can
+    be a granule that merely clips a corner of the bbox — that is what produced
+    the sliver overlays (e.g. Kaduna South at 10% lon coverage). Products arrive
+    date-desc, so on (near-)equal coverage the newest wins.
+
+    Returns (product, coverage_fraction); (None, 0.0) if products is empty.
+    """
+    from shapely.geometry import box as bbox_geom, shape
+
+    target = bbox_geom(*bbox)
+    best, best_cov = None, 0.0
+    for p in products:
+        gf = p.get("GeoFootprint")
+        if not gf:
+            continue
+        try:
+            fp = shape(gf)
+        except Exception:
+            continue
+        cov = fp.intersection(target).area / target.area
+        if cov > best_cov + 0.01:   # >1% better takes it; else keep the newer one
+            best, best_cov = p, cov
+    return best, best_cov
 
 
 def save_sites_json(sites: list, out_path: Path):
@@ -507,8 +536,14 @@ def main():
             if not products:
                 print(f"  {label}: no products found (try relaxing cloud cover)")
                 continue
-            p = products[0]
-            print(f"  {label}: {p['Name']} — cloud {p.get('Attributes',{})}")
+            p, coverage = select_best_product(products, site["bbox"])
+            if p is None:
+                print(f"  {label}: no product with usable footprint")
+                continue
+            print(f"  {label}: {p['Name']} — bbox coverage {coverage:.0%}")
+            if coverage < 0.95:
+                print(f"  WARNING {site['id']} {label}: best single granule covers "
+                      f"only {coverage:.0%} of the bbox (tile-grid straddle)")
 
             # Save product metadata (actual download is large — ~800MB per tile)
             meta_path = RAW_DIR / f"{site['id']}_{label}.json"
