@@ -515,6 +515,36 @@ def mine_changes():
     return JSONResponse(content=changes)
 
 
+# ── Ghana hub redirect + legacy root-URL 301s ────────────────────────────────
+# Ghana moved from the site root to /ghana/ (root is now the pan-African
+# landing). Old root URLs are indexed, so every legacy path 301s to its
+# /ghana/ equivalent. Routes are registered before the static mounts below,
+# so they take precedence over the "/" catch-all.
+
+@app.get("/ghana")
+@app.get("/ghana/")
+def ghana_hub():
+    return RedirectResponse(url="/ghana/hub.html")
+
+
+@app.get("/hub.html")
+def ghana_legacy_hub():
+    return RedirectResponse(url="/ghana/hub.html", status_code=301)
+
+
+def _register_ghana_legacy_redirects():
+    for mod in ("flood", "mine", "crop", "heat", "human", "profile"):
+        def bare(mod: str = mod):
+            return RedirectResponse(url=f"/ghana/{mod}/", status_code=301)
+        def deep(path: str, mod: str = mod):
+            return RedirectResponse(url=f"/ghana/{mod}/{path}", status_code=301)
+        app.get(f"/{mod}")(bare)
+        app.get(f"/{mod}/")(bare)
+        app.get(f"/{mod}/{{path:path}}")(deep)
+
+_register_ghana_legacy_redirects()
+
+
 # ── Nigeria hub redirect ──────────────────────────────────────────────────────
 
 @app.get("/nigeria")
@@ -1070,10 +1100,11 @@ app.mount("/capeverde/human",      StaticFiles(directory=str(FRONTEND_DIR / "cap
 app.mount("/capeverde/profile",    StaticFiles(directory=str(FRONTEND_DIR / "capeverde" / "profile"),html=True), name="cv-profile")
 app.mount("/capeverde",            StaticFiles(directory=str(FRONTEND_DIR / "capeverde"),             html=True), name="capeverde")
 app.mount("/tiles",                 StaticFiles(directory=str(PROCESSED_DIR)),                                    name="tiles")
-app.mount("/flood",                 StaticFiles(directory=str(FRONTEND_DIR / "flood"),                html=True), name="flood")
-app.mount("/mine",                  StaticFiles(directory=str(FRONTEND_DIR / "mine"),                 html=True), name="mine")
-app.mount("/crop",                  StaticFiles(directory=str(FRONTEND_DIR / "crop"),                 html=True), name="crop")
-app.mount("/heat",                  StaticFiles(directory=str(FRONTEND_DIR / "heat"),                 html=True), name="heat")
-app.mount("/human",                 StaticFiles(directory=str(FRONTEND_DIR / "human"),                html=True), name="human")
-app.mount("/profile",               StaticFiles(directory=str(FRONTEND_DIR / "profile"),              html=True), name="profile")
+app.mount("/ghana/flood",           StaticFiles(directory=str(FRONTEND_DIR / "ghana" / "flood"),      html=True), name="gh-flood")
+app.mount("/ghana/mine",            StaticFiles(directory=str(FRONTEND_DIR / "ghana" / "mine"),       html=True), name="gh-mine")
+app.mount("/ghana/crop",            StaticFiles(directory=str(FRONTEND_DIR / "ghana" / "crop"),       html=True), name="gh-crop")
+app.mount("/ghana/heat",            StaticFiles(directory=str(FRONTEND_DIR / "ghana" / "heat"),       html=True), name="gh-heat")
+app.mount("/ghana/human",           StaticFiles(directory=str(FRONTEND_DIR / "ghana" / "human"),      html=True), name="gh-human")
+app.mount("/ghana/profile",         StaticFiles(directory=str(FRONTEND_DIR / "ghana" / "profile"),    html=True), name="gh-profile")
+app.mount("/ghana",                 StaticFiles(directory=str(FRONTEND_DIR / "ghana"),                html=True), name="ghana")
 app.mount("/",                      StaticFiles(directory=str(FRONTEND_DIR),                          html=True), name="home")

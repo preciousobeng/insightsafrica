@@ -361,7 +361,7 @@
   // Redirect if already logged in
   (async () => {
     const { data: { session } } = await sb.auth.getSession();
-    if (session) window.location.href = 'hub.html';
+    if (session) window.location.href = '/ghana/hub.html';
   })();
 
   // Theme
@@ -417,7 +417,7 @@
       if (mode === 'login') {
         const { error } = await sb.auth.signInWithPassword({ email, password: pw });
         if (error) throw error;
-        window.location.href = 'hub.html';
+        window.location.href = '/ghana/hub.html';
       } else {
         const name = document.getElementById('inp-name').value.trim();
 
@@ -427,7 +427,7 @@
         });
         if (error) throw error;
         if (data.session) {
-          window.location.href = 'hub.html';
+          window.location.href = '/ghana/hub.html';
         } else {
           // Show thank you screen — do NOT call setMode() as it clears alerts
           document.getElementById('auth-form').reset();
@@ -544,7 +544,7 @@
       document.getElementById('reset-pw-error').textContent = error.message;
     } else {
       document.getElementById('reset-modal').classList.remove('open');
-      window.location.href = 'hub.html';
+      window.location.href = '/ghana/hub.html';
     }
   }
 </script>
