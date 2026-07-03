@@ -26,6 +26,8 @@ ghana:
   slug: ghana
   name: Ghana
   display_name: Ghana
+  accent: '#e3b341'        # flag-derived country accent (hub theme layer, dark)
+  accent_light: '#a16207'  # light-theme equivalent
   is_root: false                # served at /ghana/ like every other country (root is the pan-African landing)
   has_infrastructure: true      # IFT/drainage layer (ghana_infrastructure.json)
   api_prefix: ""                # uses /api/flood, /api/boundaries (no country segment)
@@ -62,6 +64,8 @@ nigeria:
   slug: nigeria
   name: Nigeria
   display_name: Nigeria
+  accent: '#34d399'        # flag-derived country accent (hub theme layer, dark)
+  accent_light: '#059669'  # light-theme equivalent
   is_root: false
   has_infrastructure: false
   api_prefix: /api/nigeria
@@ -98,6 +102,8 @@ ivorycoast:
   slug: ivorycoast
   name: Ivory Coast
   display_name: "C\u00f4te d'Ivoire"
+  accent: '#fb923c'        # flag-derived country accent (hub theme layer, dark)
+  accent_light: '#ea580c'  # light-theme equivalent
   is_root: false
   has_infrastructure: false
   api_prefix: /api/ivorycoast
@@ -137,6 +143,8 @@ senegal:
   slug: senegal
   name: Senegal
   display_name: Senegal
+  accent: '#21c063'        # flag-derived country accent (hub theme layer, dark)
+  accent_light: '#15803d'  # light-theme equivalent
   is_root: false
   has_infrastructure: false
   api_prefix: /api/senegal
@@ -173,6 +181,8 @@ southafrica:
   slug: southafrica
   name: South Africa
   display_name: South Africa
+  accent: '#4ade80'        # flag-derived country accent (hub theme layer, dark)
+  accent_light: '#16a34a'  # light-theme equivalent
   is_root: false
   has_infrastructure: false
   api_prefix: /api/southafrica
@@ -210,6 +220,8 @@ capeverde:
   slug: capeverde
   name: Cape Verde
   display_name: Cape Verde
+  accent: '#38bdf8'        # flag-derived country accent (hub theme layer, dark)
+  accent_light: '#0284c7'  # light-theme equivalent
   is_root: false
   has_infrastructure: false
   api_prefix: /api/capeverde

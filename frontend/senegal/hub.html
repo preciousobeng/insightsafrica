@@ -449,6 +449,60 @@
       color: #334155;
       text-align: center;
     }
+  
+    /* ── Theme layer (2026-07): neutral card/KPI chrome + module-semantic accents
+       + per-country flag accent from countries.yml (c.accent / c.accent_light).
+       Appended last so it wins by cascade order over the legacy blue values above. ── */
+    :root { --country-accent: #21c063; --country-accent-light: #15803d; }
+
+    .product-card, .profile-card { background: #10141c; border-color: #212836; }
+    .product-card:hover { border-color: var(--country-accent); }
+    .card-arrow { color: #64748b; }
+
+    .country-title span { color: var(--country-accent); }
+    .section-heading { color: var(--country-accent); }
+    .country-pill {
+      background: color-mix(in srgb, var(--country-accent) 9%, transparent);
+      border-color: color-mix(in srgb, var(--country-accent) 35%, transparent);
+      color: var(--country-accent);
+    }
+
+    .kpi-strip { background: #0b0e15; border-top-color: #1a2029; border-bottom-color: #1a2029; }
+    .kpi-value { color: #e2e8f0; }
+    #kpi-flood:not(.kpi-loading) .kpi-value { color: #22d3ee; }
+    #kpi-crop:not(.kpi-loading)  .kpi-value { color: #22c55e; }
+    #kpi-heat:not(.kpi-loading)  .kpi-value { color: #fb923c; }
+    #kpi-mine:not(.kpi-loading)  .kpi-value { color: #f59e0b; }
+
+    a[href$="/flood/"] .card-label, a[href$="/flood/"] .card-arrow { color: #22d3ee; }
+    a[href$="/mine/"]  .card-label, a[href$="/mine/"]  .card-arrow { color: #f59e0b; }
+    a[href$="/crop/"]  .card-label, a[href$="/crop/"]  .card-arrow { color: #22c55e; }
+    a[href$="/heat/"]  .card-label, a[href$="/heat/"]  .card-arrow { color: #fb923c; }
+    a[href$="/human/"] .card-label, a[href$="/human/"] .card-arrow { color: #a78bfa; }
+    a[href$="/flood/"] .card-icon { background: rgba(34,211,238,0.13); }
+    .profile-card .card-label { color: #94a3b8; }
+    .profile-card .card-icon { background: rgba(148,163,184,0.12); }
+
+    [data-theme="light"] .country-title span { color: var(--country-accent-light); }
+    [data-theme="light"] .section-heading { color: var(--country-accent-light); }
+    [data-theme="light"] .product-card:hover { border-color: var(--country-accent-light); }
+    [data-theme="light"] .country-pill {
+      background: color-mix(in srgb, var(--country-accent-light) 8%, transparent);
+      border-color: color-mix(in srgb, var(--country-accent-light) 35%, transparent);
+      color: var(--country-accent-light);
+    }
+    [data-theme="light"] .kpi-value { color: #0f172a; }
+    [data-theme="light"] #kpi-flood:not(.kpi-loading) .kpi-value { color: #0e7490; }
+    [data-theme="light"] #kpi-crop:not(.kpi-loading)  .kpi-value { color: #15803d; }
+    [data-theme="light"] #kpi-heat:not(.kpi-loading)  .kpi-value { color: #c2410c; }
+    [data-theme="light"] #kpi-mine:not(.kpi-loading)  .kpi-value { color: #b45309; }
+    [data-theme="light"] a[href$="/flood/"] .card-label, [data-theme="light"] a[href$="/flood/"] .card-arrow { color: #0e7490; }
+    [data-theme="light"] a[href$="/mine/"]  .card-label, [data-theme="light"] a[href$="/mine/"]  .card-arrow { color: #b45309; }
+    [data-theme="light"] a[href$="/crop/"]  .card-label, [data-theme="light"] a[href$="/crop/"]  .card-arrow { color: #15803d; }
+    [data-theme="light"] a[href$="/heat/"]  .card-label, [data-theme="light"] a[href$="/heat/"]  .card-arrow { color: #c2410c; }
+    [data-theme="light"] a[href$="/human/"] .card-label, [data-theme="light"] a[href$="/human/"] .card-arrow { color: #7c3aed; }
+    [data-theme="light"] .profile-card .card-label { color: #64748b; }
+  
   </style>
 </head>
 <body>
