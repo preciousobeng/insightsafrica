@@ -206,7 +206,9 @@ def read_band_clipped(jp2_path: Path, bbox: list) -> tuple:
             "transform": transform,
         })
 
-    data = clipped[0].astype(float)
+    # float32, not float64 — a ~1-degree site in f64 is ~1GB/band and the
+    # full pipeline OOM-killed free-arm2 (6GB) on Zamfara. f32 halves it.
+    data = clipped[0].astype(np.float32)
     data[data == 0] = np.nan
     return data, profile
 
@@ -313,6 +315,7 @@ def process_site(site: dict, token: str, out_dir: Path, png_prefix: str,
 
         ndvi = compute_index(band_data["B08"], band_data["B04"])
         ndwi = compute_index(band_data["B03"], band_data["B08"])
+        band_data.clear()   # release ~3 band arrays before the next period
 
         indices[period] = {
             "ndvi":    ndvi,
