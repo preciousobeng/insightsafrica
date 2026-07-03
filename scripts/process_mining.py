@@ -222,7 +222,28 @@ def save_index_png(data: np.ndarray, out_path: Path, colormap: str,
 
 # ── Main processing pipeline ─────────────────────────────────────────────────
 
-def process_site(site: dict, token: str, out_dir: Path, png_prefix: str) -> dict:
+def profile_wgs84_bounds(profile) -> list:
+    """Leaflet [[lat_min, lon_min], [lat_max, lon_max]] of a clipped raster.
+
+    Must come from the ACTUAL clip extent: when a granule only partially covers
+    the site bbox, rendering the PNG at the bbox stretches it (the June sliver
+    overlays). fetch_sentinel2 only carries old values forward, so this is the
+    single source of truth for overlay placement.
+    """
+    from rasterio.transform import array_bounds
+    from pyproj import Transformer
+
+    left, bottom, right, top = array_bounds(
+        profile["height"], profile["width"], profile["transform"])
+    if str(profile["crs"]) != "EPSG:4326":
+        t = Transformer.from_crs(profile["crs"], "EPSG:4326", always_xy=True)
+        left, bottom = t.transform(left, bottom)
+        right, top = t.transform(right, top)
+    return [[round(bottom, 5), round(left, 5)], [round(top, 5), round(right, 5)]]
+
+
+def process_site(site: dict, token: str, out_dir: Path, png_prefix: str,
+                 clean_raw: bool = False) -> dict:
     """
     Full pipeline for one mining site.
     Downloads bands, computes indices, generates PNGs.
@@ -252,7 +273,11 @@ def process_site(site: dict, token: str, out_dir: Path, png_prefix: str) -> dict
 
         print(f"  {period}: {product_name} ({date})")
 
-        zip_path = download_product(product_id, product_name, token)
+        zip_path = RAW_DIR / f"{product_name}.zip"
+        have_bands = all((bands_dir / f"{product_name}_{b}.jp2").exists()
+                         for b in ("B03", "B04", "B08"))
+        if not have_bands:
+            zip_path = download_product(product_id, product_name, token)
 
         band_data = {}
         period_profile = None
@@ -269,6 +294,13 @@ def process_site(site: dict, token: str, out_dir: Path, png_prefix: str) -> dict
 
         if len(band_data) < 3:
             continue
+
+        # Free the ~1-2GB product zip once its bands are extracted — free-arm2
+        # cannot hold a full country of zips. Bands (and the have_bands check
+        # above) make re-runs cheap without it.
+        if clean_raw and zip_path.exists():
+            zip_path.unlink()
+            print(f"  Removed {zip_path.name} (clean-raw)")
 
         ndvi = compute_index(band_data["B08"], band_data["B04"])
         ndwi = compute_index(band_data["B03"], band_data["B08"])
@@ -333,6 +365,10 @@ def process_site(site: dict, token: str, out_dir: Path, png_prefix: str) -> dict
     else:
         period_label = None
 
+    bounds_profile = (indices.get("recent") or indices.get("baseline") or {}).get("profile")
+    if bounds_profile:
+        site["leaflet_bounds"] = profile_wgs84_bounds(bounds_profile)
+
     site.update({
         "ndvi_change": round(ndvi_change, 4) if ndvi_change is not None else None,
         "ndwi_change": round(ndwi_change, 4) if ndwi_change is not None else None,
@@ -348,6 +384,8 @@ def main():
     parser = argparse.ArgumentParser(description="Process Sentinel-2 mining change detection")
     parser.add_argument("--country", choices=list(COUNTRY_SITES_FILE), default="ghana")
     parser.add_argument("--site",    help="Process a single site by ID (default: all)")
+    parser.add_argument("--clean-raw", action="store_true",
+                        help="Delete product zips after band extraction (disk-constrained hosts)")
     args = parser.parse_args()
 
     sites_path = COUNTRY_SITES_FILE[args.country]
@@ -376,7 +414,8 @@ def main():
     updated_by_id = {}
     for site in to_process:
         try:
-            updated_by_id[site["id"]] = process_site(site, token, out_dir, png_prefix)
+            updated_by_id[site["id"]] = process_site(site, token, out_dir, png_prefix,
+                                                      clean_raw=args.clean_raw)
         except Exception as e:
             print(f"  Error processing {site['id']}: {e}")
             updated_by_id[site["id"]] = site
