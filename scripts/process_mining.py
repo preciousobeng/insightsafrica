@@ -129,7 +129,16 @@ def download_product(product_id: str, product_name: str, token: str) -> Path:
     session = requests.Session()
     session.headers.update(headers)
 
-    with session.get(url, stream=True, timeout=300, allow_redirects=True) as resp:
+    resp = session.get(url, stream=True, timeout=300, allow_redirects=True)
+    if resp.status_code == 401:
+        # CDSE access tokens expire after ~60 min; a long multi-site run
+        # outlives the token minted at startup. Re-auth once and retry.
+        resp.close()
+        print("  Token expired — re-authenticating…")
+        session.headers.update({"Authorization": f"Bearer {get_token()}"})
+        resp = session.get(url, stream=True, timeout=300, allow_redirects=True)
+
+    with resp:
         resp.raise_for_status()
         total = int(resp.headers.get("content-length", 0))
         downloaded = 0
