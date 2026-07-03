@@ -19,6 +19,7 @@ Usage:
 
 import argparse
 import os
+from datetime import datetime
 from pathlib import Path
 import requests
 from dotenv import load_dotenv
@@ -135,8 +136,15 @@ def get_earthdata_token(user: str, password: str) -> str:
     resp = requests.get(token_url, auth=(user, password), timeout=30)
     resp.raise_for_status()
     tokens = resp.json()
-    if tokens:
-        return tokens[0]["access_token"]
+    # URS returns expired tokens too — reusing one 401s every download.
+    # expiration_date format: "07/02/2026" (MM/DD/YYYY, UTC).
+    now = datetime.utcnow()
+    for t in tokens:
+        try:
+            if datetime.strptime(t["expiration_date"], "%m/%d/%Y") > now:
+                return t["access_token"]
+        except (KeyError, ValueError):
+            continue
 
     # No existing token — create one
     create_url = "https://urs.earthdata.nasa.gov/api/users/token"
