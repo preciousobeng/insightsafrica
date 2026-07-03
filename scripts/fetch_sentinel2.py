@@ -517,12 +517,14 @@ def main():
     token = get_token(user, password)
     print("Authenticated.\n")
 
-    # Search windows: baseline (2 years ago) and recent (last 3 months)
+    # Search windows: baseline (2 years ago) and recent. 180 days, not 90 —
+    # narrower windows miss the full-coverage tile at some sites (Nasarawa,
+    # Seguela baselines) and find nothing at all in cloudy regions.
     today     = datetime.utcnow()
     recent_end   = today.strftime("%Y-%m-%d")
-    recent_start = (today - timedelta(days=90)).strftime("%Y-%m-%d")
+    recent_start = (today - timedelta(days=180)).strftime("%Y-%m-%d")
     baseline_end   = (today - timedelta(days=365*2)).strftime("%Y-%m-%d")
-    baseline_start = (today - timedelta(days=365*2 + 90)).strftime("%Y-%m-%d")
+    baseline_start = (today - timedelta(days=365*2 + 180)).strftime("%Y-%m-%d")
 
     RAW_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -532,14 +534,22 @@ def main():
             ("baseline", baseline_start, baseline_end),
             ("recent",   recent_start,   recent_end),
         ]:
-            products = search_products(site["bbox"], d_start, d_end, max_cloud=15)
-            if not products:
-                print(f"  {label}: no products found (try relaxing cloud cover)")
-                continue
-            p, coverage = select_best_product(products, site["bbox"])
+            # Adaptive cloud: prefer clear imagery, but a cloudier full-frame
+            # beats a clear corner sliver (Niger delta rarely clears 15%).
+            p, coverage, used_cloud = None, 0.0, None
+            for max_cloud in (15, 30, 50):
+                candidates = search_products(site["bbox"], d_start, d_end,
+                                             max_cloud=max_cloud)
+                cp, ccov = select_best_product(candidates, site["bbox"])
+                if cp is not None and ccov > coverage:
+                    p, coverage, used_cloud = cp, ccov, max_cloud
+                if coverage >= 0.95:
+                    break
             if p is None:
-                print(f"  {label}: no product with usable footprint")
+                print(f"  {label}: no products found up to 50% cloud")
                 continue
+            if used_cloud > 15:
+                print(f"  NOTE {site['id']} {label}: needed max_cloud={used_cloud}")
             print(f"  {label}: {p['Name']} — bbox coverage {coverage:.0%}")
             if coverage < 0.95:
                 print(f"  WARNING {site['id']} {label}: best single granule covers "
