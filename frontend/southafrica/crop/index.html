@@ -15,7 +15,7 @@
       height: 100vh; display: flex; flex-direction: column;
     }
     header {
-      background: #0d1527; border-bottom: 1px solid #14532d33;
+      background: #10141c; border-bottom: 1px solid #14532d33;
       padding: 0 1.5rem; height: 56px;
       display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
     }
@@ -40,8 +40,8 @@
     .main { display: flex; flex: 1; overflow: hidden; }
 
     .sidebar {
-      width: 360px; background: #0d1527;
-      border-right: 1px solid #1e3a5f;
+      width: 360px; background: #10141c;
+      border-right: 1px solid #212836;
       display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
     }
     .sidebar-section { padding: 1.5rem; border-bottom: 1px solid #1e2d45; }
@@ -83,7 +83,7 @@
     .year-btn {
       flex: 1; padding: 0.3rem 0; font-size: 0.72rem; font-weight: 600;
       border-radius: 6px; cursor: pointer;
-      background: #1a2540; border: 1px solid #1e3a5f; color: #64748b;
+      background: #1a2540; border: 1px solid #212836; color: #64748b;
       transition: all 0.15s;
     }
     .year-btn:hover { border-color: #22c55e; color: #e2e8f0; }
@@ -120,7 +120,7 @@
     .speed-btn {
       flex: 1; padding: 0.25rem 0; font-size: 0.68rem; font-weight: 600;
       border-radius: 5px; cursor: pointer;
-      background: #1a2540; border: 1px solid #1e3a5f; color: #64748b;
+      background: #1a2540; border: 1px solid #212836; color: #64748b;
       transition: all 0.15s;
     }
     .speed-btn:hover { border-color: #22c55e; color: #e2e8f0; }
@@ -132,7 +132,7 @@
     /* Layer list buttons */
     .layer-btn {
       width: 100%; text-align: left;
-      background: #1a2540; border: 1px solid #1e3a5f; border-radius: 8px;
+      background: #1a2540; border: 1px solid #212836; border-radius: 8px;
       padding: 0.5rem 0.75rem; color: #94a3b8; font-size: 0.8rem;
       cursor: pointer; margin-bottom: 0.3rem; transition: all 0.15s;
     }
@@ -142,7 +142,7 @@
     .layer-sub { display: block; font-size: 0.7rem; color: #475569; margin-top: 0.1rem; }
 
     .info-box {
-      background: #1a2540; border: 1px solid #1e3a5f; border-radius: 8px;
+      background: #1a2540; border: 1px solid #212836; border-radius: 8px;
       padding: 0.75rem; font-size: 0.78rem; color: #94a3b8; line-height: 1.5;
     }
     .sidebar-message { font-size: 0.78rem; color: #475569; line-height: 1.5; padding: 0.5rem 0; }
@@ -170,7 +170,7 @@
 
     /* ── Theme toggle ── */
     .theme-toggle {
-      background: none; border: 1px solid #1e3a5f; border-radius: 6px;
+      background: none; border: 1px solid #212836; border-radius: 6px;
       color: #475569; cursor: pointer; font-size: 0.85rem;
       padding: 0.2rem 0.5rem; line-height: 1;
       transition: border-color 0.15s, color 0.15s;
@@ -231,7 +231,7 @@
         width: 100%;
         order: 2;
         border-right: none;
-        border-top: 1px solid #1e3a5f;
+        border-top: 1px solid #212836;
         flex: 1;
         overflow-y: auto;
       }
@@ -712,7 +712,7 @@
             },
             tooltip: {
               backgroundColor: 'rgba(13,21,39,0.95)',
-              borderColor: '#1e3a5f', borderWidth: 1,
+              borderColor: '#212836', borderWidth: 1,
               titleColor: '#22c55e', bodyColor: '#94a3b8', padding: 9,
               filter: (item) => item.raw != null,
               callbacks: {
