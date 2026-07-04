@@ -377,6 +377,13 @@ def process_site(site: dict, token: str, out_dir: Path, png_prefix: str,
     else:
         period_label = None
 
+    # Under clean-raw, drop this site's extracted bands too: at ~350MB/jp2 a
+    # full country of band caches (2.2GB/site) filled free-arm2 outright.
+    if clean_raw and bands_dir.exists():
+        import shutil
+        shutil.rmtree(bands_dir)
+        print(f"  Removed extracted bands for {sid} (clean-raw)")
+
     bounds_profile = (indices.get("recent") or indices.get("baseline") or {}).get("profile")
     if bounds_profile:
         site["leaflet_bounds"] = profile_wgs84_bounds(bounds_profile)
