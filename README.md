@@ -1,6 +1,6 @@
 # InsightsAfrica — Satellite Intelligence Platform for Africa
 
-[![Licence: CC BY-NC 4.0](https://img.shields.io/badge/Licence-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+[![Licence: MIT](https://img.shields.io/badge/Licence-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
 **Live platform:** [insightsafrica.org](https://insightsafrica.org)
 
@@ -134,11 +134,13 @@ For research collaboration, data access, or partnership enquiries:
 
 ## Licence
 
-This project is licensed under [Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/).
+The InsightsAfrica **codebase** is licensed under [MIT](https://opensource.org/licenses/MIT) — free to use, modify, and deploy, including commercially, with attribution.
 
-You may use, share, and adapt this work for **non-commercial purposes** with attribution. Commercial use requires explicit written permission.
+This covers the code only. Input datasets carry their own terms:
+- **CHIRPS v2.0** (Climate Hazards Center, UCSB/USGS): public domain / free use.
+- **GADM administrative boundaries** (gadm.org): free for academic and other non-commercial use; commercial use or redistribution requires a separate licence directly from the GADM project. Deploying this codebase commercially does not grant a right to use GADM data commercially — that permission must be obtained independently, or a commercially-licensed boundary source substituted.
 
-For commercial licensing: **info@insightsafrica.org**
+For questions: **info@insightsafrica.org**
 
 ---
 
