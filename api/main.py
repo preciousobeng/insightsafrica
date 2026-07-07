@@ -1040,6 +1040,82 @@ def flood_anomaly_index(country: str):
     return JSONResponse(content={"country": country, "available_months": months})
 
 
+
+# ── Full-archive CSV export (1981–present, from precomputed anomaly files) ───
+# Anonymous users are clamped to the recent window by _auth_and_clamp, same as
+# the other CSV downloads; registered users / API keys get the full archive.
+
+_archive_rows_cache: dict[tuple[str, str], tuple[float, list]] = {}
+
+
+@app.get("/api/{country}/flood/archive/download/csv")
+async def flood_archive_csv(
+    request: Request,
+    country: str,
+    level: str = Query(...),
+    from_date: str | None = Query(None, alias="from"),
+    to_date:   str | None = Query(None, alias="to"),
+):
+    """District-level rainfall + anomaly archive (1981–present) as CSV."""
+    _validate_country(country)
+    anomaly_dir = _safe_path(ARCHIVE_DIR / country / "anomaly")
+    if not anomaly_dir.exists():
+        raise HTTPException(status_code=404, detail=f"No anomaly data directory for {country}")
+
+    files = sorted(anomaly_dir.glob(f"chirps-v2.0.*_{country}_anomaly.json"))
+    if not files:
+        raise HTTPException(status_code=404, detail=f"No anomaly files found for {country}")
+
+    sample = json.loads(files[0].read_text())
+    valid_levels = list(sample.get("anomaly", {}).keys())
+    if level not in valid_levels:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid level '{level}'. Valid levels: {', '.join(valid_levels)}",
+        )
+
+    user_id, tier, from_ym, to_ym = await _auth_and_clamp(request, from_date, to_date)
+    await _log_download(request, country, "flood", "archive_csv", user_id, from_ym, to_ym)
+
+    dir_mtime = anomaly_dir.stat().st_mtime
+    cache_key = (country, level)
+    cached_mtime, rows = _archive_rows_cache.get(cache_key, (None, []))
+    if cached_mtime != dir_mtime:
+        rows = []
+        for f in files:
+            data = json.loads(f.read_text())
+            for area, stats in data.get("anomaly", {}).get(level, {}).items():
+                rows.append({
+                    "year": data["year"],
+                    "month": data["month"],
+                    "area": area,
+                    "level": level,
+                    "actual_mm": stats.get("actual"),
+                    "ltm_mm": stats.get("ltm"),
+                    "anomaly_mm": stats.get("anomaly_mm"),
+                    "anomaly_pct": stats.get("anomaly_pct"),
+                    "z_score": stats.get("z_score"),
+                    "category": stats.get("category"),
+                })
+        _archive_rows_cache[cache_key] = (dir_mtime, rows)
+
+    if from_ym or to_ym:
+        rows = [r for r in rows
+                if not (from_ym and _ym(r["year"], r["month"]) < from_ym)
+                and not (to_ym and _ym(r["year"], r["month"]) > to_ym)]
+
+    buf = io.StringIO()
+    buf.write(_ATTRIBUTION["flood"])
+    buf.write(f"# Country: {country.title()}\n")
+    buf.write("# Reference period: WMO 1991-2020 long-term mean\n")
+    buf.write("# Full archive: 1981-present (anonymous downloads limited to recent months; free registration unlocks the full range)\n")
+    if rows:
+        w = csv.DictWriter(buf, fieldnames=list(rows[0].keys()))
+        w.writeheader()
+        w.writerows(rows)
+    return _csv_resp(buf.getvalue(), f"insightsafrica_{country}_flood_archive_{level}.csv")
+
+
 # ── South Africa downloads (layers/sites/boundaries handled by the factory above) ──
 @app.get("/api/southafrica/flood/download/provinces.geojson")
 def sa_flood_provinces():
