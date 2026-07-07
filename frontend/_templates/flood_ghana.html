@@ -634,6 +634,17 @@
         </div>
       </div>
 
+      <div class="sidebar-section" id="hist-section" style="display:none;">
+        <div class="section-label">Historical Archive</div>
+        <div style="font-size:0.72rem;color:#64748b;margin-bottom:0.5rem;">Anomaly vs 1991&ndash;2020 normal, back to 1981</div>
+        <div style="display:flex; gap:0.4rem; align-items:center;">
+          <select id="hist-year" style="flex:1;background:#10141c;color:#e2e8f0;border:1px solid #212836;border-radius:6px;padding:0.35rem;"></select>
+          <select id="hist-month" style="flex:1;background:#10141c;color:#e2e8f0;border:1px solid #212836;border-radius:6px;padding:0.35rem;"></select>
+          <button id="hist-load" class="layer-btn" style="padding:0.35rem 0.7rem;">Load</button>
+        </div>
+        <div id="hist-status" style="margin-top:0.45rem;font-size:0.72rem;color:#22d3ee;"></div>
+      </div>
+
       <div class="sidebar-section">
         <div class="section-label">Boundaries</div>
         <div style="display:flex; flex-direction:column; gap:0.4rem;">
@@ -710,6 +721,8 @@
             <input type="month" id="dl-from" value="2024-01" min="2024-01" max="2025-12">
             <label>To</label>
             <input type="month" id="dl-to" value="2025-12" min="2024-01" max="2025-12">
+          <a class="dl-btn" href="{{ c.flood.anomaly_base }}/flood/archive/download/csv?level={{ c.levels.fine.key }}" download>Full archive CSV (1981&ndash;present)</a>
+          <a class="dl-btn" href="/docs" target="_blank" rel="noopener">API docs (JSON, full archive)</a>
           </div>
           <button class="dl-btn" onclick="dlCsv('/api/flood/download/csv?level=districts', 'insightsafrica_ghana_flood_districts.csv')">CSV — Districts</button>
           <button class="dl-btn" onclick="dlCsv('/api/flood/download/csv?level=regions', 'insightsafrica_ghana_flood_regions.csv')">CSV — Regions</button>
@@ -788,6 +801,8 @@
 
     let viewMode = 'rainfall';
     let currentAnomalyData = null;
+        histActive = false;
+        if (histEl('hist-status')) histEl('hist-status').textContent = '';
     const anomalyCache = {};
 
     async function loadBoundary(level) {
@@ -1057,6 +1072,10 @@
     }
 
     function displayLayer(layer, fromPlayer) {
+      if (histActive) {
+        histActive = false;
+        if (histEl('hist-status')) histEl('hist-status').textContent = '';
+      }
       const imgUrl = '/tiles/' + layer.png;
       const bounds = layer.leaflet_bounds;
       const prev = currentOverlay;
@@ -1345,6 +1364,52 @@
 
     // ── Anomaly layer functions ──────────────────────────────────────────────
 
+
+    // ── Historical Archive (anomaly back to 1981) ────────────────────────────
+    var histActive = false;
+    var histAvailableMonths = [];
+    function histEl(id) { return document.getElementById(id); }
+
+    async function populateHistSelects() {
+      try {
+        const res = await fetch('{{ c.flood.anomaly_base }}/flood/anomaly');
+        if (!res.ok) throw new Error(res.status);
+        const data = await res.json();
+        histAvailableMonths = data.available_months || [];
+        const years = [...new Set(histAvailableMonths.map(m => m.year))].sort((a, b) => b - a);
+        histEl('hist-year').innerHTML = years.map(y => '<option value="' + y + '">' + y + '</option>').join('');
+        onHistYearChange();
+      } catch (e) {
+        console.warn('Could not fetch archive index', e);
+        if (histEl('hist-status')) histEl('hist-status').textContent = 'Archive index unavailable';
+      }
+    }
+
+    function onHistYearChange() {
+      const year = parseInt(histEl('hist-year').value, 10);
+      const present = histAvailableMonths.filter(m => m.year === year).map(m => m.month);
+      const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      histEl('hist-month').innerHTML = names.map((n, i) =>
+        '<option value="' + (i + 1) + '"' + (present.includes(i + 1) ? '' : ' disabled') + '>' + n + '</option>'
+      ).join('');
+      const firstOk = present.length ? present[0] : 1;
+      histEl('hist-month').value = String(firstOk);
+    }
+
+    if (histEl('hist-year')) histEl('hist-year').addEventListener('change', onHistYearChange);
+    if (histEl('hist-load')) {
+      histEl('hist-load').addEventListener('click', async () => {
+        const y = parseInt(histEl('hist-year').value, 10);
+        const m = parseInt(histEl('hist-month').value, 10);
+        if (!y || !m) return;
+        histActive = true;
+        if (currentOverlay) currentOverlay.setOpacity(0);
+        await loadAndApplyAnomaly(y, m);
+        if (histEl('hist-status')) histEl('hist-status').textContent =
+          'Showing ' + y + '-' + String(m).padStart(2, '0') + ' vs 1991\u20132020 normal';
+      });
+    }
+
     function setViewMode(mode) {
       viewMode = mode;
       document.getElementById('btn-mode-rainfall').classList.toggle('active', mode === 'rainfall');
@@ -1353,6 +1418,9 @@
       document.getElementById('anomaly-legend-section').style.display   = mode === 'anomaly'  ? '' : 'none';
       document.getElementById('rainfall-stats-rows').style.display      = mode === 'rainfall' ? '' : 'none';
       document.getElementById('anomaly-stats-rows').style.display       = mode === 'anomaly'  ? '' : 'none';
+      const histSection = document.getElementById('hist-section');
+      if (histSection) histSection.style.display = mode === 'anomaly' ? '' : 'none';
+      if (mode === 'anomaly' && histEl('hist-year') && histEl('hist-year').options.length === 0) populateHistSelects();
 
       const activeLayer = layers.length
         ? (playerLayers.length ? playerLayers[playerIndex] : layers[layers.length - 1])
@@ -1360,7 +1428,7 @@
 
       if (mode === 'anomaly') {
         if (currentOverlay) currentOverlay.setOpacity(0);
-        if (activeLayer) loadAndApplyAnomaly(activeLayer.year, activeLayer.month);
+        if (activeLayer && !histActive) loadAndApplyAnomaly(activeLayer.year, activeLayer.month);
       } else {
         if (currentOverlay) currentOverlay.setOpacity(0.8);
         clearAnomalyStyle('regions');
