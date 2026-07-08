@@ -152,6 +152,7 @@ def _extract_token(request: Request) -> str | None:
 _FREE_MONTHS    = 6    # how far back free users can go
 _FREE_RPD       = 500  # free-tier API key requests per day
 _KEY_PREFIX     = "ia_"
+MAX_API_KEYS_PER_USER = 5  # maximum number of active (non-revoked) API keys per user
 
 
 def _hash_key(raw: str) -> str:
@@ -301,6 +302,26 @@ async def create_api_key(body: _KeyCreate, request: Request):
     user  = await _get_user(token) if token else None
     if not user:
         raise HTTPException(status_code=401, detail="Login required to create API keys")
+
+    # Count current active (non-revoked) keys for this user
+    async with httpx.AsyncClient(timeout=4.0) as client:
+        count_resp = await client.get(
+            f"{_SUPA_URL}/rest/v1/api_keys",
+            headers=_supa_headers_service,
+            params={
+                "user_id":    f"eq.{user['id']}",
+                "revoked_at": "is.null",
+                "select":     "id",
+            },
+        )
+    if count_resp.status_code != 200:
+        raise HTTPException(status_code=500, detail="Failed to check key limit")
+    existing_keys = count_resp.json()
+    if len(existing_keys) >= MAX_API_KEYS_PER_USER:
+        raise HTTPException(
+            status_code=429,
+            detail=f"API key limit reached (max {MAX_API_KEYS_PER_USER} active keys). Revoke an existing key first.",
+        )
 
     raw  = _KEY_PREFIX + secrets.token_urlsafe(32)
     tier = await _get_tier(user["id"])
@@ -1184,3 +1205,4 @@ app.mount("/ghana/human",           StaticFiles(directory=str(FRONTEND_DIR / "gh
 app.mount("/ghana/profile",         StaticFiles(directory=str(FRONTEND_DIR / "ghana" / "profile"),    html=True), name="gh-profile")
 app.mount("/ghana",                 StaticFiles(directory=str(FRONTEND_DIR / "ghana"),                html=True), name="ghana")
 app.mount("/",                      StaticFiles(directory=str(FRONTEND_DIR),                          html=True), name="home")
+
