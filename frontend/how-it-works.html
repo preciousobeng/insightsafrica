@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How It Works — InsightsAfrica</title>
+  <meta name="description" content="How InsightsAfrica turns free satellite data into district-level intelligence for Africa — no dish, no ground station, no signal to space required." />
+  <link rel="canonical" href="https://insightsafrica.org/how-it-works.html" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://insightsafrica.org/how-it-works.html" />
+  <meta property="og:title" content="How It Works — InsightsAfrica" />
+  <meta property="og:description" content="We never talk to a satellite. How open data from space becomes district-level intelligence for Africa." />
+  <meta property="og:image" content="https://insightsafrica.org/static/og-image.png" />
+  <meta property="og:site_name" content="InsightsAfrica" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg:          #0a0f1e;
+      --bg-card:     #0d1527;
+      --border:      #1e3a5f;
+      --border-dim:  #1e2d45;
+      --accent:      #3b82f6;
+      --accent-2:    #06b6d4;
+      --accent-glow: rgba(59,130,246,0.12);
+      --green:       #22c55e;
+      --amber:       #f59e0b;
+      --red:         #ef4444;
+      --text-1:      #f1f5f9;
+      --text-2:      #94a3b8;
+      --text-3:      #475569;
+      --font-display:'Syne', system-ui, sans-serif;
+      --font-mono:   'DM Mono', 'Courier New', monospace;
+      --font-body:   'Segoe UI', system-ui, sans-serif;
+      --radius:      14px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text-1); font-family: var(--font-body); line-height: 1.7; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--border-dim); }
+    .nav-brand { display: flex; align-items: center; gap: 12px; color: var(--text-1); }
+    .nav-brand:hover { text-decoration: none; }
+    .nav-logo svg { width: 22px; height: 27px; fill: var(--accent); }
+    .nav-name { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; }
+    .nav-tagline { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-2); letter-spacing: 0.08em; text-transform: uppercase; }
+    .nav-back { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-2); }
+
+    main { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+    .kicker { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-2); margin-bottom: 14px; }
+    h1 { font-family: var(--font-display); font-size: clamp(1.8rem, 4.5vw, 2.7rem); line-height: 1.15; margin-bottom: 18px; }
+    h1 em { font-style: normal; color: var(--accent); }
+    .lede { font-size: 1.12rem; color: var(--text-2); max-width: 640px; margin-bottom: 40px; }
+    .lede strong { color: var(--text-1); }
+
+    h2 { font-family: var(--font-display); font-size: 1.35rem; margin: 52px 0 16px; }
+    p { color: var(--text-2); margin-bottom: 16px; max-width: 700px; }
+    p strong { color: var(--text-1); }
+
+    .diagram-wrap { background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: var(--radius); padding: 28px 20px; margin: 36px 0; overflow-x: auto; }
+    .diagram-wrap svg { display: block; width: 100%; height: auto; min-width: 560px; }
+    .diagram-caption { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-3); text-align: center; margin-top: 14px; }
+
+    .callout { border: 1px solid var(--border); border-left: 3px solid var(--accent); background: var(--accent-glow); border-radius: 0 var(--radius) var(--radius) 0; padding: 20px 24px; margin: 32px 0; }
+    .callout p { margin: 0; color: var(--text-1); }
+
+    .steps { counter-reset: step; display: grid; gap: 14px; margin: 28px 0; }
+    .step { background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: var(--radius); padding: 20px 22px; display: flex; gap: 18px; align-items: flex-start; }
+    .step-num { counter-increment: step; flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-mono); font-size: 0.9rem; display: flex; align-items: center; justify-content: center; }
+    .step-num::before { content: counter(step); }
+    .step h3 { font-family: var(--font-display); font-size: 1rem; margin-bottom: 6px; }
+    .step p { margin: 0; font-size: 0.95rem; }
+
+    .faq { display: grid; gap: 10px; margin-top: 24px; }
+    details { background: var(--bg-card); border: 1px solid var(--border-dim); border-radius: var(--radius); padding: 16px 20px; }
+    summary { font-family: var(--font-display); font-size: 0.98rem; cursor: pointer; color: var(--text-1); }
+    details p { margin: 12px 0 4px; font-size: 0.95rem; }
+
+    footer { border-top: 1px solid var(--border-dim); padding: 36px 24px; text-align: center; }
+    .foot-mission { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-3); margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">
+    <div class="nav-logo">
+      <svg viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5,1 L9,0 L13,1.5 L15,5 L15.5,9 L15,13 L14,16 L12,18.5 L9,20 L7,19.5 L5,17.5 L3,14 L2,10 L2,6 L3,3 Z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="nav-name">InsightsAfrica</div>
+      <div class="nav-tagline">Satellite Intelligence Platform</div>
+    </div>
+  </a>
+  <a class="nav-back" href="/">&larr; back to the map</a>
+</nav>
+
+<main>
+  <div class="kicker">How it works</div>
+  <h1>We never talk to a satellite.<br /><em>Nobody needs to.</em></h1>
+  <p class="lede">
+    The most common question we get — from students, researchers and journalists — is
+    <strong>"how do you connect to the satellites, especially with poor network in rural areas?"</strong>
+    The answer surprises almost everyone: there is no dish, no ground station, and no signal
+    between us and space. Here is the entire chain, honestly drawn.
+  </p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 880 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram: satellites photograph clouds; rain gauges measure rain; CHIRPS blends both and publishes files; our server computes district statistics; you view them on any connection.">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#3b82f6"/>
+        </marker>
+      </defs>
+
+      <!-- space band -->
+      <rect x="0" y="0" width="880" height="120" fill="#0d1527" rx="12"/>
+      <text x="16" y="24" fill="#475569" font-family="DM Mono, monospace" font-size="11" letter-spacing="2">SPACE</text>
+
+      <!-- satellite -->
+      <g transform="translate(160,45)">
+        <rect x="-18" y="-10" width="36" height="20" rx="4" fill="#1e3a5f" stroke="#3b82f6"/>
+        <rect x="-52" y="-7" width="28" height="14" rx="2" fill="#06b6d4" opacity="0.85"/>
+        <rect x="24" y="-7" width="28" height="14" rx="2" fill="#06b6d4" opacity="0.85"/>
+        <text x="0" y="42" text-anchor="middle" fill="#f1f5f9" font-family="Syne, sans-serif" font-size="14" font-weight="700">Weather satellites</text>
+        <text x="0" y="60" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, sans-serif" font-size="12">NASA · NOAA · EUMETSAT photograph</text>
+        <text x="0" y="76" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, sans-serif" font-size="12">clouds in infrared — cold tops = likely rain</text>
+      </g>
+
+      <!-- ground band -->
+      <rect x="0" y="140" width="880" height="120" fill="#0d1527" rx="12"/>
+      <text x="16" y="164" fill="#475569" font-family="DM Mono, monospace" font-size="11" letter-spacing="2">ON THE GROUND IN AFRICA</text>
+
+      <!-- rain gauge -->
+      <g transform="translate(160,185)">
+        <rect x="-8" y="-12" width="16" height="34" rx="3" fill="#1e3a5f" stroke="#22c55e"/>
+        <path d="M-14,-18 L14,-18 L8,-10 L-8,-10 Z" fill="#22c55e" opacity="0.85"/>
+        <text x="0" y="46" text-anchor="middle" fill="#f1f5f9" font-family="Syne, sans-serif" font-size="14" font-weight="700">Rain gauges</text>
+        <text x="0" y="64" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, sans-serif" font-size="12">Real buckets measuring real rain —</text>
+        <text x="0" y="80" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, sans-serif" font-size="12">including Ghana Meteorological Agency's</text>
+      </g>
+
+      <!-- CHIRPS blend -->
+      <g transform="translate(430,130)">
+        <rect x="-105" y="-40" width="210" height="96" rx="12" fill="#0a0f1e" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="0" y="-14" text-anchor="middle" fill="#f1f5f9" font-family="Syne, sans-serif" font-size="15" font-weight="700">CHIRPS</text>
+        <text x="0" y="6" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, sans-serif" font-size="12">UC Santa Barbara blends both:</text>
+        <text x="0" y="24" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, sans-serif" font-size="12">satellite estimates, corrected by gauges</text>
+        <text x="0" y="44" text-anchor="middle" fill="#06b6d4" font-family="DM Mono, monospace" font-size="11">published FREE · 1981 → today</text>
+      </g>
+
+      <!-- arrows into CHIRPS -->
+      <path d="M 262 70 C 290 70, 305 110, 322 122" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#arr)"/>
+      <path d="M 262 210 C 290 210, 305 180, 322 158" fill="none" stroke="#22c55e" stroke-width="2" marker-end="url(#arr)"/>
+
+      <!-- our server -->
+      <g transform="translate(700,130)">
+        <rect x="-90" y="-40" width="180" height="96" rx="12" fill="#0a0f1e" stroke="#06b6d4" stroke-width="1.5"/>
+        <text x="0" y="-14" text-anchor="middle" fill="#f1f5f9" font-family="Syne, sans-serif" font-size="15" font-weight="700">Our server</text>
+        <text x="0" y="6" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, sans-serif" font-size="12">downloads the file monthly</text>
+        <text x="0" y="24" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, sans-serif" font-size="12">(like you'd download a PDF), then</text>
+        <text x="0" y="42" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, sans-serif" font-size="12">computes stats for every district</text>
+      </g>
+      <path d="M 537 138 L 608 138" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#arr)"/>
+      <text x="572" y="128" text-anchor="middle" fill="#475569" font-family="DM Mono, monospace" font-size="10">internet</text>
+
+      <!-- you -->
+      <g transform="translate(430,330)">
+        <rect x="-150" y="-28" width="300" height="76" rx="12" fill="#0a0f1e" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="0" y="-2" text-anchor="middle" fill="#f1f5f9" font-family="Syne, sans-serif" font-size="15" font-weight="700">You</text>
+        <text x="0" y="18" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, sans-serif" font-size="12">maps + free API, deliberately lightweight —</text>
+        <text x="0" y="36" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, sans-serif" font-size="12">built to load on a modest connection</text>
+      </g>
+      <path d="M 700 226 C 700 280, 620 300, 585 315" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arr)"/>
+
+      <!-- the point -->
+      <text x="90" y="330" fill="#475569" font-family="DM Mono, monospace" font-size="11">NO DISH.</text>
+      <text x="90" y="348" fill="#475569" font-family="DM Mono, monospace" font-size="11">NO GROUND STATION.</text>
+      <text x="90" y="366" fill="#475569" font-family="DM Mono, monospace" font-size="11">NO SIGNAL TO SPACE.</text>
+    </svg>
+    <div class="diagram-caption">the whole chain — every link is public infrastructure or open data</div>
+  </div>
+
+  <div class="callout">
+    <p><strong>The part that matters for Africa:</strong> a satellite measures rain over a village whether
+    or not that village has ever had a network signal. Remote sensing works precisely where
+    infrastructure doesn't. Connectivity only becomes a question when a <em>person</em> wants to
+    view the data — which is why this site is lightweight and free.</p>
+  </div>
+
+  <h2>The five steps, in plain language</h2>
+  <div class="steps">
+    <div class="step"><div class="step-num"></div><div>
+      <h3>Satellites photograph clouds — for their own reasons</h3>
+      <p>Space agencies (NASA, NOAA, EUMETSAT) run weather satellites that constantly image Africa in
+      infrared. Very cold cloud tops are a strong hint of rainfall. The agencies downlink this imagery
+      to <em>their own</em> ground stations and publish it. We are not involved in any of this.</p>
+    </div></div>
+    <div class="step"><div class="step-num"></div><div>
+      <h3>Rain gauges measure the truth on the ground</h3>
+      <p>Satellites estimate; gauges know. National meteorological services — including the Ghana
+      Meteorological Agency — maintain physical rain gauges. Their readings are the "ground" part of
+      the story: not receivers or antennas, just honest buckets.</p>
+    </div></div>
+    <div class="step"><div class="step-num"></div><div>
+      <h3>CHIRPS blends the two and gives it away</h3>
+      <p>The Climate Hazards Center at UC Santa Barbara combines the satellite estimates with the
+      gauge readings into one calibrated dataset: <strong>CHIRPS</strong> — rainfall for every ~5&nbsp;km
+      square of Africa, every month since 1981, published free on the internet. The same source NASA
+      and the World Bank use.</p>
+    </div></div>
+    <div class="step"><div class="step-num"></div><div>
+      <h3>Our pipeline turns pixels into districts</h3>
+      <p>Each month our server downloads the newest CHIRPS file — the same way you download a PDF —
+      and computes statistics for every district: rainfall totals, the 1991–2020 long-term average,
+      and how far this month deviates from normal. That's the intelligence layer, and the code is
+      open source.</p>
+    </div></div>
+    <div class="step"><div class="step-num"></div><div>
+      <h3>You see answers, not raster files</h3>
+      <p>Maps, district profiles and a free API — deliberately lightweight so it loads on a modest
+      connection anywhere. No paywall, no login.</p>
+    </div></div>
+  </div>
+
+  <h2>Questions students actually ask us</h2>
+  <div class="faq">
+    <details>
+      <summary>Do you communicate with the satellites directly?</summary>
+      <p>No — and neither do most people who work with satellite data. The space agencies operate the
+      satellites and publish the data; the entire earth-observation ecosystem downstream of them works
+      from those public archives. You could start doing the same today.</p>
+    </details>
+    <details>
+      <summary>Doesn't poor rural network coverage break this?</summary>
+      <p>No, because nothing is transmitted from rural Ghana. The measurement happens from orbit and
+      the gauge data travels through the met agencies' own channels. A village with zero connectivity
+      is measured exactly as well as central Accra.</p>
+    </details>
+    <details>
+      <summary>How accurate is satellite rainfall?</summary>
+      <p>Good, not perfect. Infrared estimates can misjudge certain storm types, which is exactly why
+      CHIRPS blends in gauge readings. For district-level monthly patterns — our use case — it is a
+      well-validated, peer-reviewed standard. We also publish our methodology openly so you can judge
+      for yourself.</p>
+    </details>
+    <details>
+      <summary>Can I use this data for my research or coursework?</summary>
+      <p>Yes, please. The maps and the API are free to use with attribution to InsightsAfrica, and
+      CHIRPS itself is freely available if you want to work with the raw data. If you're a student
+      building on this, we'd genuinely like to hear about it — write to us via the
+      <a href="/#contact">contact form</a>.</p>
+    </details>
+  </div>
+
+  <h2>Want to go deeper?</h2>
+  <p>
+    The raw dataset: <a href="https://www.chc.ucsb.edu/data/chirps" rel="noopener" target="_blank">CHIRPS at the UCSB Climate Hazards Center</a>.
+    Our full methodology write-up and the open-source pipeline are linked from the
+    <a href="/ghana/hub.html">Ghana hub</a>. And if you're a researcher or student who wants to
+    collaborate, that's exactly what this platform is for — <a href="/#contact">get in touch</a>.
+  </p>
+</main>
+
+<footer>
+  <div class="foot-brand" style="font-family:var(--font-display);font-weight:700;">InsightsAfrica</div>
+  <div class="foot-mission">Built on open data for public benefit</div>
+</footer>
+
+</body>
+</html>
