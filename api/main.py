@@ -128,7 +128,7 @@ async def _log_download(
         "user_id":   user_id,
         "from_date": from_date,
         "to_date":   to_date,
-        "ip":        request.client.host if request.client else None,
+        "ip":        request.headers.get("CF-Connecting-IP") or (request.client.host if request.client else None),
     }
     try:
         async with httpx.AsyncClient(timeout=4.0) as client:
@@ -204,7 +204,16 @@ INDICATORS_DIR    = BASE_DIR / "data" / "processed_indicators"
 ARCHIVE_DIR       = BASE_DIR / "data" / "archive"
 FRONTEND_DIR      = BASE_DIR / "frontend"
 
-limiter = Limiter(key_func=get_remote_address, default_limits=["200/minute"])
+def _client_ip(request: Request) -> str:
+    # Behind cloudflared (sole ingress from localhost), request.client.host is
+    # always 127.0.0.1, which would collapse the rate limiter to one global
+    # bucket. Cloudflare OVERWRITES CF-Connecting-IP with the true client IP
+    # (unlike X-Forwarded-For, which it appends and a client can pre-seed), so
+    # it is the trustworthy per-client key here.
+    return request.headers.get("CF-Connecting-IP") or get_remote_address(request)
+
+
+limiter = Limiter(key_func=_client_ip, default_limits=["200/minute"])
 app = FastAPI(title="InsightsAfrica API", version="0.4.0")
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
