@@ -57,14 +57,17 @@ def run(cmd: list[str]) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, capture_output=True, text=True, cwd=str(BASE_DIR))
 
 
+_MONTH_RE = None
+
+
 def latest_layer_month(processed_dir: Path, country: str) -> tuple[int, int] | None:
+    import re
+    pat = re.compile(rf"chirps-v2\.0\.(\d{{4}})\.(\d{{2}})_{re.escape(country)}\.json$")
     months = []
     for f in processed_dir.glob(f"chirps-v2.0.*_{country}.json"):
-        parts = f.name.split(".")
-        try:
-            months.append((int(parts[2]), int(parts[3])))
-        except (IndexError, ValueError):
-            continue
+        m = pat.match(f.name)
+        if m:
+            months.append((int(m.group(1)), int(m.group(2))))
     return max(months) if months else None
 
 
