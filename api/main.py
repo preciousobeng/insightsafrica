@@ -54,7 +54,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from slowapi.errors import RateLimitExceeded
 from fastapi.responses import JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 load_dotenv()
 
@@ -282,14 +282,27 @@ app.add_middleware(SlowAPIMiddleware)
 # ── Contact form ──────────────────────────────────────────────────────────────
 
 class ContactForm(BaseModel):
-    name: str
-    email: str
-    enquiry_type: str
-    message: str
+    # Bounded so a single POST cannot push an unbounded payload through the
+    # SMTP relay. Header-bound fields are kept short; only the body is roomy.
+    name: str = Field(min_length=1, max_length=100)
+    email: str = Field(min_length=3, max_length=254)
+    enquiry_type: str = Field(min_length=1, max_length=60)
+    message: str = Field(min_length=1, max_length=5000)
+
+
+def _header_safe(value: str) -> str:
+    """Collapse CR/LF so user input can never open a new MIME header.
+
+    The stdlib already refuses to serialise a header containing an embedded
+    newline (HeaderParseError), so this is defence in depth — but it also turns
+    a would-be 500 into clean, well-formed output.
+    """
+    return " ".join(value.replace("\r", " ").replace("\n", " ").split())
 
 
 @app.post("/api/contact")
-async def contact(form: ContactForm):
+@limiter.limit("3/hour;10/day")
+async def contact(request: Request, form: ContactForm):
     smtp_user  = os.getenv("BREVO_SMTP_USER")
     smtp_pass  = os.getenv("BREVO_SMTP_PASS")
     recipient  = os.getenv("CONTACT_RECIPIENT", "info@insightsafrica.org")
@@ -303,11 +316,15 @@ async def contact(form: ContactForm):
     if "@" not in form.email or "." not in form.email.split("@")[-1]:
         raise HTTPException(status_code=400, detail="Invalid email address")
 
+    safe_name    = _header_safe(form.name)
+    safe_email   = _header_safe(form.email)
+    safe_enquiry = _header_safe(form.enquiry_type)
+
     msg = MIMEMultipart("alternative")
-    msg["Subject"]  = f"[InsightsAfrica] {form.enquiry_type} enquiry from {form.name}"
+    msg["Subject"]  = f"[InsightsAfrica] {safe_enquiry} enquiry from {safe_name}"
     msg["From"]     = "InsightsAfrica <noreply@insightsafrica.org>"
     msg["To"]       = recipient
-    msg["Reply-To"] = f"{form.name} <{form.email}>"
+    msg["Reply-To"] = f"{safe_name} <{safe_email}>"
 
     body = (
         f"New enquiry via insightsafrica.org\n\n"
