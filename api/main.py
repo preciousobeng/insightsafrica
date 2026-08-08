@@ -222,12 +222,23 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("insightsafrica")
 
 
+SECURITY_HEADERS = {
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+}
+
+
 @app.middleware("http")
-async def redirect_https(request: Request, call_next):
+async def security_and_https(request: Request, call_next):
     if request.headers.get("x-forwarded-proto") == "http":
         url = str(request.url).replace("http://", "https://", 1)
         return RedirectResponse(url)
-    return await call_next(request)
+    response = await call_next(request)
+    for k, v in SECURITY_HEADERS.items():
+        response.headers.setdefault(k, v)
+    return response
 
 app.add_middleware(
     CORSMiddleware,
