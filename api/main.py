@@ -230,6 +230,18 @@ SECURITY_HEADERS = {
 }
 
 
+CSP_REPORT_ONLY = (
+    "default-src 'self'; "
+    "script-src 'self' https://unpkg.com https://cdn.jsdelivr.net; "
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+    "img-src 'self' data: blob:; "
+    "font-src 'self' https://fonts.gstatic.com; "
+    "connect-src 'self' https://ajkpbpiqmsmahzetfxzc.supabase.co; "
+    "frame-ancestors 'none'; base-uri 'self'; object-src 'none'; "
+    "form-action 'self'; report-uri /api/csp-report"
+)
+
+
 @app.middleware("http")
 async def security_and_https(request: Request, call_next):
     if request.headers.get("x-forwarded-proto") == "http":
@@ -238,7 +250,24 @@ async def security_and_https(request: Request, call_next):
     response = await call_next(request)
     for k, v in SECURITY_HEADERS.items():
         response.headers.setdefault(k, v)
+    response.headers.setdefault("Content-Security-Policy-Report-Only", CSP_REPORT_ONLY)
     return response
+
+
+@app.post("/api/csp-report", include_in_schema=False)
+async def csp_report(request: Request):
+    try:
+        payload = json.loads(await request.body() or b"{}")
+        rep = payload.get("csp-report", payload)
+        logger.warning(
+            "CSP-violation directive=%s blocked=%s doc=%s",
+            rep.get("violated-directive") or rep.get("effective-directive"),
+            rep.get("blocked-uri"),
+            rep.get("document-uri"),
+        )
+    except Exception:
+        logger.warning("CSP-violation (unparseable report)")
+    return Response(status_code=204)
 
 app.add_middleware(
     CORSMiddleware,
