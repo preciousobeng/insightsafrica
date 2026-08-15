@@ -358,7 +358,9 @@ def health():
 # ── API key management ────────────────────────────────────────────────────────
 
 class _KeyCreate(BaseModel):
-    name: str = "My API key"
+    # Bounded like every other user-supplied field on this API; the value is
+    # written straight to Supabase and shown back in the key list.
+    name: str = Field(default="My API key", min_length=1, max_length=80)
 
 
 @app.post("/api/keys")
@@ -407,6 +409,33 @@ async def create_api_key(body: _KeyCreate, request: Request):
         raise HTTPException(status_code=500, detail="Failed to create key")
 
     row = r.json()[0]
+
+    # The count above and the insert are not atomic, so two concurrent requests
+    # could both pass the limit check and leave the user over MAX_API_KEYS_PER_USER.
+    # Re-check after the write and revoke the key we just made if we lost the race.
+    async with httpx.AsyncClient(timeout=4.0) as client:
+        recheck = await client.get(
+            f"{_SUPA_URL}/rest/v1/api_keys",
+            headers=_supa_headers_service,
+            params={
+                "user_id":    f"eq.{user['id']}",
+                "revoked_at": "is.null",
+                "select":     "id",
+            },
+        )
+    if recheck.status_code == 200 and len(recheck.json()) > MAX_API_KEYS_PER_USER:
+        async with httpx.AsyncClient(timeout=4.0) as client:
+            await client.patch(
+                f"{_SUPA_URL}/rest/v1/api_keys",
+                headers=_supa_headers_service,
+                params={"id": f"eq.{row['id']}", "user_id": f"eq.{user['id']}"},
+                json={"revoked_at": datetime.now(timezone.utc).isoformat()},
+            )
+        raise HTTPException(
+            status_code=429,
+            detail=f"API key limit reached (max {MAX_API_KEYS_PER_USER} active keys). Revoke an existing key first.",
+        )
+
     return {
         "id":         row["id"],
         "name":       row["name"],
