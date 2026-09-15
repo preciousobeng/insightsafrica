@@ -415,6 +415,13 @@ async def create_api_key(body: _KeyCreate, request: Request):
             },
         )
     if r.status_code not in (200, 201):
+        # The database enforces the cap atomically, including concurrent callers.
+        try:
+            error = r.json()
+        except ValueError:
+            error = {}
+        if isinstance(error, dict) and error.get("code") == "P0001" and str(error.get("message", "")).startswith("API key limit reached"):
+            raise HTTPException(status_code=429, detail=error["message"])
         raise HTTPException(status_code=500, detail="Failed to create key")
 
     row = r.json()[0]

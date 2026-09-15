@@ -943,25 +943,25 @@
       btn.disabled = true;
       btn.textContent = 'Generating…';
 
-      const r = await fetch('/api/keys', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + _session.access_token,
-          'Content-Type':  'application/json',
-        },
-        body: JSON.stringify({ name }),
-      });
-
-      btn.disabled = false;
-      btn.textContent = 'Generate key';
-
-      if (!r.ok) { alert('Failed to generate key. Please try again.'); return; }
-
-      const data = await r.json();
-      document.getElementById('key-reveal-value').textContent = data.key;
-      document.getElementById('key-reveal').style.display = '';
-      document.getElementById('key-name-input').value = '';
-      await loadKeys();
+      try {
+        // Match the existing ia_ + 32 random bytes/base64url + SHA-256 contract.
+        const bytes = crypto.getRandomValues(new Uint8Array(32));
+        const raw = 'ia_' + btoa(String.fromCharCode(...bytes))
+          .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
+        const hash = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
+        const { error } = await sb.rpc('create_api_key', { key_name: name, key_hash_input: hash });
+        if (error) throw error;
+        document.getElementById('key-reveal-value').textContent = raw;
+        document.getElementById('key-reveal').style.display = '';
+        document.getElementById('key-name-input').value = '';
+        await loadKeys();
+      } catch (error) {
+        alert(error.message || 'Failed to generate key. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Generate key';
+      }
     }
 
     // ── Copy ──────────────────────────────────────────────────────────────────
@@ -977,19 +977,17 @@
     // ── Revoke ────────────────────────────────────────────────────────────────
     async function revokeKey(id) {
       if (!confirm('Revoke this key? Any scripts using it will stop working immediately.')) return;
-      const r = await fetch('/api/keys/' + id, {
-        method: 'DELETE',
-        headers: { 'Authorization': 'Bearer ' + _session.access_token },
-      });
-      if (r.ok) {
+      try {
+        const { error } = await sb.rpc('revoke_api_key', { key_id: id });
+        if (error) throw error;
         document.getElementById('keyrow-' + id)?.remove();
         // If list is now empty, re-render
         if (!document.querySelector('.key-row')) {
           document.getElementById('key-list').innerHTML =
             '<div class="keys-empty">No API keys yet. Generate one above.</div>';
         }
-      } else {
-        alert('Failed to revoke key. Please try again.');
+      } catch (error) {
+        alert(error.message || 'Failed to revoke key. Please try again.');
       }
     }
 
