@@ -61,7 +61,8 @@ def render(env: Environment, page_type: str, country: dict) -> str:
 
 def main():
     ap = argparse.ArgumentParser(description="Generate InsightsAfrica frontend pages")
-    ap.add_argument("--type", help="Single page type (flood, crop, heat, mine, human, profile, hub)")
+    ap.add_argument("--type", choices=MODULE_TYPES + ["hub"],
+                    help="Single page type (flood, crop, heat, mine, human, profile, hub)")
     ap.add_argument("--all", action="store_true", help="All page types")
     ap.add_argument("--verify", action="store_true",
                     help="Diff generated output against committed files; write nothing")
@@ -82,10 +83,11 @@ def main():
     types = MODULE_TYPES + ["hub"] if args.all else [args.type]
     available = {p.stem for p in TEMPLATES.glob("*.html")}
 
-    total = clean = diffs = skipped = written = 0
+    total = clean = diffs = written = errors = missing = 0
     for page_type in types:
         if page_type not in available:
-            print(f"[skip] no template for '{page_type}' yet")
+            print(f"[ERROR] no template for '{page_type}'")
+            errors += 1
             continue
         for slug, country in config.items():
             country.setdefault("slug", slug)
@@ -95,12 +97,14 @@ def main():
                 generated = render(env, page_type, country)
             except Exception as e:
                 print(f"[ERROR] {slug}/{page_type}: {e}")
+                errors += 1
                 continue
             total += 1
 
             if args.verify:
                 if not out.exists():
                     print(f"[new]  {out.relative_to(FRONTEND)} (no committed file to diff)")
+                    missing += 1
                     continue
                 current = out.read_text()
                 if current == generated:
@@ -126,8 +130,9 @@ def main():
                 written += 1
                 print(f"[write] {out.relative_to(FRONTEND)}")
 
-    print(f"\nTotal {total} | identical {clean} | differ {diffs} | written {written}")
-    if args.verify and diffs:
+    print(f"\nTotal {total} | identical {clean} | differ {diffs} | written {written}"
+          f" | errors {errors} | missing {missing}")
+    if errors or (args.verify and (diffs or missing)):
         sys.exit(1)
 
 
