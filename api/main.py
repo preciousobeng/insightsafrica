@@ -177,8 +177,17 @@ async def _verify_api_key(key: str) -> dict | None:
             )
         if r.status_code != 200:
             return None
-        row = r.json()
-        if not row:
+        rows = r.json()
+        # RETURNS TABLE RPCs return an array, even when exactly one key matches.
+        # Reject unexpected shapes rather than granting access from partial data.
+        if not isinstance(rows, list) or len(rows) != 1:
+            return None
+        row = rows[0]
+        if not isinstance(row, dict):
+            return None
+        if any(not isinstance(row.get(k), str) or not row[k] for k in ("id", "user_id")):
+            return None
+        if row.get("tier") not in ("free", "premium"):
             return None
         return row
     except Exception as e:
