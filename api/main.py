@@ -232,11 +232,13 @@ SECURITY_HEADERS = {
 
 CSP_REPORT_ONLY = (
     "default-src 'self'; "
-    "script-src 'self' https://unpkg.com https://cdn.jsdelivr.net; "
+    "script-src 'self' https://unpkg.com https://cdn.jsdelivr.net "
+    "https://static.cloudflareinsights.com; "
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
     "img-src 'self' data: blob:; "
     "font-src 'self' https://fonts.gstatic.com; "
-    "connect-src 'self' https://ajkpbpiqmsmahzetfxzc.supabase.co; "
+    "connect-src 'self' https://ajkpbpiqmsmahzetfxzc.supabase.co "
+    "https://cloudflareinsights.com; "
     "frame-ancestors 'none'; base-uri 'self'; object-src 'none'; "
     "form-action 'self'; report-uri /api/csp-report"
 )
