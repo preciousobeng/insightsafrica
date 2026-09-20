@@ -358,10 +358,25 @@
     'sb_publishable_yGiG6-hzI0EIY5SCnyR2vw_PTpJ5tLy'
   );
 
-  // Redirect if already logged in
+  // Recovery sessions must stay here so the user can set a new password.
+  const isRecoveryFlow = new URLSearchParams(window.location.search).get('reset') === '1' ||
+    new URLSearchParams(window.location.hash.slice(1)).get('type') === 'recovery';
+  function showRecoveryForm() {
+    const show = () => document.getElementById('reset-modal').classList.add('open');
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', show, { once: true });
+    } else {
+      show();
+    }
+  }
+
+  // Redirect ordinary signed-in sessions only.
   (async () => {
     const { data: { session } } = await sb.auth.getSession();
-    if (session) window.location.href = '/ghana/hub.html';
+    if (session && !isRecoveryFlow) window.location.href = '/ghana/hub.html';
+    if (session && isRecoveryFlow) {
+      showRecoveryForm();
+    }
   })();
 
   // Theme
@@ -525,10 +540,10 @@
   }
 
   // Handle password recovery redirect
-  if (window.location.search.includes('reset=1')) {
+  if (isRecoveryFlow) {
     sb.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
-        document.getElementById('reset-modal').classList.add('open');
+        showRecoveryForm();
       }
     });
   }
