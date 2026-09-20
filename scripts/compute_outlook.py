@@ -154,6 +154,7 @@ def _compute_district_outlook(district_series: list[dict],
                               n_years_backtest: int,
                               min_years: int) -> dict | None:
     """Compute outlook for one district. Returns dict or None if insufficient history."""
+    district_series = sorted(district_series, key=lambda rec: (rec["year"], rec["month"]))
     lookup = {}
     for rec in district_series:
         lookup[(rec["year"], rec["month"])] = rec["value"]
@@ -179,9 +180,8 @@ def _compute_district_outlook(district_series: list[dict],
         persistence_value = clim_forecast
 
     # Build the monthly time series for SARIMA: all monthly values up to issue date.
-    sorted_series = sorted(district_series, key=lambda x: (x["year"], x["month"]))
     series_values = []
-    for rec in sorted_series:
+    for rec in district_series:
         if (rec["year"], rec["month"]) <= (issue_year, issue_month):
             series_values.append(rec["value"])
 
