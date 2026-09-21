@@ -3,7 +3,7 @@
 update_all_monthly.py — idempotent monthly CHIRPS refresh for all countries.
 
 Keeps BOTH data paths current, for every country, up to the latest CHIRPS
-release (CHIRPS publishes monthly with ~2-3 month latency):
+release (publication lag varies):
 
   Path A — recent monthly flood layers (data/processed*/):
       fetch_chirps.py  ->  process_rainfall.py   (map JSON + PNG)
@@ -26,9 +26,14 @@ import os
 import smtplib
 import subprocess
 import sys
-from datetime import date
+from datetime import date, datetime, timezone
 from email.mime.text import MIMEText
 from pathlib import Path
+
+if __package__:
+    from .chirps_release import newest_release
+else:
+    from chirps_release import newest_release
 
 BASE_DIR = Path(__file__).parent.parent
 SCRIPTS = BASE_DIR / "scripts"
@@ -140,11 +145,14 @@ def update_anomaly_archive(start_ym: str, dry: bool):
             log(f"  {country}: anomaly — {tail}")
 
 
-def notify_failure() -> None:
-    """Email the failure summary if SMTP creds are present; otherwise stay silent."""
+def notify_failure(failures=None, detail=None, label="monthly data update") -> bool:
+    """Reuse the configured SMTP channel; explicitly report unavailable delivery."""
+    failures = errors if failures is None else failures
+    detail = log_lines if detail is None else detail
     env_path = Path.home() / ".config" / "insightsafrica" / "smtp.env"
     if not env_path.exists():
-        return
+        print("ALERT NOT SENT: SMTP configuration missing", flush=True)
+        return False
     cfg = {}
     for line in env_path.read_text().splitlines():
         line = line.strip()
@@ -152,35 +160,36 @@ def notify_failure() -> None:
             k, v = line.split("=", 1)
             cfg[k.strip()] = v.strip()
     host = cfg.get("SMTP_HOST", "smtp.gmail.com")
-    port = int(cfg.get("SMTP_PORT", "587"))
+    port = cfg.get("SMTP_PORT", "587")
     user = cfg.get("SMTP_USER")
     pw = cfg.get("SMTP_PASS")
     to = cfg.get("MAIL_TO", user)
     if not (user and pw and to):
-        return
-    body = "InsightsAfrica monthly data update reported errors:\n\n" + "\n\n".join(errors)
-    body += "\n\n--- full log ---\n" + "\n".join(log_lines)
+        print("ALERT NOT SENT: SMTP configuration incomplete", flush=True)
+        return False
+    body = f"InsightsAfrica {label} reported errors:\n\n" + "\n\n".join(failures)
+    body += "\n\n--- full log ---\n" + "\n".join(detail)
     msg = MIMEText(body)
-    msg["Subject"] = f"[InsightsAfrica] monthly data update FAILED ({len(errors)} error(s))"
+    msg["Subject"] = f"[InsightsAfrica] {label} FAILED ({len(failures)} error(s))"
     msg["From"] = user
     msg["To"] = to
     try:
-        with smtplib.SMTP(host, port) as s:
+        with smtplib.SMTP(host, int(port), timeout=20) as s:
             s.starttls()
             s.login(user, pw)
             s.sendmail(user, [to], msg.as_string())
+        print("ALERT SENT: configured SMTP recipient", flush=True)
+        return True
     except Exception as e:
-        print(f"(alert email failed: {e})", flush=True)
+        print(f"ALERT NOT SENT: {type(e).__name__}", flush=True)
+        return False
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--dry-run", action="store_true", help="Show planned actions, change nothing")
-    args = ap.parse_args()
-
+def update(args) -> int:
     today = date.today()
     # Attempt up to last month; CHIRPS lag means recent ones 404 and stop cleanly.
     ceiling = (today.year, today.month - 1) if today.month > 1 else (today.year - 1, 12)
+    ceiling = newest_release(ceiling)
     # Path B start: re-check the last ~4 months (cheap, idempotent, self-heals gaps)
     sy, sm = ceiling
     for _ in range(3):
@@ -205,10 +214,36 @@ def main() -> int:
         log(f"\nFAILED with {len(errors)} error(s):")
         for e in errors:
             log("  - " + e.splitlines()[0])
-        notify_failure()
+        if not args.dry_run:
+            notify_failure()
         return 1
-    log("\nAll countries current. No errors.")
+    log("\nDry-run completed; no data written." if args.dry_run else "\nAll countries current. No errors.")
     return 0
+
+
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--dry-run", action="store_true", help="Check release availability and show planned actions; write no data")
+    args = ap.parse_args(argv)
+    log_lines.clear()
+    errors.clear()
+    start = datetime.now(timezone.utc)
+    mode = "DRY_RUN" if args.dry_run else "UPDATE"
+    log(f"=== RUN START {start.isoformat()} mode={mode} ===")
+    code = 1
+    try:
+        code = update(args)
+    except Exception as exc:
+        errors.append(f"Updater failed: {type(exc).__name__}: {exc}")
+        log(errors[-1])
+        if not args.dry_run:
+            notify_failure()
+    finally:
+        end = datetime.now(timezone.utc)
+        outcome = "FAILED" if code else ("DRY_RUN_OK" if args.dry_run else "SUCCESS")
+        log(f"=== RUN END {end.isoformat()} outcome={outcome} exit={code} "
+            f"errors={len(errors)} duration_s={(end-start).total_seconds():.1f} ===")
+    return code
 
 
 if __name__ == "__main__":

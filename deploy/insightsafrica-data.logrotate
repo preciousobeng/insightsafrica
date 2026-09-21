@@ -1,0 +1,11 @@
+/home/ubuntu/insightsafrica/data/logs/monthly_update.log /home/ubuntu/insightsafrica/data/logs/data_freshness.log {
+    su ubuntu ubuntu
+    weekly
+    maxsize 10M
+    rotate 8
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}
