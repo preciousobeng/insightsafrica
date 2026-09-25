@@ -32,6 +32,11 @@ from rasterio.mask import mask as rio_mask
 from rasterstats import zonal_stats
 from shapely.geometry import box
 
+try:
+    from .admin_keys import build_key, parse_key, feature_keys, unique_name_match
+except ImportError:  # direct script execution
+    from admin_keys import build_key, parse_key, feature_keys, unique_name_match
+
 BASE_DIR = Path(__file__).parent.parent
 BOUNDARIES_DIR = BASE_DIR / "data" / "processed"
 
@@ -169,6 +174,7 @@ def compute_stats(clipped_tif: Path, country: str) -> dict:
             geojson = json.load(f)
 
         features = geojson.get("features", [])
+        keys = feature_keys(features)
         stats = zonal_stats(
             features,
             str(clipped_tif),
@@ -179,11 +185,9 @@ def compute_stats(clipped_tif: Path, country: str) -> dict:
         )
 
         level_stats = {}
-        for feature, stat in zip(features, stats):
-            props = feature.get("properties", {})
-            name = props.get("name", "Unknown")
-            region = props.get("region", "")
-            key = f"{name}|{region}" if region else name
+        if len(stats) != len(keys):
+            raise ValueError("Zonal statistics count does not match boundary count")
+        for key, stat in zip(keys, stats):
             level_stats[key] = {
                 "mean": round(stat["mean"], 2) if stat.get("mean") is not None else None,
                 "max":  round(stat["max"],  2) if stat.get("max")  is not None else None,

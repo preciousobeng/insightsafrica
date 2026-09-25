@@ -24,6 +24,11 @@ matplotlib.use("Agg")  # non-interactive backend
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
+try:
+    from .admin_keys import build_key, parse_key, feature_keys, unique_name_match
+except ImportError:  # direct script execution
+    from admin_keys import build_key, parse_key, feature_keys, unique_name_match
+
 BASE_DIR          = Path(__file__).parent.parent
 PROCESSED_DIR     = BASE_DIR / "data" / "processed"
 NIGERIA_DIR       = BASE_DIR / "data" / "processed_nigeria"
@@ -189,6 +194,7 @@ def compute_zonal_stats(tif_path: Path, country: str = "ghana") -> dict:
             geojson = json.load(f)
 
         features = geojson.get("features", [])
+        keys = feature_keys(features)
         stats = zonal_stats(
             features,
             str(tif_path),
@@ -199,11 +205,9 @@ def compute_zonal_stats(tif_path: Path, country: str = "ghana") -> dict:
         )
 
         level_stats = {}
-        for feature, stat in zip(features, stats):
-            props = feature.get("properties", {})
-            name = props.get("name", "Unknown")
-            region = props.get("region", "")
-            key = f"{name}|{region}" if region else name
+        if len(stats) != len(keys):
+            raise ValueError("Zonal statistics count does not match boundary count")
+        for key, stat in zip(keys, stats):
             level_stats[key] = {
                 "mean": round(stat["mean"], 1) if stat["mean"] is not None else None,
                 "max":  round(stat["max"],  1) if stat["max"]  is not None else None,

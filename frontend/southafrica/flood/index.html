@@ -710,7 +710,9 @@
 
     function buildTooltipContent(feature, level, periodLabel) {
       const p = feature.properties;
-      const key = p.region ? p.name + '|' + p.region : p.name;
+      const key = (level === 'districts' && p.region)
+        ? p.name + '|' + p.region
+        : p.name;
 
       // ── Anomaly mode ──
       if (viewMode === 'anomaly' && currentAnomalyData) {
@@ -719,9 +721,9 @@
         const catLabel = ANOMALY_LABELS[(entry && entry.category)] || 'No data';
 
         if (level !== 'districts') {
-          if (!entry) return p.region + ' Province\n\nNo anomaly data';
+          if (!entry) return p.name + ' Province\n\nNo anomaly data';
           const sign = entry.anomaly_pct >= 0 ? '+' : '';
-          return p.region + ' Province\n\n' + periodLabel +
+          return p.name + ' Province\n\n' + periodLabel +
             '\nActual: ' + entry.actual + ' mm' +
             '\nLTM:    ' + entry.ltm    + ' mm' +
             '\nAnomaly: ' + sign + entry.anomaly_pct + '%' +
@@ -750,7 +752,7 @@
       const areaStats = stats[key];
 
       if (level !== 'districts') {
-        const header = p.region + ' Province';
+        const header = p.name + ' Province';
         if (!areaStats || areaStats.mean === null) return header + '\n\nNo data';
         return (
           header +
@@ -815,8 +817,8 @@
             featureLayer.on('mouseover', () => {
               clearTimeout(chartResetTimer);
               const p = feature.properties;
-              const key = p.region ? p.name + '|' + p.region : p.name;
-              const label = level === 'districts' ? p.name + ', ' + p.region : p.region + ' Province';
+              const key = (level === 'districts' && p.region) ? p.name + '|' + p.region : p.name;
+              const label = level === 'districts' ? p.name + ', ' + p.region : p.name + ' Province';
               updateChartArea({ key, level, label });
             });
             featureLayer.on('mouseout', () => {
@@ -1343,7 +1345,7 @@
       const anomalyLevel = currentAnomalyData.anomaly[level] || {};
       boundaryLayers[level].eachLayer(featureLayer => {
         const p   = featureLayer.feature.properties;
-        const key = p.region ? p.name + '|' + p.region : p.name;
+        const key = (level === 'districts' && p.region) ? p.name + '|' + p.region : p.name;
         const entry = anomalyLevel[key];
         const cat   = (entry && entry.category) || 'no_baseline';
         featureLayer.setStyle({

@@ -262,6 +262,12 @@ async def security_and_https(request: Request, call_next):
     for k, v in SECURITY_HEADERS.items():
         response.headers.setdefault(k, v)
     response.headers.setdefault("Content-Security-Policy-Report-Only", CSP_REPORT_ONLY)
+    if request.url.path.startswith("/api/") and (
+        "/flood/" in request.url.path or "/boundaries/" in request.url.path
+    ):
+        response.headers["X-Administrative-Key-Version"] = "2"
+        response.headers["Link"] = '</admin-hierarchy-v2.html>; rel="describedby"'
+
     return response
 
 

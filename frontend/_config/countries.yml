@@ -43,9 +43,9 @@ ghana:
   flood:
     data_base: /api
     anomaly_base: /api/ghana
-    coarse_noun: Region
+    coarse_noun: District
     region_noun: Region
-    summary_noun: districts
+    summary_noun: regions
     fine_mouseover_prop: region
     about_intro: "Covering Ghana's major flood corridors:"
     about_regions: "Accra, Volta River Basin, and Northern Region."
@@ -84,7 +84,7 @@ nigeria:
     coarse_noun: State
     region_noun: Region
     summary_noun: LGAs
-    fine_mouseover_prop: state      # QUIRK/BUG: should be region (chart hover broken); preserved for byte-identical
+    fine_mouseover_prop: region     # same parent property as the shared key builder
     about_intro: "Covering Nigeria's major flood corridors:"
     about_regions: "Lagos, Niger Delta, and the North-Central flood plains."
     buttons:   # ordered as on the page (default-visible first); active flag set accordingly
@@ -112,26 +112,24 @@ ivorycoast:
   map_center: [7.5, -5.5]
   map_zoom: 6
   weather: { lat: "5.3599", lng: "-4.0083", location: Abidjan, timezone: Africa/Abidjan }
-  # INVERTED on purpose: districts(14) are geographically coarse but carry the only working
-  # anomaly data, so they are mapped to fine.key; region(33) anomaly data is broken (14 wrong
-  # entries) so regions is coarse/boundary-only. See docs/handoff-ic-foldin-2026-06-15.md.
+  # Correct GADM hierarchy: 14 districts; 31 regions plus 2 autonomous districts.
   levels:
-    coarse: { key: regions,   label: Regions,   count: 33 }
-    fine:   { key: districts, label: Districts, count: 14 }
+    coarse: { key: districts, label: Districts, count: 14 }
+    fine:   { key: regions, label: Regions and autonomous districts, count: 33 }
   default_visible: districts
   flood:
     data_base: /api/ivorycoast
     endpointmap_multiline: true
     anomaly_base: /api/ivorycoast
-    coarse_noun: Region
+    coarse_noun: District
     region_noun: District
-    summary_noun: districts
-    fine_mouseover_prop: region      # district boundaries have empty p.name; name lives in p.region
+    summary_noun: regions
+    fine_mouseover_prop: region      # corrected GADM level-2 parent
     about_intro: "Covering C\u00f4te d'Ivoire's flood-prone zones:"
     about_regions: "the Abidjan lagoon belt, the central basins, and the northern savanna."
     buttons:
       - { key: districts, label: Districts, count: 14, active: true }
-      - { key: regions,   label: Regions,   count: 33, active: false }
+      - { key: regions,   label: Regions + autonomous districts, count: 33, active: false }
     downloads:
       csv:
         - { level: districts, label: Districts }
@@ -195,7 +193,7 @@ southafrica:
     coarse: { key: provinces, label: Provinces,     count: 9 }
     fine:   { key: districts, label: Municipalities, count: 257 }   # NOTE: key=districts but DISPLAY label=Municipalities
   default_visible: provinces
-  coarse_empty_name: true        # SA province boundaries have empty p.name (name lives in p.region)
+  coarse_empty_name: false       # level-1 names now use the canonical name field
   flood:
     data_base: /api/southafrica
     anomaly_base: /api/southafrica

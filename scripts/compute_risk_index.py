@@ -15,6 +15,11 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+try:
+    from .admin_keys import build_key, parse_key, feature_keys, unique_name_match
+except ImportError:  # direct script execution
+    from admin_keys import build_key, parse_key, feature_keys, unique_name_match
+
 # ---------------------------------------------------------------------------
 # Named constants – NADMO calibration targets.
 # ---------------------------------------------------------------------------
@@ -118,12 +123,20 @@ def _load_population(country: str) -> dict[str, float]:
 
 def _normalise_key(key: str) -> str:
     """Remove all whitespace from a district key."""
-    return key.replace(" ", "").replace("\t", "")
+    name, parent = parse_key(key)
+    return build_key(name.replace(" ", "").replace("\t", ""),
+                     parent.replace(" ", "").replace("\t", "") if parent else None)
 
 
 # ---------------------------------------------------------------------------
 # Full computation (file I/O, aggregation)
 # ---------------------------------------------------------------------------
+
+
+def _insert_unique(mapping, key, value):
+    if key in mapping:
+        raise ValueError(f"Duplicate normalized administrative key: {key}")
+    mapping[key] = value
 
 
 def _load_spi_file(country: str, year: int, month: int) -> dict[str, float]:
@@ -194,7 +207,7 @@ def _load_spi_file(country: str, year: int, month: int) -> dict[str, float]:
             for area, val in raw["zonal_stats"]["districts"].items():
                 spi_val = _extract_spi(val)
                 if spi_val is not None:
-                    result[_normalise_key(area)] = spi_val
+                    _insert_unique(result, _normalise_key(area), spi_val)
         # Check for a "districts" key
         elif "districts" in raw:
             districts_raw = raw["districts"]
@@ -202,7 +215,7 @@ def _load_spi_file(country: str, year: int, month: int) -> dict[str, float]:
                 for area, val in districts_raw.items():
                     spi_val = _extract_spi(val)
                     if spi_val is not None:
-                        result[_normalise_key(area)] = spi_val
+                        _insert_unique(result, _normalise_key(area), spi_val)
             elif isinstance(districts_raw, list):
                 for entry in districts_raw:
                     if not isinstance(entry, dict):
@@ -213,10 +226,10 @@ def _load_spi_file(country: str, year: int, month: int) -> dict[str, float]:
                         name = entry.get("name")
                         region = entry.get("region")
                         if name and region:
-                            area = f"{name}|{region}"
+                            area = build_key(name, region)
                     spi_val = _extract_spi(entry)
                     if area and spi_val is not None:
-                        result[_normalise_key(area)] = spi_val
+                        _insert_unique(result, _normalise_key(area), spi_val)
             else:
                 raise ValueError(
                     f"Unexpected districts type in SPI file {spi_path}: "
@@ -232,7 +245,7 @@ def _load_spi_file(country: str, year: int, month: int) -> dict[str, float]:
                     continue
                 spi_val = _extract_spi(val)
                 if spi_val is not None:
-                    result[_normalise_key(area)] = spi_val
+                    _insert_unique(result, _normalise_key(area), spi_val)
 
     elif isinstance(raw, list):
         for entry in raw:
@@ -243,10 +256,10 @@ def _load_spi_file(country: str, year: int, month: int) -> dict[str, float]:
                 name = entry.get("name")
                 region = entry.get("region")
                 if name and region:
-                    area = f"{name}|{region}"
+                    area = build_key(name, region)
             spi_val = _extract_spi(entry)
             if area and spi_val is not None:
-                result[_normalise_key(area)] = spi_val
+                _insert_unique(result, _normalise_key(area), spi_val)
 
     else:
         raise ValueError(
@@ -294,7 +307,7 @@ def _load_drainage_file() -> dict[str, dict]:
         return None
 
     def _build_key(district, region):
-        return f"{district}|{region}"
+        return build_key(district, region)
 
     result: dict[str, dict] = {}
 
@@ -306,7 +319,7 @@ def _load_drainage_file() -> dict[str, dict]:
                 for key, info in districts_raw.items():
                     rating = _extract_drainage(info)
                     if rating:
-                        result[_normalise_key(key)] = {"drainage": rating}
+                        _insert_unique(result, _normalise_key(key), {"drainage": rating})
             elif isinstance(districts_raw, list):
                 for entry in districts_raw:
                     if not isinstance(entry, dict):
@@ -315,7 +328,7 @@ def _load_drainage_file() -> dict[str, dict]:
                     region = entry.get("Region") or entry.get("region")
                     rating = _extract_drainage(entry)
                     if district and region and rating:
-                        result[_normalise_key(_build_key(district, region))] = {"drainage": rating}
+                        _insert_unique(result, _normalise_key(_build_key(district, region)), {"drainage": rating})
             else:
                 raise ValueError(
                     f"Unexpected 'districts' type in {drain_path}: "
@@ -329,7 +342,7 @@ def _load_drainage_file() -> dict[str, dict]:
             for key, info in raw.items():
                 rating = _extract_drainage(info)
                 if rating:
-                    result[_normalise_key(key)] = {"drainage": rating}
+                    _insert_unique(result, _normalise_key(key), {"drainage": rating})
 
     elif isinstance(raw, list):
         # Case 3: list of district records
@@ -340,7 +353,7 @@ def _load_drainage_file() -> dict[str, dict]:
             region = entry.get("Region") or entry.get("region")
             rating = _extract_drainage(entry)
             if district and region and rating:
-                result[_normalise_key(_build_key(district, region))] = {"drainage": rating}
+                _insert_unique(result, _normalise_key(_build_key(district, region)), {"drainage": rating})
 
     else:
         raise ValueError(
@@ -367,15 +380,6 @@ def compute_risk(country: str, year: int, month: int) -> dict:
     # Build a set of drainage keys for fast lookup
     drain_keys = set(drainage_data.keys())
 
-    # Build name-only → full-key mapping from drainage (for fallback when SPI
-    # keys lack a region, e.g., "Accra" instead of "Accra|GreaterAccra")
-    name_to_drain = {}
-    for dk in drain_keys:
-        if '|' in dk:
-            name = dk.split('|')[0]  # already normalized, no extra whitespace
-            if name not in name_to_drain:
-                name_to_drain[name] = dk
-
     districts = {}
     skip_count = 0
 
@@ -385,18 +389,14 @@ def compute_risk(country: str, year: int, month: int) -> dict:
         # Find drainage record for this district
         drain_info = drainage_data.get(district_key)
 
-        # Fallback: if district_key is a name without region, try to match a
-        # drainage key that starts with that name + '|'
-        if drain_info is None and '|' not in district_key:
-            matched_key = name_to_drain.get(district_key)
-            if matched_key is None:
-                # Try prefix match with all drain keys (e.g., "Accra" -> "Accra|GreaterAccra")
-                candidates = [dk for dk in drain_keys if dk.startswith(district_key + '|')]
-                if candidates:
-                    matched_key = sorted(candidates)[0]
+        # Resolve only an exact, unambiguous name when the parent is absent.
+        if drain_info is None:
+            matched_key = unique_name_match(district_key, drain_keys)
             if matched_key:
                 drain_info = drainage_data[matched_key]
-                district_key = matched_key  # use the full key for output
+                district_key = matched_key
+        if district_key in districts:
+            raise ValueError(f"Duplicate risk output key: {district_key}")
 
         if drain_info is not None:
             rating = drain_info["drainage"]

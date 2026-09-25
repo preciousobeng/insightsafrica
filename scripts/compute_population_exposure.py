@@ -21,6 +21,11 @@ from pathlib import Path
 import requests
 from rasterstats import zonal_stats
 
+try:
+    from .admin_keys import build_key, parse_key, feature_keys, unique_name_match
+except ImportError:  # direct script execution
+    from admin_keys import build_key, parse_key, feature_keys, unique_name_match
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # WorldPop unconstrained 2020, 1km aggregated, per ISO3
@@ -60,12 +65,13 @@ def main() -> None:
 
     geo = json.loads(boundaries.read_text())
     # all_touched=False avoids double-counting boundary pixels in a population SUM
+    keys = feature_keys(geo["features"])
     stats = zonal_stats(geo["features"], str(tif), stats=["sum"],
                         all_touched=False, nodata=-99999)
     pop: dict[str, float] = {}
-    for feat, s in zip(geo["features"], stats):
-        p = feat["properties"]
-        key = f"{p['name']}|{p['region']}"
+    if len(stats) != len(keys):
+        raise ValueError("Population statistics count mismatch")
+    for key, s in zip(keys, stats):
         pop[key] = round(float(s["sum"] or 0.0), 0)
 
     out = exp_dir / f"{country}_population.json"

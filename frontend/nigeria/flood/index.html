@@ -817,8 +817,8 @@
             featureLayer.on('mouseover', () => {
               clearTimeout(chartResetTimer);
               const p = feature.properties;
-              const key = (level === 'lgas' && p.state) ? p.name + '|' + p.state : p.name;
-              const label = level === 'lgas' ? p.name + ', ' + p.state : p.name + ' State';
+              const key = (level === 'lgas' && p.region) ? p.name + '|' + p.region : p.name;
+              const label = level === 'lgas' ? p.name + ', ' + p.region : p.name + ' State';
               updateChartArea({ key, level, label });
             });
             featureLayer.on('mouseout', () => {

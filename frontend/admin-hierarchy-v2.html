@@ -1,0 +1,9 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Administrative area identifiers — version 2</title>
+<main><h1>Administrative area identifiers — version 2</h1>
+<p>This release corrects administrative names in rainfall data, boundaries and derived products. It deliberately changes affected public identifiers; update saved queries and cached extracts together.</p>
+<ul><li>Top-level identifiers are <code>Name</code>. Cape Verde, Côte d’Ivoire and South Africa no longer use <code>|Name</code>.</li>
+<li>Child identifiers are <code>Name|Parent</code>. Existing Ghana, Nigeria and Senegal names retain this convention.</li>
+<li>Côte d’Ivoire’s second level contains 31 regions and two autonomous districts: 33 distinctly named features. GeoJSON <code>admin_type</code> distinguishes them.</li>
+<li>The old 14 region entries were child statistics overwritten under parent names. They cannot be treated as district totals or mapped one-to-one to the corrected 33 entries. Re-download regional history and its derived products.</li></ul>
+<p>Applies to rainfall layer JSON, CSV downloads (including the archive), administrative GeoJSON, anomaly and SPI responses, and affected derived risk/outlook products. API responses for flood and boundary routes identify this release with <code>X-Administrative-Key-Version: 2</code>. The CSV column layout and JSON nesting remain unchanged.</p>
+<p>The frontend is updated with the data. Ghana URLs and redirects are retained. Rebuild local Databricks extracts and joins from corrected data rather than reusing previously exported rows.</p></main></html>

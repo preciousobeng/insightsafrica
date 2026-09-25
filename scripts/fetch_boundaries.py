@@ -19,6 +19,11 @@ import io
 from pathlib import Path
 import requests
 
+try:
+    from .admin_keys import build_key, parse_key, feature_keys, unique_name_match
+except ImportError:  # direct script execution
+    from admin_keys import build_key, parse_key, feature_keys, unique_name_match
+
 BASE_DIR          = Path(__file__).parent.parent
 PROCESSED_DIR     = BASE_DIR / "data" / "processed"
 NIGERIA_DIR       = BASE_DIR / "data" / "processed_nigeria"
@@ -33,11 +38,13 @@ COUNTRY_CONFIG = {
         "levels": {
             "regions":   {
                 "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_GHA_1.json.zip",
+                "admin_level": 1,
                 "out_name": "ghana_regions.geojson",
                 "level_label": "region",
             },
             "districts": {
                 "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_GHA_2.json.zip",
+                "admin_level": 2,
                 "out_name": "ghana_districts.geojson",
                 "level_label": "district",
             },
@@ -48,11 +55,13 @@ COUNTRY_CONFIG = {
         "levels": {
             "states": {
                 "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_NGA_1.json.zip",
+                "admin_level": 1,
                 "out_name": "nigeria_states.geojson",
                 "level_label": "state",
             },
             "lgas": {
                 "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_NGA_2.json.zip",
+                "admin_level": 2,
                 "out_name": "nigeria_lgas.geojson",
                 "level_label": "lga",
             },
@@ -63,11 +72,13 @@ COUNTRY_CONFIG = {
         "levels": {
             "districts": {
                 "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_CIV_1.json.zip",
+                "admin_level": 1,
                 "out_name": "ivorycoast_districts.geojson",
                 "level_label": "district",
             },
             "regions": {
                 "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_CIV_2.json.zip",
+                "admin_level": 2,
                 "out_name": "ivorycoast_regions.geojson",
                 "level_label": "region",
             },
@@ -78,11 +89,13 @@ COUNTRY_CONFIG = {
         "levels": {
             "regions": {
                 "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_SEN_1.json.zip",
+                "admin_level": 1,
                 "out_name": "senegal_regions.geojson",
                 "level_label": "region",
             },
             "departments": {
                 "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_SEN_2.json.zip",
+                "admin_level": 2,
                 "out_name": "senegal_departments.geojson",
                 "level_label": "department",
             },
@@ -93,6 +106,7 @@ COUNTRY_CONFIG = {
         "levels": {
             "islands": {
                 "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_CPV_1.json.zip",
+                "admin_level": 1,
                 "out_name": "capeverde_islands.geojson",
                 "level_label": "island",
             },
@@ -103,11 +117,13 @@ COUNTRY_CONFIG = {
         "levels": {
             "provinces": {
                 "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_ZAF_1.json.zip",
+                "admin_level": 1,
                 "out_name": "southafrica_provinces.geojson",
                 "level_label": "province",
             },
             "districts": {
                 "url":      "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_ZAF_2.json.zip",
+                "admin_level": 2,
                 "out_name": "southafrica_districts.geojson",
                 "level_label": "district",
             },
@@ -116,9 +132,43 @@ COUNTRY_CONFIG = {
 }
 
 
-def download_and_extract(name: str, url: str, out_path: Path, level_label: str):
+def validate_boundaries(raw: dict, admin_level: int) -> list[str]:
+    features = raw.get("features", [])
+    if admin_level not in (1, 2) or not features:
+        raise ValueError("Expected a nonempty level-1 or level-2 boundary layer")
+    for feature in features:
+        props = feature.get("properties", {})
+        if props.get("admin_level") != admin_level:
+            raise ValueError("Boundary needs controlled refresh: missing/wrong admin_level")
+        if admin_level == 2 and not props.get("region"):
+            raise ValueError("Level-2 area requires a parent")
+        if admin_level == 1 and props.get("region"):
+            raise ValueError("Level-1 area must not have a parent")
+    return feature_keys(features)
+
+
+def map_boundaries(raw: dict, level_label: str, admin_level: int) -> dict:
+    from copy import deepcopy
+    result = deepcopy(raw)
+    if admin_level not in (1, 2):
+        raise ValueError("Unsupported administrative depth")
+    for feature in result.get("features", []):
+        props = feature.get("properties", {})
+        mapped = {"name": props.get(f"NAME_{admin_level}"),
+                  "level": level_label, "admin_level": admin_level,
+                  "admin_type": props.get(f"TYPE_{admin_level}")}
+        if admin_level == 2:
+            mapped["region"] = props.get("NAME_1")
+        feature["properties"] = mapped
+    validate_boundaries(result, admin_level)
+    return result
+
+
+def download_and_extract(name: str, url: str, out_path: Path, level_label: str, admin_level: int):
     if out_path.exists():
-        print(f"Already exists: {out_path.name}")
+        existing = json.loads(out_path.read_text())
+        validate_boundaries(existing, admin_level)
+        print(f"Already exists and validated: {out_path.name}")
         return
 
     print(f"Downloading {name} from GADM...")
@@ -135,23 +185,10 @@ def download_and_extract(name: str, url: str, out_path: Path, level_label: str):
         with z.open(json_name) as jf:
             raw = json.load(jf)
 
-    # Slim down properties — keep only name fields to reduce file size
-    for feature in raw.get("features", []):
-        props = feature.get("properties", {})
-        if level_label in ("region", "state"):
-            feature["properties"] = {
-                "name":  props.get("NAME_1", ""),
-                "level": level_label,
-            }
-        else:  # district / lga
-            feature["properties"] = {
-                "name":   props.get("NAME_2", ""),
-                "region": props.get("NAME_1", ""),
-                "level":  level_label,
-            }
+    raw = map_boundaries(raw, level_label, admin_level)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(out_path, "w") as f:
+    with open(out_path, "x") as f:
         json.dump(raw, f)
 
     feature_count = len(raw.get("features", []))
@@ -168,7 +205,7 @@ def main():
 
     for name, level in config["levels"].items():
         out_path = processed_dir / level["out_name"]
-        download_and_extract(name, level["url"], out_path, level["level_label"])
+        download_and_extract(name, level["url"], out_path, level["level_label"], level["admin_level"])
 
     print("\nBoundaries ready.")
 
