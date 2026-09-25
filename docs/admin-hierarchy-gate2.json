@@ -1,0 +1,183 @@
+[
+  {
+    "country": "ghana",
+    "level": "regions",
+    "admin_level": 1,
+    "count": 16,
+    "samples": [
+      "Ahafo",
+      "Ashanti",
+      "Bono"
+    ],
+    "url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_GHA_1.json.zip",
+    "sha256": "55f871394a222972e8ad1595151b2d7622561cafe4652f095eacb35dd2784f93",
+    "types": {
+      "Region": 16
+    }
+  },
+  {
+    "country": "ghana",
+    "level": "districts",
+    "admin_level": 2,
+    "count": 260,
+    "samples": [
+      "AsunafoNorth|Ahafo",
+      "AsunafoSouth|Ahafo",
+      "AsutifiNorth|Ahafo"
+    ],
+    "url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_GHA_2.json.zip",
+    "sha256": "6442272e49b881d44e9ff621a99c1ed642ea47e5e38a26ee706d4dff0e279447",
+    "types": {
+      "District": 148,
+      "Metropolis": 6,
+      "Municipality": 106
+    }
+  },
+  {
+    "country": "nigeria",
+    "level": "states",
+    "admin_level": 1,
+    "count": 37,
+    "samples": [
+      "Abia",
+      "Adamawa",
+      "AkwaIbom"
+    ],
+    "url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_NGA_1.json.zip",
+    "sha256": "232c624a188dff8d2ab6fac104676ccf35d892927dcd0a5577c8210d79af4d4b",
+    "types": {
+      "State": 37
+    }
+  },
+  {
+    "country": "nigeria",
+    "level": "lgas",
+    "admin_level": 2,
+    "count": 775,
+    "samples": [
+      "AbaNorth|Abia",
+      "AbaSouth|Abia",
+      "Arochukwu|Abia"
+    ],
+    "url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_NGA_2.json.zip",
+    "sha256": "8d4631d56daedc6190b6d63e8e0a36c3f761ec82b8cac982463fb003a44e8d81",
+    "types": {
+      "LocalAuthority": 774,
+      "Waterbody": 1
+    }
+  },
+  {
+    "country": "ivorycoast",
+    "level": "districts",
+    "admin_level": 1,
+    "count": 14,
+    "samples": [
+      "Abidjan",
+      "Bas-Sassandra",
+      "Comoé"
+    ],
+    "url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_CIV_1.json.zip",
+    "sha256": "fb247455668e89dc9e5139da340570776cd68d758ad433c34f97d3abb33cbf0f",
+    "types": {
+      "District": 12,
+      "Districtautonome": 2
+    }
+  },
+  {
+    "country": "ivorycoast",
+    "level": "regions",
+    "admin_level": 2,
+    "count": 33,
+    "samples": [
+      "Abidjan|Abidjan",
+      "Gbôkle|Bas-Sassandra",
+      "Nawa|Bas-Sassandra"
+    ],
+    "url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_CIV_2.json.zip",
+    "sha256": "b829d2d183cb41e97381f687def3a84e7a9d505a67fbb8402cdddd0de85f379d",
+    "types": {
+      "Districtautonome": 2,
+      "Région": 31
+    }
+  },
+  {
+    "country": "senegal",
+    "level": "regions",
+    "admin_level": 1,
+    "count": 14,
+    "samples": [
+      "Dakar",
+      "Diourbel",
+      "Fatick"
+    ],
+    "url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_SEN_1.json.zip",
+    "sha256": "43e9ce45f13b9fc39f8666325cbbde19fef416c86d062997ecacc6c4472bd1be",
+    "types": {
+      "Région": 14
+    }
+  },
+  {
+    "country": "senegal",
+    "level": "departments",
+    "admin_level": 2,
+    "count": 45,
+    "samples": [
+      "Dakar|Dakar",
+      "Guédiawaye|Dakar",
+      "Pikine|Dakar"
+    ],
+    "url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_SEN_2.json.zip",
+    "sha256": "42a77ba9e1f1d6ed3a8dd546636f3a57aff257944ef3e09f2dce231db2585448",
+    "types": {
+      "Département": 45
+    }
+  },
+  {
+    "country": "capeverde",
+    "level": "islands",
+    "admin_level": 1,
+    "count": 22,
+    "samples": [
+      "BoaVista",
+      "Brava",
+      "Maio"
+    ],
+    "url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_CPV_1.json.zip",
+    "sha256": "f8ab176d16750f91eeca6c85bd749f71cd712e7a9f1e4bb00460e11430686cdd",
+    "types": {
+      "Concelho": 22
+    }
+  },
+  {
+    "country": "southafrica",
+    "level": "provinces",
+    "admin_level": 1,
+    "count": 9,
+    "samples": [
+      "EasternCape",
+      "FreeState",
+      "Gauteng"
+    ],
+    "url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_ZAF_1.json.zip",
+    "sha256": "de0796196dd1fc1d6b6125869bc0a503fff8edeaa9e210389f82c392fac41db9",
+    "types": {
+      "Provinsie": 9
+    }
+  },
+  {
+    "country": "southafrica",
+    "level": "districts",
+    "admin_level": 2,
+    "count": 52,
+    "samples": [
+      "AlfredNzo|EasternCape",
+      "Amathole|EasternCape",
+      "BuffaloCity|EasternCape"
+    ],
+    "url": "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_ZAF_2.json.zip",
+    "sha256": "31cfb0a3b86cf37d43266980ca51abf1b49af60f0638c0fb76d768c9abb80ce6",
+    "types": {
+      "DistrictMunicipality": 52
+    }
+  }
+]
