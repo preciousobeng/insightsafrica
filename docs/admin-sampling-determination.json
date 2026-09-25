@@ -1,0 +1,1315 @@
+{
+  "full_audit": false,
+  "passed": false,
+  "results": [
+    {
+      "environment": "local",
+      "country": "ghana",
+      "archive_files": 544,
+      "checked_files": 2,
+      "common_settings": [
+        true
+      ],
+      "passed": true,
+      "evidence": [
+        {
+          "file": "chirps-v2.0.2026.04_ghana.json",
+          "matches": [
+            true
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 276,
+              "examples": [
+                {
+                  "level": "regions",
+                  "key": "Ahafo",
+                  "before": {
+                    "mean": 209.69,
+                    "max": 262.1,
+                    "min": 147.96
+                  },
+                  "after": {
+                    "mean": 212.72,
+                    "max": 262.1,
+                    "min": 148.45
+                  }
+                },
+                {
+                  "level": "regions",
+                  "key": "Ashanti",
+                  "before": {
+                    "mean": 162.3,
+                    "max": 261.26,
+                    "min": 106.42
+                  },
+                  "after": {
+                    "mean": 161.8,
+                    "max": 256.22,
+                    "min": 108.05
+                  }
+                }
+              ]
+            },
+            {
+              "all_touched": true,
+              "different_areas": 0,
+              "examples": []
+            }
+          ]
+        },
+        {
+          "file": "chirps-v2.0.1981.01_ghana.json",
+          "matches": [
+            true
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 274,
+              "examples": [
+                {
+                  "level": "regions",
+                  "key": "Ahafo",
+                  "before": {
+                    "mean": 5.55,
+                    "max": 6.82,
+                    "min": 3.8
+                  },
+                  "after": {
+                    "mean": 5.57,
+                    "max": 6.82,
+                    "min": 4.25
+                  }
+                },
+                {
+                  "level": "regions",
+                  "key": "Ashanti",
+                  "before": {
+                    "mean": 4.65,
+                    "max": 12.17,
+                    "min": 1.52
+                  },
+                  "after": {
+                    "mean": 4.53,
+                    "max": 11.48,
+                    "min": 1.52
+                  }
+                }
+              ]
+            },
+            {
+              "all_touched": true,
+              "different_areas": 0,
+              "examples": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "environment": "local",
+      "country": "nigeria",
+      "archive_files": 544,
+      "checked_files": 2,
+      "common_settings": [
+        false
+      ],
+      "passed": true,
+      "evidence": [
+        {
+          "file": "chirps-v2.0.2026.04_nigeria.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 811,
+              "examples": [
+                {
+                  "level": "states",
+                  "key": "Abia",
+                  "before": {
+                    "mean": 203.07,
+                    "max": 238.07,
+                    "min": 159.7
+                  },
+                  "after": {
+                    "mean": 202.12,
+                    "max": 243.33,
+                    "min": 147.24
+                  }
+                },
+                {
+                  "level": "states",
+                  "key": "Adamawa",
+                  "before": {
+                    "mean": 61.35,
+                    "max": 193.88,
+                    "min": 8.33
+                  },
+                  "after": {
+                    "mean": 62.41,
+                    "max": 193.88,
+                    "min": 6.8
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "file": "chirps-v2.0.1981.01_nigeria.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 716,
+              "examples": [
+                {
+                  "level": "states",
+                  "key": "Abia",
+                  "before": {
+                    "mean": 27.88,
+                    "max": 57.73,
+                    "min": 15.55
+                  },
+                  "after": {
+                    "mean": 27.61,
+                    "max": 57.73,
+                    "min": 14.1
+                  }
+                },
+                {
+                  "level": "states",
+                  "key": "Adamawa",
+                  "before": {
+                    "mean": 0.59,
+                    "max": 3.53,
+                    "min": 0.0
+                  },
+                  "after": {
+                    "mean": 0.6,
+                    "max": 3.53,
+                    "min": 0.0
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "environment": "local",
+      "country": "ivorycoast",
+      "archive_files": 544,
+      "checked_files": 2,
+      "common_settings": [
+        false
+      ],
+      "passed": true,
+      "evidence": [
+        {
+          "file": "chirps-v2.0.2026.04_ivorycoast.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 14,
+              "examples": [
+                {
+                  "level": "districts",
+                  "key": "Abidjan",
+                  "before": {
+                    "mean": 282.86,
+                    "max": 319.34,
+                    "min": 229.8
+                  },
+                  "after": {
+                    "mean": 285.9,
+                    "max": 319.34,
+                    "min": 229.8
+                  }
+                },
+                {
+                  "level": "districts",
+                  "key": "Bas-Sassandra",
+                  "before": {
+                    "mean": 191.9,
+                    "max": 279.21,
+                    "min": 118.14
+                  },
+                  "after": {
+                    "mean": 191.23,
+                    "max": 279.21,
+                    "min": 114.87
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "file": "chirps-v2.0.1981.01_ivorycoast.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 13,
+              "examples": [
+                {
+                  "level": "districts",
+                  "key": "Abidjan",
+                  "before": {
+                    "mean": 9.23,
+                    "max": 11.95,
+                    "min": 6.62
+                  },
+                  "after": {
+                    "mean": 9.04,
+                    "max": 11.95,
+                    "min": 6.52
+                  }
+                },
+                {
+                  "level": "districts",
+                  "key": "Bas-Sassandra",
+                  "before": {
+                    "mean": 11.15,
+                    "max": 20.69,
+                    "min": 2.96
+                  },
+                  "after": {
+                    "mean": 11.08,
+                    "max": 20.69,
+                    "min": 2.96
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "environment": "local",
+      "country": "senegal",
+      "archive_files": 544,
+      "checked_files": 2,
+      "common_settings": [
+        false
+      ],
+      "passed": true,
+      "evidence": [
+        {
+          "file": "chirps-v2.0.2026.04_senegal.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 50,
+              "examples": [
+                {
+                  "level": "regions",
+                  "key": "Dakar",
+                  "before": {
+                    "mean": 0.04,
+                    "max": 0.09,
+                    "min": 0.01
+                  },
+                  "after": {
+                    "mean": 0.14,
+                    "max": 3.28,
+                    "min": 0.01
+                  }
+                },
+                {
+                  "level": "regions",
+                  "key": "Diourbel",
+                  "before": {
+                    "mean": 0.03,
+                    "max": 0.28,
+                    "min": 0.0
+                  },
+                  "after": {
+                    "mean": 0.05,
+                    "max": 0.39,
+                    "min": 0.0
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "file": "chirps-v2.0.1981.01_senegal.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 49,
+              "examples": [
+                {
+                  "level": "regions",
+                  "key": "Dakar",
+                  "before": {
+                    "mean": 1.1,
+                    "max": 1.99,
+                    "min": 0.79
+                  },
+                  "after": {
+                    "mean": 1.15,
+                    "max": 3.22,
+                    "min": 0.69
+                  }
+                },
+                {
+                  "level": "regions",
+                  "key": "Diourbel",
+                  "before": {
+                    "mean": 0.67,
+                    "max": 1.02,
+                    "min": 0.16
+                  },
+                  "after": {
+                    "mean": 0.67,
+                    "max": 1.14,
+                    "min": 0.05
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "environment": "local",
+      "country": "capeverde",
+      "archive_files": 544,
+      "checked_files": 2,
+      "common_settings": [
+        false
+      ],
+      "passed": true,
+      "evidence": [
+        {
+          "file": "chirps-v2.0.2026.04_capeverde.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 22,
+              "examples": [
+                {
+                  "level": "islands",
+                  "key": "BoaVista",
+                  "before": {
+                    "mean": 1.8,
+                    "max": 1.94,
+                    "min": 1.36
+                  },
+                  "after": {
+                    "mean": 1.75,
+                    "max": 1.94,
+                    "min": 1.3
+                  }
+                },
+                {
+                  "level": "islands",
+                  "key": "Brava",
+                  "before": {
+                    "mean": 3.06,
+                    "max": 3.07,
+                    "min": 3.04
+                  },
+                  "after": {
+                    "mean": 3.06,
+                    "max": 3.11,
+                    "min": 3.02
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "file": "chirps-v2.0.1981.01_capeverde.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 22,
+              "examples": [
+                {
+                  "level": "islands",
+                  "key": "BoaVista",
+                  "before": {
+                    "mean": 6.99,
+                    "max": 7.76,
+                    "min": 6.09
+                  },
+                  "after": {
+                    "mean": 7.27,
+                    "max": 9.39,
+                    "min": 6.08
+                  }
+                },
+                {
+                  "level": "islands",
+                  "key": "Brava",
+                  "before": {
+                    "mean": 10.45,
+                    "max": 10.52,
+                    "min": 10.36
+                  },
+                  "after": {
+                    "mean": 10.35,
+                    "max": 10.52,
+                    "min": 10.0
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "environment": "local",
+      "country": "southafrica",
+      "archive_files": 544,
+      "checked_files": 2,
+      "common_settings": [
+        false
+      ],
+      "passed": true,
+      "evidence": [
+        {
+          "file": "chirps-v2.0.2026.04_southafrica.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 60,
+              "examples": [
+                {
+                  "level": "provinces",
+                  "key": "EasternCape",
+                  "before": {
+                    "mean": 50.3,
+                    "max": 155.98,
+                    "min": 19.17
+                  },
+                  "after": {
+                    "mean": 50.98,
+                    "max": 246.58,
+                    "min": 19.17
+                  }
+                },
+                {
+                  "level": "provinces",
+                  "key": "FreeState",
+                  "before": {
+                    "mean": 99.14,
+                    "max": 179.26,
+                    "min": 45.55
+                  },
+                  "after": {
+                    "mean": 99.16,
+                    "max": 179.26,
+                    "min": 45.55
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "file": "chirps-v2.0.1981.01_southafrica.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 61,
+              "examples": [
+                {
+                  "level": "provinces",
+                  "key": "EasternCape",
+                  "before": {
+                    "mean": 95.74,
+                    "max": 349.09,
+                    "min": 26.58
+                  },
+                  "after": {
+                    "mean": 96.0,
+                    "max": 349.09,
+                    "min": 26.3
+                  }
+                },
+                {
+                  "level": "provinces",
+                  "key": "FreeState",
+                  "before": {
+                    "mean": 109.15,
+                    "max": 221.2,
+                    "min": 28.06
+                  },
+                  "after": {
+                    "mean": 109.81,
+                    "max": 251.1,
+                    "min": 27.12
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "environment": "production",
+      "country": "ghana",
+      "archive_files": 548,
+      "checked_files": 3,
+      "common_settings": [
+        true
+      ],
+      "passed": true,
+      "evidence": [
+        {
+          "file": "chirps-v2.0.2026.04_ghana.json",
+          "matches": [
+            true
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 276,
+              "examples": [
+                {
+                  "level": "regions",
+                  "key": "Ahafo",
+                  "before": {
+                    "mean": 209.69,
+                    "max": 262.1,
+                    "min": 147.96
+                  },
+                  "after": {
+                    "mean": 212.72,
+                    "max": 262.1,
+                    "min": 148.45
+                  }
+                },
+                {
+                  "level": "regions",
+                  "key": "Ashanti",
+                  "before": {
+                    "mean": 162.3,
+                    "max": 261.26,
+                    "min": 106.42
+                  },
+                  "after": {
+                    "mean": 161.8,
+                    "max": 256.22,
+                    "min": 108.05
+                  }
+                }
+              ]
+            },
+            {
+              "all_touched": true,
+              "different_areas": 0,
+              "examples": []
+            }
+          ]
+        },
+        {
+          "file": "chirps-v2.0.2026.08_ghana.json",
+          "matches": [
+            true
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 276,
+              "examples": [
+                {
+                  "level": "regions",
+                  "key": "Ahafo",
+                  "before": {
+                    "mean": 112.82,
+                    "max": 176.23,
+                    "min": 66.54
+                  },
+                  "after": {
+                    "mean": 109.13,
+                    "max": 166.74,
+                    "min": 66.54
+                  }
+                },
+                {
+                  "level": "regions",
+                  "key": "Ashanti",
+                  "before": {
+                    "mean": 155.68,
+                    "max": 245.36,
+                    "min": 46.6
+                  },
+                  "after": {
+                    "mean": 156.81,
+                    "max": 245.36,
+                    "min": 48.13
+                  }
+                }
+              ]
+            },
+            {
+              "all_touched": true,
+              "different_areas": 0,
+              "examples": []
+            }
+          ]
+        },
+        {
+          "file": "chirps-v2.0.1981.01_ghana.json",
+          "matches": [
+            true
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 274,
+              "examples": [
+                {
+                  "level": "regions",
+                  "key": "Ahafo",
+                  "before": {
+                    "mean": 5.55,
+                    "max": 6.82,
+                    "min": 3.8
+                  },
+                  "after": {
+                    "mean": 5.57,
+                    "max": 6.82,
+                    "min": 4.25
+                  }
+                },
+                {
+                  "level": "regions",
+                  "key": "Ashanti",
+                  "before": {
+                    "mean": 4.65,
+                    "max": 12.17,
+                    "min": 1.52
+                  },
+                  "after": {
+                    "mean": 4.53,
+                    "max": 11.48,
+                    "min": 1.52
+                  }
+                }
+              ]
+            },
+            {
+              "all_touched": true,
+              "different_areas": 0,
+              "examples": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "environment": "production",
+      "country": "nigeria",
+      "archive_files": 548,
+      "checked_files": 2,
+      "common_settings": [],
+      "passed": false,
+      "evidence": [
+        {
+          "file": "chirps-v2.0.2026.04_nigeria.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 811,
+              "examples": [
+                {
+                  "level": "states",
+                  "key": "Abia",
+                  "before": {
+                    "mean": 203.07,
+                    "max": 238.07,
+                    "min": 159.7
+                  },
+                  "after": {
+                    "mean": 202.12,
+                    "max": 243.33,
+                    "min": 147.24
+                  }
+                },
+                {
+                  "level": "states",
+                  "key": "Adamawa",
+                  "before": {
+                    "mean": 61.35,
+                    "max": 193.88,
+                    "min": 8.33
+                  },
+                  "after": {
+                    "mean": 62.41,
+                    "max": 193.88,
+                    "min": 6.8
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "file": "chirps-v2.0.2026.08_nigeria.json",
+          "matches": [
+            true
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 811,
+              "examples": [
+                {
+                  "level": "states",
+                  "key": "Abia",
+                  "before": {
+                    "mean": 315.05,
+                    "max": 406.63,
+                    "min": 263.82
+                  },
+                  "after": {
+                    "mean": 313.37,
+                    "max": 395.36,
+                    "min": 263.82
+                  }
+                },
+                {
+                  "level": "states",
+                  "key": "Adamawa",
+                  "before": {
+                    "mean": 211.35,
+                    "max": 358.47,
+                    "min": 132.05
+                  },
+                  "after": {
+                    "mean": 207.95,
+                    "max": 350.17,
+                    "min": 137.17
+                  }
+                }
+              ]
+            },
+            {
+              "all_touched": true,
+              "different_areas": 0,
+              "examples": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "environment": "production",
+      "country": "ivorycoast",
+      "archive_files": 548,
+      "checked_files": 2,
+      "common_settings": [],
+      "passed": false,
+      "evidence": [
+        {
+          "file": "chirps-v2.0.2026.04_ivorycoast.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 14,
+              "examples": [
+                {
+                  "level": "districts",
+                  "key": "Abidjan",
+                  "before": {
+                    "mean": 282.86,
+                    "max": 319.34,
+                    "min": 229.8
+                  },
+                  "after": {
+                    "mean": 285.9,
+                    "max": 319.34,
+                    "min": 229.8
+                  }
+                },
+                {
+                  "level": "districts",
+                  "key": "Bas-Sassandra",
+                  "before": {
+                    "mean": 191.9,
+                    "max": 279.21,
+                    "min": 118.14
+                  },
+                  "after": {
+                    "mean": 191.23,
+                    "max": 279.21,
+                    "min": 114.87
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "file": "chirps-v2.0.2026.08_ivorycoast.json",
+          "matches": [
+            true
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 14,
+              "examples": [
+                {
+                  "level": "districts",
+                  "key": "Abidjan",
+                  "before": {
+                    "mean": 18.79,
+                    "max": 30.57,
+                    "min": 4.34
+                  },
+                  "after": {
+                    "mean": 19.24,
+                    "max": 29.55,
+                    "min": 8.43
+                  }
+                },
+                {
+                  "level": "districts",
+                  "key": "Bas-Sassandra",
+                  "before": {
+                    "mean": 49.8,
+                    "max": 136.25,
+                    "min": 12.9
+                  },
+                  "after": {
+                    "mean": 49.07,
+                    "max": 122.78,
+                    "min": 12.9
+                  }
+                }
+              ]
+            },
+            {
+              "all_touched": true,
+              "different_areas": 0,
+              "examples": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "environment": "production",
+      "country": "senegal",
+      "archive_files": 548,
+      "checked_files": 2,
+      "common_settings": [],
+      "passed": false,
+      "evidence": [
+        {
+          "file": "chirps-v2.0.2026.04_senegal.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 50,
+              "examples": [
+                {
+                  "level": "regions",
+                  "key": "Dakar",
+                  "before": {
+                    "mean": 0.04,
+                    "max": 0.09,
+                    "min": 0.01
+                  },
+                  "after": {
+                    "mean": 0.14,
+                    "max": 3.28,
+                    "min": 0.01
+                  }
+                },
+                {
+                  "level": "regions",
+                  "key": "Diourbel",
+                  "before": {
+                    "mean": 0.03,
+                    "max": 0.28,
+                    "min": 0.0
+                  },
+                  "after": {
+                    "mean": 0.05,
+                    "max": 0.39,
+                    "min": 0.0
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "file": "chirps-v2.0.2026.08_senegal.json",
+          "matches": [
+            true
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 59,
+              "examples": [
+                {
+                  "level": "regions",
+                  "key": "Dakar",
+                  "before": {
+                    "mean": 185.84,
+                    "max": 231.59,
+                    "min": 142.42
+                  },
+                  "after": {
+                    "mean": 183.19,
+                    "max": 212.16,
+                    "min": 162.23
+                  }
+                },
+                {
+                  "level": "regions",
+                  "key": "Diourbel",
+                  "before": {
+                    "mean": 212.63,
+                    "max": 265.49,
+                    "min": 167.91
+                  },
+                  "after": {
+                    "mean": 214.16,
+                    "max": 265.49,
+                    "min": 167.91
+                  }
+                }
+              ]
+            },
+            {
+              "all_touched": true,
+              "different_areas": 0,
+              "examples": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "environment": "production",
+      "country": "capeverde",
+      "archive_files": 548,
+      "checked_files": 2,
+      "common_settings": [],
+      "passed": false,
+      "evidence": [
+        {
+          "file": "chirps-v2.0.2026.04_capeverde.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 22,
+              "examples": [
+                {
+                  "level": "islands",
+                  "key": "BoaVista",
+                  "before": {
+                    "mean": 1.8,
+                    "max": 1.94,
+                    "min": 1.36
+                  },
+                  "after": {
+                    "mean": 1.75,
+                    "max": 1.94,
+                    "min": 1.3
+                  }
+                },
+                {
+                  "level": "islands",
+                  "key": "Brava",
+                  "before": {
+                    "mean": 3.06,
+                    "max": 3.07,
+                    "min": 3.04
+                  },
+                  "after": {
+                    "mean": 3.06,
+                    "max": 3.11,
+                    "min": 3.02
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "file": "chirps-v2.0.2026.08_capeverde.json",
+          "matches": [
+            true
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 22,
+              "examples": [
+                {
+                  "level": "islands",
+                  "key": "BoaVista",
+                  "before": {
+                    "mean": 5.08,
+                    "max": 7.46,
+                    "min": 3.97
+                  },
+                  "after": {
+                    "mean": 5.23,
+                    "max": 7.46,
+                    "min": 4.14
+                  }
+                },
+                {
+                  "level": "islands",
+                  "key": "Brava",
+                  "before": {
+                    "mean": 9.88,
+                    "max": 10.6,
+                    "min": 9.36
+                  },
+                  "after": {
+                    "mean": 9.66,
+                    "max": 10.06,
+                    "min": 9.36
+                  }
+                }
+              ]
+            },
+            {
+              "all_touched": true,
+              "different_areas": 0,
+              "examples": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "environment": "production",
+      "country": "southafrica",
+      "archive_files": 548,
+      "checked_files": 2,
+      "common_settings": [],
+      "passed": false,
+      "evidence": [
+        {
+          "file": "chirps-v2.0.2026.04_southafrica.json",
+          "matches": [
+            false
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 0,
+              "examples": []
+            },
+            {
+              "all_touched": true,
+              "different_areas": 60,
+              "examples": [
+                {
+                  "level": "provinces",
+                  "key": "EasternCape",
+                  "before": {
+                    "mean": 50.3,
+                    "max": 155.98,
+                    "min": 19.17
+                  },
+                  "after": {
+                    "mean": 50.98,
+                    "max": 246.58,
+                    "min": 19.17
+                  }
+                },
+                {
+                  "level": "provinces",
+                  "key": "FreeState",
+                  "before": {
+                    "mean": 99.14,
+                    "max": 179.26,
+                    "min": 45.55
+                  },
+                  "after": {
+                    "mean": 99.16,
+                    "max": 179.26,
+                    "min": 45.55
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "file": "chirps-v2.0.2026.08_southafrica.json",
+          "matches": [
+            true
+          ],
+          "checks": [
+            {
+              "all_touched": false,
+              "different_areas": 61,
+              "examples": [
+                {
+                  "level": "provinces",
+                  "key": "EasternCape",
+                  "before": {
+                    "mean": 17.68,
+                    "max": 111.3,
+                    "min": 2.55
+                  },
+                  "after": {
+                    "mean": 17.43,
+                    "max": 95.64,
+                    "min": 2.55
+                  }
+                },
+                {
+                  "level": "provinces",
+                  "key": "FreeState",
+                  "before": {
+                    "mean": 17.27,
+                    "max": 52.94,
+                    "min": 2.26
+                  },
+                  "after": {
+                    "mean": 17.25,
+                    "max": 52.94,
+                    "min": 2.58
+                  }
+                }
+              ]
+            },
+            {
+              "all_touched": true,
+              "different_areas": 0,
+              "examples": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
