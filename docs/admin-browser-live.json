@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "base": "https://insightsafrica.org",
+  "results": [
+    {
+      "country": "ghana",
+      "fine_level": "districts",
+      "polygons": 260,
+      "rainfall_areas": 260,
+      "anomaly_areas": 260,
+      "fatal_errors": 0
+    },
+    {
+      "country": "nigeria",
+      "fine_level": "lgas",
+      "polygons": 775,
+      "rainfall_areas": 775,
+      "anomaly_areas": 767,
+      "fatal_errors": 0
+    },
+    {
+      "country": "ivorycoast",
+      "fine_level": "regions",
+      "polygons": 33,
+      "rainfall_areas": 33,
+      "anomaly_areas": 33,
+      "fatal_errors": 0
+    },
+    {
+      "country": "senegal",
+      "fine_level": "departments",
+      "polygons": 45,
+      "rainfall_areas": 45,
+      "anomaly_areas": 44,
+      "fatal_errors": 0
+    },
+    {
+      "country": "capeverde",
+      "fine_level": "islands",
+      "polygons": 22,
+      "rainfall_areas": 22,
+      "anomaly_areas": 22,
+      "fatal_errors": 0
+    },
+    {
+      "country": "southafrica",
+      "fine_level": "districts",
+      "polygons": 52,
+      "rainfall_areas": 52,
+      "anomaly_areas": 52,
+      "fatal_errors": 0
+    }
+  ]
+}

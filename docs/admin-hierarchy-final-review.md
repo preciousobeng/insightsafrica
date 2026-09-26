@@ -1,6 +1,6 @@
 # InsightsAfrica administrative hierarchy — completed-work review
 
-26 September 2026. **Release status: pending final outlook completion and production deployment.**
+26 September 2026. **Release status: deployed and verified live.**
 
 ## Root cause
 
@@ -51,6 +51,9 @@ For Nigeria, Côte d’Ivoire, Senegal, Cape Verde and South Africa, production 
 - Generated pages: 42 total, 42 identical, zero differing/error/missing pages.
 - Both local and production-preview browser checks passed across all six flood pages with zero fatal JavaScript errors. Fine-level polygons: 260/775/33/45/22/52; anomaly counts reflect the preserved nulls.
 - Production-preview API checks passed for all current layers, boundaries, baselines, anomaly history, archive CSVs, Côte d’Ivoire current CSV, Ghana redirects and the public notice.
+- The same API checks and all six interactive map checks passed against `https://insightsafrica.org` after deployment. The redirect verifier needed consistent request headers: its initial default-client request received HTTP 403, while the redirects themselves were correct; the corrected verifier passed.
+- Final on-host integrity check passed for all 6,882 deployed files and all 3,288 unchanged original rasters. The service is active, and the production checkout has no tracked modifications; the pre-existing untracked South Africa indicators file was preserved.
+- Both Ghana outlook runs completed for all 260 districts. Browser checks used an isolated cache after the desktop recovery; the user's font cache remained unchanged.
 
 Production currently has no SPI/risk/outlook artifacts or routes. Latest SPI for all six countries and Ghana risk/outlook are validation artifacts in the isolated trees, not new deployed features. The authorised “live risk index” check cannot be performed against a route that does not exist; the staged risk calculation validates all 260 Ghana districts instead.
 
@@ -64,7 +67,11 @@ The release overlay contains only 6,882 existing products: 3,288 base-stat files
 
 Previous production commit: `ea1e482c2493e1394afb7d7881f656cd75f1bafe`.
 
-**Deployment commit, live verification and completion record will be added after the production gate finishes.**
+Deployed commit: `a059a1022cd07d415ac6a12fcc8ce61b1f8a3fde`. The coordinated replacement/startup check completed in 26.65 seconds without rollback. Production is pinned to this detached commit; the review branch also contains the later verification reports and verifier-header correction. GitHub main was not moved or force-pushed.
+
+Release directory: `/home/ubuntu/insightsafrica-releases/admin-hierarchy-20260926`. It contains the deployment result, overlay manifest, integrity report and release files. Live evidence is recorded in `admin-api-live.json` and `admin-browser-live.json`.
+
+The regenerated local archive and local validation products are at `/home/kayob/projects/insightsafrica-codex/admin-hierarchy/data/admin-remediation-output/local`; the independent production replay is beside it under `production`. The original local checkout `/home/kayob/projects/insightsafrica` remains untouched. No original local files were overwritten to perform the local gate.
 
 ## Review and rollback
 

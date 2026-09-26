@@ -97,7 +97,10 @@ def main():
     if 'May 2026' not in notice or '33' not in notice:
         raise ValueError('Version/methodology notice missing')
     for path, expected in (('/ghana', '/ghana/hub.html'), ('/flood/', '/ghana/flood/')):
-        with urllib.request.urlopen(args.base.rstrip('/') + path, timeout=30) as response:
+        request = urllib.request.Request(args.base.rstrip('/') + path,
+                                         headers={'User-Agent': 'InsightsAfrica-release-verification',
+                                                  'Cache-Control': 'no-cache'})
+        with urllib.request.urlopen(request, timeout=30) as response:
             if not response.url.endswith(expected) or response.status != 200:
                 raise ValueError('Legacy redirect failed: ' + path)
             results.append({'path': path, 'final_path': expected, 'status': response.status})

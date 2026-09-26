@@ -1,0 +1,217 @@
+{
+  "passed": true,
+  "base": "https://insightsafrica.org",
+  "checks": [
+    {
+      "path": "/api/flood/layers",
+      "status": 200
+    },
+    {
+      "path": "/api/boundaries/regions",
+      "status": 200
+    },
+    {
+      "path": "/api/boundaries/districts",
+      "status": 200
+    },
+    {
+      "path": "/api/ghana/flood/baseline",
+      "status": 200
+    },
+    {
+      "path": "/api/ghana/flood/anomaly",
+      "status": 200
+    },
+    {
+      "path": "/api/ghana/flood/anomaly/1981/1",
+      "status": 200
+    },
+    {
+      "path": "/api/ghana/flood/anomaly/2026/8",
+      "status": 200
+    },
+    {
+      "path": "/api/ghana/flood/archive/download/csv?level=districts&from=2026-08&to=2026-08",
+      "status": 200
+    },
+    {
+      "path": "/api/nigeria/flood/layers",
+      "status": 200
+    },
+    {
+      "path": "/api/nigeria/boundaries/states",
+      "status": 200
+    },
+    {
+      "path": "/api/nigeria/boundaries/lgas",
+      "status": 200
+    },
+    {
+      "path": "/api/nigeria/flood/baseline",
+      "status": 200
+    },
+    {
+      "path": "/api/nigeria/flood/anomaly",
+      "status": 200
+    },
+    {
+      "path": "/api/nigeria/flood/anomaly/1981/1",
+      "status": 200
+    },
+    {
+      "path": "/api/nigeria/flood/anomaly/2026/8",
+      "status": 200
+    },
+    {
+      "path": "/api/nigeria/flood/archive/download/csv?level=lgas&from=2026-08&to=2026-08",
+      "status": 200
+    },
+    {
+      "path": "/api/ivorycoast/flood/layers",
+      "status": 200
+    },
+    {
+      "path": "/api/ivorycoast/boundaries/districts",
+      "status": 200
+    },
+    {
+      "path": "/api/ivorycoast/boundaries/regions",
+      "status": 200
+    },
+    {
+      "path": "/api/ivorycoast/flood/baseline",
+      "status": 200
+    },
+    {
+      "path": "/api/ivorycoast/flood/anomaly",
+      "status": 200
+    },
+    {
+      "path": "/api/ivorycoast/flood/anomaly/1981/1",
+      "status": 200
+    },
+    {
+      "path": "/api/ivorycoast/flood/anomaly/2026/8",
+      "status": 200
+    },
+    {
+      "path": "/api/ivorycoast/flood/archive/download/csv?level=regions&from=2026-08&to=2026-08",
+      "status": 200
+    },
+    {
+      "path": "/api/senegal/flood/layers",
+      "status": 200
+    },
+    {
+      "path": "/api/senegal/boundaries/regions",
+      "status": 200
+    },
+    {
+      "path": "/api/senegal/boundaries/departments",
+      "status": 200
+    },
+    {
+      "path": "/api/senegal/flood/baseline",
+      "status": 200
+    },
+    {
+      "path": "/api/senegal/flood/anomaly",
+      "status": 200
+    },
+    {
+      "path": "/api/senegal/flood/anomaly/1981/1",
+      "status": 200
+    },
+    {
+      "path": "/api/senegal/flood/anomaly/2026/8",
+      "status": 200
+    },
+    {
+      "path": "/api/senegal/flood/archive/download/csv?level=departments&from=2026-08&to=2026-08",
+      "status": 200
+    },
+    {
+      "path": "/api/capeverde/flood/layers",
+      "status": 200
+    },
+    {
+      "path": "/api/capeverde/boundaries/islands",
+      "status": 200
+    },
+    {
+      "path": "/api/capeverde/flood/baseline",
+      "status": 200
+    },
+    {
+      "path": "/api/capeverde/flood/anomaly",
+      "status": 200
+    },
+    {
+      "path": "/api/capeverde/flood/anomaly/1981/1",
+      "status": 200
+    },
+    {
+      "path": "/api/capeverde/flood/anomaly/2026/8",
+      "status": 200
+    },
+    {
+      "path": "/api/capeverde/flood/archive/download/csv?level=islands&from=2026-08&to=2026-08",
+      "status": 200
+    },
+    {
+      "path": "/api/southafrica/flood/layers",
+      "status": 200
+    },
+    {
+      "path": "/api/southafrica/boundaries/provinces",
+      "status": 200
+    },
+    {
+      "path": "/api/southafrica/boundaries/districts",
+      "status": 200
+    },
+    {
+      "path": "/api/southafrica/flood/baseline",
+      "status": 200
+    },
+    {
+      "path": "/api/southafrica/flood/anomaly",
+      "status": 200
+    },
+    {
+      "path": "/api/southafrica/flood/anomaly/1981/1",
+      "status": 200
+    },
+    {
+      "path": "/api/southafrica/flood/anomaly/2026/8",
+      "status": 200
+    },
+    {
+      "path": "/api/southafrica/flood/archive/download/csv?level=districts&from=2026-08&to=2026-08",
+      "status": 200
+    },
+    {
+      "path": "/api/ivorycoast/flood/download/csv?level=regions&from=2026-08&to=2026-08",
+      "status": 200
+    },
+    {
+      "path": "/api/southafrica/flood/anomaly/1982/10",
+      "status": 200
+    },
+    {
+      "path": "/admin-hierarchy-v2.html",
+      "status": 200
+    },
+    {
+      "path": "/ghana",
+      "final_path": "/ghana/hub.html",
+      "status": 200
+    },
+    {
+      "path": "/flood/",
+      "final_path": "/ghana/flood/",
+      "status": 200
+    }
+  ],
+  "risk": "No deployed route; 260-district staged validation recorded separately"
+}
