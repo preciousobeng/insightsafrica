@@ -3,9 +3,9 @@
 #
 # QUIRKS captured as explicit data (do not hide in template logic):
 #   - ivorycoast: fine level is `regions` (33), coarse is `districts` (14) — INVERTED vs Ghana.
-#                 district boundaries have EMPTY p.name; name lives in p.region.
+#                 names follow GADM depth; every feature has a nonempty p.name.
 #   - nigeria:    fine level `lgas`; p.region holds the STATE name (property named region).
-#   - southafrica: province boundaries have EMPTY p.name; province name in p.region.
+#   - southafrica: province names are in p.name; district parents are in p.region.
 #   - capeverde:  single level `islands`, no compound keys.
 #
 # Previously-buggy values now FIXED on the live pages (commit de4065a) and reflected here:

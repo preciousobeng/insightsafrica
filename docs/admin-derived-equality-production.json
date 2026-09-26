@@ -1,0 +1,6 @@
+{
+  "passed": true,
+  "environment": "production",
+  "files_checked": 3294,
+  "comparison": "All baseline and anomaly values exact outside corrected CIV adm2"
+}

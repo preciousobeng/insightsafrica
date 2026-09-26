@@ -72,6 +72,8 @@ def main():
         raise ValueError('Backup archive changed')
     old = run('git', '-C', str(root), 'rev-parse', 'HEAD')
     target = run('git', '-C', str(root), 'rev-parse', args.commit + '^{commit}')
+    if overlay['source_commit'] != target or overlay['backup_sha256'] != evidence['archive_sha256']:
+        raise ValueError('Release code/backup pairing mismatch')
     if old != evidence['source_head']:
         raise ValueError('Production code changed since backup')
     if run('git', '-C', str(root), 'status', '--porcelain', '--untracked-files=no'):

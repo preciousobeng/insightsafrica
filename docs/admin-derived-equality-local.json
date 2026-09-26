@@ -1,0 +1,6 @@
+{
+  "passed": true,
+  "environment": "local",
+  "files_checked": 3270,
+  "comparison": "All baseline and anomaly values exact outside corrected CIV adm2"
+}

@@ -28,7 +28,9 @@ def test_deploy_or_restore_verified_original(tmp_path, monkeypatch, fail_start):
         'archive_sha256': deploy.sha(backup / 'data.tar.gz'),
         'files': {name: deploy.sha(root / name)}}))
     (release / 'overlay.json').write_text(json.dumps({
-        'gates_passed': True, 'files': {name: deploy.sha(release / name)}}))
+        'gates_passed': True, 'source_commit': 'new',
+        'backup_sha256': deploy.sha(backup / 'data.tar.gz'),
+        'files': {name: deploy.sha(release / name)}}))
     commands = []
     def run(*args, **kwargs):
         commands.append(args)
