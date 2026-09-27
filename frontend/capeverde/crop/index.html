@@ -250,8 +250,8 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const map = L.map('map', { center: [16.3, -23.6], zoom: 8 });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '© OpenStreetMap © CARTO', subdomains: 'abcd', maxZoom: 20,
+    L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '© Esri © OpenStreetMap contributors', subdomains: 'abcd', maxZoom: 20,
     }).addTo(map);
 
     function setStatus(t) { document.getElementById('status-text').textContent = t; }

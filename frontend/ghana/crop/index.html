@@ -407,7 +407,7 @@
   <script>
     const map = L.map('map', { center: [8.0, -1.0], zoom: 7 });
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
       attribution: '\u00a9 OpenStreetMap \u00a9 CARTO',
       subdomains: 'abcd', maxZoom: 20,
     }).addTo(map);

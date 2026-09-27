@@ -492,8 +492,8 @@
 
   <script>
     const map = L.map('map', { center: [16.0, -24.0], zoom: 8 });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '© OpenStreetMap © CARTO',
+    L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '© Esri © OpenStreetMap contributors',
       subdomains: 'abcd', maxZoom: 20,
     }).addTo(map);
 
