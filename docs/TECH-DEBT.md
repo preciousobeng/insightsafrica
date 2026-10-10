@@ -55,3 +55,73 @@ Arc-Malstrom on a 10 m DTM, covering the Odaw River basin / ~23% of GAMA) — su
   remaining half — it is the calibration the Risk Index brief anticipates.
 
 Does not block anything; the Risk Index remains correctly labelled provisional until the NADMO half lands.
+
+## TD-3 — Boundary data licence: GADM 4.1 geometry exposed through the API (logged 2026-10-10 claude) — PRIORITY
+
+`scripts/fetch_boundaries.py` downloads GADM 4.1, and the API serves boundary files at `/api/boundaries/*` and
+`/api/{country}/boundaries/*`. GADM's terms (gadm.org/license.html) permit non-commercial and academic use,
+including maps in academic publications. They distinguish that from **redistribution of the data and from
+commercial use, both of which need permission**. Being a free site does not by itself make serving the
+GeoJSON permitted, and paid tiers raise the commercial question as well. Displaying a rendered map differs
+from serving the geometry. Not legal advice; a decision is needed.
+
+**Action:** (1) confirm exactly which endpoints and downloads expose GADM geometry, and in what form;
+(2) either seek GADM permission or evaluate an openly licensed source per country. Candidates checked for
+Ghana during the flood–health paper audit: OCHA COD-AB (HDX `cod-ab-gha`, CC BY-IGO) and geoBoundaries gbOpen
+(ADM2 CC BY 4.0; ADM1 CC BY-SA 2.0, OSM-derived). For each, check exact licence and attribution obligations
+(including share-alike), coverage, vintage and suitability for commercial use. Ghana ADM2 geometry
+substantially overlaps GADM (per-district IoU 0.90–0.997, 260 units), but **do not assume a swap is
+scientifically neutral**. Re-run the zonal statistics and compare. Keys differ (P-codes vs `name|region`),
+so a crosswalk is needed across the stats, anomaly, baseline, SPI, risk and population JSONs and the
+frontend lookups.
+
+## TD-4 — WorldPop district totals diverge from the 2021 census; Risk Index v2 depends on them (logged 2026-10-10 claude)
+
+`data/exposure/ghana_population.json` (WorldPop unconstrained 2020, 1 km, pixel-centre sums over GADM districts)
+was compared with GSS 2021 Census Vol 3A district totals for Greater Accra. Regional totals are within 3%
+(5.61M vs 5.46M). District ratios range **0.23–5.1** (e.g. Ayawaso West 384,661 vs 75,303; Ablekuma North
+512,207 vs 159,208; Ga South 81,490 vs 350,121). **The cause is not established.** GADM's post-2019 split lines
+diverge from GSS district areas (Accra Metro 5.6 vs 20 km²; Weija Gbawe 164 vs 47 km²). Merged parent
+clusters still differ (core ~1.55×, periphery 0.48–0.75×). Geography, vintage (2020 vs 2021), product and
+aggregation effects remain entangled.
+
+Verified in code: `compute_risk_index.py` loads this file and applies the log-population exposure factor
+(TD-2). The effect of the discrepancy on Risk Index categories is a **testable pipeline question**, not yet a
+finding. **Action:** keep the Risk Index provisional and non-public (no frontend page references it at the
+time of logging). Rerun the index with exposure neutralised and compare the category changes. Do **not**
+substitute census totals mapped by district name until boundaries and units are reconciled. Evaluate
+WorldPop 100 m constrained / GRID3 before relying on any district exposure. Evidence: flood–health paper
+repo, `analysis/geometry_comparison_ga.csv`, `audit_05_clusters.csv`.
+
+## TD-5 — Label low CHIRPS grid support on district anomaly maps (logged 2026-10-10 claude)
+
+District rainfall is the unweighted mean of every CHIRPS 0.05° cell the polygon touches (`all_touched=True`).
+In Greater Accra, 9 of 29 districts contain no cell centre, and urban districts are supported by 1.4–2.8
+effective cells (1/Σw² of overlap weights, a weight-concentration measure), shared with neighbours.
+Small Kumasi districts are likely similar. Adjacent urban districts therefore draw largely on the same grid
+cells. **Action (cheap):** compute cells-touched and effective-cell counts per district once, and show a
+"limited grid support" note in tooltips and download metadata below a threshold (e.g. < 3). Optional: exact
+overlap-area weighting (the paper audit found ~6 mm difference in the Greater Accra annual normal).
+
+## TD-6 — Two latent code defects to review and test (logged 2026-10-10 claude)
+
+Found by code reading during the paper audit. Neither is known to have affected a published output; confirm
+with tests before claiming any effect.
+1. `compute_population_exposure.py`: `round(float(s["sum"] or 0.0), 0)` records a district with no population
+   support as `0` rather than missing. `compute_risk_index.py` treats 0 as neutral, which limits the impact
+   there, but other consumers may not. Prefer `None` and add a test.
+2. `compute_spi.py`, method-of-moments fallback in `_fit_gamma_zero_adjusted`: `non_zero = non_zero[:2]`
+   truncates the sample before the moments are computed. Reached only if the MLE fails. Fix and add a unit
+   test with a degenerate series.
+
+## TD-7 — Candidate: reviewed regional method + "how this year compares" view (logged 2026-10-10 claude)
+
+**After** the flood–health paper's method is frozen, and only with explicit estimator/version labels and
+pre-deployment checks (the paper calculations do not update the production pipeline): regional/national
+rainfall as an area-weighted, exact-overlap mean computed directly on the region polygon (never averaged
+from district anomalies), sample-SD z, and gamma SPI-1/SPI-3 per calendar month. Possible frontend card:
+"Jan–Apr 2026: highest January–April total in the 1981–2026 CHIRPS record for this footprint (+56%)", with
+an SPI-3 strip and an estimand note ("area average over the region outline; not population-weighted").
+Audit facts for reference: 5 sampled archive months are pixel-identical to fresh upstream downloads clipped
+with `clip_to_country()`, and the Ghana stats JSONs were rebuilt in one pass on 2026-09-26. CHIRPS v2
+production ends after Dec 2026, so schedule a v3-transition ticket.
