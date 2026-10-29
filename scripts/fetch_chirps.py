@@ -8,7 +8,7 @@ Usage:
     python scripts/fetch_chirps.py --year 2024 --month 3
     python scripts/fetch_chirps.py --year 2024 --month 3 --country nigeria
 
-CHIRPS data: https://data.chc.ucsb.edu/products/CHIRPS-2.0/
+CHIRPS data: https://data.chc.ucsb.edu/products/CHIRPS/v2.0/
 """
 
 import argparse
@@ -42,7 +42,7 @@ COUNTRY_BBOXES = {
     },
 }
 
-CHIRPS_BASE = "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_monthly/tifs"
+CHIRPS_BASE = "https://data.chc.ucsb.edu/products/CHIRPS/v2.0/global_monthly/tifs"
 RAW_DIR = Path(__file__).parent.parent / "data" / "raw" / "chirps"
 
 

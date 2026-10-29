@@ -5,7 +5,7 @@
 - **Coverage:** Global, 1981–present
 - **Resolution:** 0.05° (~5km)
 - **Auth required:** No
-- **Access:** https://data.chc.ucsb.edu/products/CHIRPS-2.0/
+- **Access:** https://data.chc.ucsb.edu/products/CHIRPS/v2.0/
 - **Format:** GeoTIFF / NetCDF
 - **Update:** Monthly (with ~2 week lag)
 - **Use case:** Historical baselines, anomaly detection, drought/flood trends

@@ -58,7 +58,7 @@ def test_probe_uses_head_only(monkeypatch, status, expected):
     head = MagicMock(return_value=response)
     monkeypatch.setattr(release.requests, 'head', head)
     assert release.is_month_released(2026, 8) is expected
-    head.assert_called_once_with('https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_monthly/tifs/chirps-v2.0.2026.08.tif.gz', allow_redirects=True, timeout=20)
+    head.assert_called_once_with('https://data.chc.ucsb.edu/products/CHIRPS/v2.0/global_monthly/tifs/chirps-v2.0.2026.08.tif.gz', allow_redirects=True, timeout=20)
 
 
 def test_probe_outage_is_not_unreleased(monkeypatch):

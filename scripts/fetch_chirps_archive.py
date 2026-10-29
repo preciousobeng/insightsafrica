@@ -93,7 +93,7 @@ COUNTRY_BOUNDARIES = {
     },
 }
 
-CHIRPS_BASE = "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_monthly/tifs"
+CHIRPS_BASE = "https://data.chc.ucsb.edu/products/CHIRPS/v2.0/global_monthly/tifs"
 
 
 def month_range(start: str, end: str):
