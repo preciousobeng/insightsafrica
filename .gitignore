@@ -54,3 +54,12 @@ evidence/homepage/local-gadm/
 .ia-qa/
 .ia-*.cjs
 .ia-*.mjs
+
+# Generated homepage: rebuild at deployment and monthly refresh.
+/frontend/index.html
+/frontend/static/data/homepage_summary.json
+/frontend/static/data/homepage_national.csv
+/frontend/static/data/homepage-output/
+/evidence/
+
+.iarev-*

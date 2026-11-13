@@ -13,10 +13,10 @@ themeButton.addEventListener('click', () => {
  try { localStorage.setItem('ia-theme', theme); } catch (_) {}
  themeLabel();
 });
-$('mine-range').addEventListener('input', (event) => {
+$('mine-range')?.addEventListener('input', (event) => {
  document.querySelector('.compare-before').style.clipPath = 'inset(0 ' + (100 - Number(event.target.value)) + '% 0 0)';
 });
-const colours = ['#8C510A','#D8B365','#F5F5F5','#5AB4AC','#01665E'];
+const colours = ['#8C510A','#D8B365','#E3DED4','#5AB4AC','#01665E'];
 const colour = d3.scaleLinear().domain([-50,-25,0,25,50]).range(colours).clamp(true);
 const fmt = (v) => v == null ? 'not available' : Number(v).toFixed(1);
 const monthName = (ym) => new Intl.DateTimeFormat('en', {month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(ym + '-01T00:00:00Z'));
@@ -39,7 +39,7 @@ Promise.all([getJSON('/static/data/homepage_summary.json'),getJSON('/static/data
   $('month-range').setAttribute('aria-valuetext',monthName(months[i]));
   shapes.forEach((shape) => {
    const country = summary.countries[shape.dataset.country], value = country.recent_values[i];
-   shape.querySelector('.map-fill').setAttribute('fill',value[1] == null ? '#A79F93' : colour(value[1]));
+   shape.querySelectorAll('.map-fill').forEach(fill => fill.setAttribute('fill',value[1] == null ? '#A79F93' : colour(value[1])));
    const label = shape.querySelector('.map-code').textContent + ' · ' + country.name + ', ' + monthName(months[i]) + ': ' + valueText(value);
    shape.setAttribute('aria-label',label);
    shape.setAttribute('title',label);
@@ -97,7 +97,7 @@ Promise.all([getJSON('/static/data/homepage_summary.json'),getJSON('/static/data
    const projection = d3.geoMercator().scale(scale).translate([(1100-radians(81)*scale)/2-radians(-27)*scale,(650-(merc(38)-merc(-36))*scale)/2+merc(38)*scale]);
    if (!features.length || features.some((feature) => !summary.countries[feature.properties.country]?.regions[feature.id])) throw new Error('Regional keys do not match');
    regional = svg.append('g').attr('class','region-layer');
-   regional.selectAll('path').data(features).join('path').attr('d',d3.geoPath(projection)).attr('stroke','var(--bg)').attr('stroke-width',.6).append('title').text((feature) => {
+   regional.selectAll('path').data(features).join('path').attr('d',d3.geoPath(projection)).attr('stroke','#3d352a').attr('stroke-width',.6).append('title').text((feature) => {
     const country = summary.countries[feature.properties.country], region = country?.regions[feature.id];
     return region ? region.name + ': ' + valueText(region.value) : 'No matching observation';
    });

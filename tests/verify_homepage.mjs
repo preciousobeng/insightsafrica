@@ -75,8 +75,17 @@ try{
  check('Search shows computed exact observation',card.includes(place.value[0].toFixed(1)+' mm'));
  check('Search shows computed rank',card.includes('Ranked '+place.rank+' of '+place.samples));
  check('Search does not invent a selected-district deep link',await page.$eval('#place-card a',e=>e.getAttribute('href')==='/ghana/flood/'));
- await page.$eval('#mine-range',e=>{e.value='80';e.dispatchEvent(new Event('input',{bubbles:true}))});
- check('Mine slider reveals actual before frame',await page.$eval('.compare-before',e=>e.style.clipPath.includes('20%')));
+ if (data.outputs.mine.mode === 'comparison') {
+  await page.$eval('#mine-range',e=>{e.value='80';e.dispatchEvent(new Event('input',{bubbles:true}))});
+  check('Mine slider reveals actual before frame',await page.$eval('.compare-before',e=>e.style.clipPath.includes('20%')));
+ } else {
+  check('Unmatched mine seasons show a single dated frame',await page.$$eval('#mine-range',elements=>elements.length===0));
+  check('Single mine frame explains the absence of a comparison',await page.$eval('.mine-tile',e=>e.textContent.includes('No comparable same-season pair')));
+ }
+ check('Covered countries have dark visible borders',await page.$eval('.map-fill',e=>getComputedStyle(e).stroke==='rgb(61, 53, 42)'));
+ check('Cabo Verde has a visible marker',await page.$$eval('.map-marker',elements=>elements.length===2));
+ const thumb=await page.evaluate(async()=>fetch('/static/data/homepage-output/flood.svg').then(r=>r.text()));
+ check('FloodWatch thumbnail includes Cabo Verde marker',thumb.includes('map-marker'));
  await page.close();
  // Contact responses are intercepted locally; the real endpoint is never called.
  for(const mode of ['success','failure','network']){
@@ -106,7 +115,7 @@ try{
  check('Timeline stops after one pass at latest month',await autoplay.$eval('#month-range',e=>e.value==='23'));
  await autoplay.close();
  const nojs=await browser.newPage();await nojs.setViewport({width:375,height:900});await nojs.setJavaScriptEnabled(false);await nojs.goto(base,{waitUntil:'networkidle0'});await loadImages(nojs);
- check('No-JS headline has latest date',await nojs.$eval('h1',e=>e.textContent.includes('September 2026')));
+ check('No-JS headline has latest date',await nojs.$eval('h1',(e,latest)=>e.textContent.includes(latest.slice(0,4)),data.latest));
  check('No-JS has six historical tables',await nojs.$$eval('#historical-tables table',elements=>elements.length===6));
  check('No-JS has country map',await nojs.$$eval('.atlas-map--mobile .country-shape',elements=>elements.length===6));
  await nojs.screenshot({path:output+'/375-no-javascript.png',fullPage:true});await nojs.close();
@@ -119,8 +128,22 @@ try{
  });
  await missing.goto(base,{waitUntil:'networkidle0'});await missing.waitForSelector('.current-line');
  check('Missing regions falls back to countries',await missing.$eval('#map-mode',e=>e.textContent.includes('regional outlines unavailable')));
- check('Missing regions retains filled countries',await missing.$$eval('.atlas-map--desktop .map-fill',elements=>elements.length===6));
+ check('Missing regions retains filled countries',await missing.$$eval('.atlas-map--desktop .map-fill',elements=>elements.length===7));
  await missing.close();
+ const normal=await browser.newPage();await normal.setViewport({width:375,height:900});
+ await normal.emulateMediaFeatures([{name:'prefers-reduced-motion',value:'reduce'}]);
+ await normal.evaluateOnNewDocument(()=>localStorage.setItem('ia-theme','light'));
+ await normal.setRequestInterception(true);
+ const neutralData=structuredClone(data);
+ neutralData.countries.ghana.recent_values[23][1]=0;
+ neutralData.countries.ghana.value[1]=0;
+ normal.on('request',request=>{
+  if(request.url().endsWith('/homepage_summary.json'))request.respond({status:200,contentType:'application/json',body:JSON.stringify(neutralData)});
+  else request.continue();
+ });
+ await normal.goto(base,{waitUntil:'networkidle0'});await normal.waitForSelector('.current-line');
+ check('Exactly normal Ghana stays visible on paper',await normal.$eval('.country-shape[data-country=ghana] .map-fill',e=>getComputedStyle(e).fill==='rgb(227, 222, 212)' && getComputedStyle(e).stroke==='rgb(61, 53, 42)'));
+ await normal.screenshot({path:output+'/375-light-neutral-ghana.png',fullPage:true});await normal.close();
  check('No runtime anomaly API or geometry downloads',!results.requests.some(path=>path.startsWith('/api/')||/gadm|districts\.geojson|regions\.geojson/.test(path)));
  check('No uncaught browser errors',results.errors.length===0);
  check('No WCAG A/AA axe violations',results.accessibility.every(result=>result.violations.length===0));

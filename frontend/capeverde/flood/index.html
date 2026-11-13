@@ -366,7 +366,7 @@
         <div class="section-label">Anomaly vs LTM</div>
                   <div class="al-row"><span class="al-swatch" style="background:#8C510A"></span><span class="al-label">−50% or drier</span></div>
           <div class="al-row"><span class="al-swatch" style="background:#D8B365"></span><span class="al-label">−25%</span></div>
-          <div class="al-row"><span class="al-swatch" style="background:#F5F5F5"></span><span class="al-label">Normal (0%)</span></div>
+          <div class="al-row"><span class="al-swatch" style="background:#E3DED4"></span><span class="al-label">Normal (0%)</span></div>
           <div class="al-row"><span class="al-swatch" style="background:#5AB4AC"></span><span class="al-label">+25%</span></div>
           <div class="al-row"><span class="al-swatch" style="background:#01665E"></span><span class="al-label">+50% or wetter</span></div>
 <p style="font-size:0.7rem">Colours interpolate between departures; not a flood-risk scale.</p>
@@ -512,7 +512,7 @@
     // Same continuous BrBG departure scale as the homepage; ends clamp at ±50%.
     function rainfallAnomalyColor(value) {
       if (value == null || !Number.isFinite(Number(value))) return '#A79F93';
-      const colours = ['#8C510A', '#D8B365', '#F5F5F5', '#5AB4AC', '#01665E'];
+      const colours = ['#8C510A', '#D8B365', '#E3DED4', '#5AB4AC', '#01665E'];
       const amount = Math.max(-50, Math.min(50, Number(value)));
       const index = Math.min(3, Math.floor((amount + 50) / 25));
       const t = (amount + 50 - index * 25) / 25;
@@ -1053,7 +1053,7 @@
         const cat   = (entry && entry.category) || 'no_baseline';
         featureLayer.setStyle({
           fillColor: rainfallAnomalyColor(entry && entry.anomaly_pct), fillOpacity: 0.72,
-          color: '#ffffff', weight: 1.8, opacity: 0.8,
+          color: '#3d352a', weight: 1.8, opacity: 0.8,
         });
       });
     }
