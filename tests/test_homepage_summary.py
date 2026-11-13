@@ -336,7 +336,8 @@ def test_headline_excludes_low_baselines_and_keeps_rank():
     )
     text = summary.headline(data)
     assert "60 mm, about 3.0× its January normal" in text
-    assert "The wettest January in the record (1981–2021)." in text
+    assert "January normal. The wettest January in the record (1981–2021)." in text
+    assert "; The" not in text
     assert "900" not in text and "14.7" not in text and "z" not in text
 
 

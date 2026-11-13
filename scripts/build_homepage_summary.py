@@ -410,7 +410,7 @@ def headline(summary):
         else f"{abs(pct):g}% below its {month} normal"
     )
     return (
-        f"{when}: {region['name']}, {country['name']} received {mm:g} mm, {comparison}; "
+        f"{when}: {region['name']}, {country['name']} received {mm:g} mm, {comparison}. "
         f"{region['rank_text']}"
     )
 
@@ -530,7 +530,9 @@ def build(
     page = root / "frontend/index.html"
     if update_html:
         current = (root / "frontend/_templates/home.html").read_text()
-        lead, separator, rank = summary["headline"].partition("; ")
+        lead, separator, rank = summary["headline"].rpartition(". ")
+        if not separator:
+            lead = rank
         headline_markup = html.escape(lead)
         if separator:
             headline_markup += (

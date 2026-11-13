@@ -56,7 +56,13 @@ try{
  }
  const page=await pageFor();await ready(page);
  const data=await page.evaluate(async()=>fetch('/static/data/homepage_summary.json').then(r=>r.json()));
- check('Headline uses the exact plain-English rank copy',await page.$eval('.headline-rank',(e,text)=>e.textContent.trim()===text,data.headline.split('; ')[1]));
+ check('Headline uses the exact plain-English rank copy',await page.$eval('.headline-rank',(e,text)=>e.textContent.trim()===text,data.headline.split('. ').pop()));
+ for (const label of ['Main','Mobile','Footer']) {
+  check('Monitor link ends '+label+' navigation',await page.$eval('nav[aria-label="'+label+'"]',nav=>{
+   const link=nav.querySelector('a:last-child');
+   return link.textContent==='Monitor ↗' && link.href==='https://monitor.insightsafrica.org/' && link.target==='_blank' && link.rel==='noopener';
+  }));
+ }
  check('Natural Earth country fallback',await page.$eval('#map-mode',e=>e.textContent.includes('Country view')));
  check('No public regional file configured',data.region_geometry_url===null);
  await page.focus('#month-range');await page.keyboard.press('ArrowLeft');
