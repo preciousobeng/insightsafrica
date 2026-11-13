@@ -210,6 +210,17 @@ def update(args) -> int:
     log("## Path B — anomaly archive")
     update_anomaly_archive(start_ym, args.dry_run)
 
+    if not errors:
+        log("## Homepage — static archive summary")
+        if args.dry_run:
+            log("  [dry-run] would rebuild homepage summary")
+        else:
+            homepage = run([PY, str(SCRIPTS / "build_homepage_summary.py")])
+            if homepage.returncode:
+                errors.append("Homepage summary FAILED:\n" + homepage.stderr[-500:])
+            else:
+                log("  " + homepage.stdout.strip())
+
     if errors:
         log(f"\nFAILED with {len(errors)} error(s):")
         for e in errors:

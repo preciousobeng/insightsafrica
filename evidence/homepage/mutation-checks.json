@@ -1,0 +1,30 @@
+[
+  {
+    "mutation": "area weighting",
+    "test": "test_national_weighting_and_normal",
+    "exit": 1,
+    "caught": true,
+    "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n______________________ test_national_weighting_and_normal ______________________\n\narchive = PosixPath('/tmp/pytest-of-kayob/pytest-1/test_national_weighting_and_no0')\n\n    def test_national_weighting_and_normal(archive):\n        data=summary.country_summary(archive,\"test\",CONFIG)\n        assert len(data[\"months\"])==481\n>       assert data[\"national\"][-1]==35\nE       assert 30.0 == 35\n\ntests/test_homepage_summary.py:40: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_homepage_summary.py::test_national_weighting_and_normal - a...\n1 failed in 0.17s\n"
+  },
+  {
+    "mutation": "rank tie handling",
+    "test": "test_missing_is_not_zero_and_ties_share_rank",
+    "exit": 1,
+    "caught": true,
+    "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________________ test_missing_is_not_zero_and_ties_share_rank _________________\n\narchive = PosixPath('/tmp/pytest-of-kayob/pytest-2/test_missing_is_not_zero_and_t0')\n\n    def test_missing_is_not_zero_and_ties_share_rank(archive):\n        data=summary.country_summary(archive,\"test\",CONFIG)\n        town=next(p for p in data[\"places\"] if p[\"name\"]==\"Town\")\n>       assert town[\"rank\"]==1 and town[\"samples\"]==40\nE       assert (41 == 1)\n\ntests/test_homepage_summary.py:52: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_homepage_summary.py::test_missing_is_not_zero_and_ties_share_rank\n1 failed in 0.17s\n"
+  },
+  {
+    "mutation": "zero normal",
+    "test": "test_zero_normal_is_unavailable",
+    "exit": 1,
+    "caught": true,
+    "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_______________________ test_zero_normal_is_unavailable ________________________\n\n    def test_zero_normal_is_unavailable():\n>       assert summary.relative(12,{\"mean\":0,\"std\":0})==[12,None,None]\nE       assert [12, 0, None] == [12, None, None]\nE         \nE         At index 1 diff: 0 != None\nE         Use -v to get more diff\n\ntests/test_homepage_summary.py:63: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_homepage_summary.py::test_zero_normal_is_unavailable - asse...\n1 failed in 0.12s\n"
+  },
+  {
+    "mutation": "GADM publication guard",
+    "test": "test_gadm_publication_guard",
+    "exit": 1,
+    "caught": true,
+    "output": "       with pytest.raises(ValueError,match=\"cannot be published\"):\n>           summary.build(archive,False,region_geometry_url=\"/static/regions.topojson\")\n\ntests/test_homepage_summary.py:106: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nscripts/build_homepage_summary.py:131: in build\n    for code,config in COUNTRIES.items():summary[\"countries\"][code]=country_summary(root,code,config,boundaries,boundary_root,crosswalk)\n                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nroot = PosixPath('/tmp/pytest-of-kayob/pytest-3/test_gadm_publication_guard0')\ncountry = 'ghana'\nconfig = ('Ghana', 'processed', 'regions', 'districts', 'ghana_regions.geojson', 'Region', ...)\nboundaries = 'gadm', boundary_root = None, crosswalk = {}\n\n    def country_summary(root,country,config,boundaries=\"gadm\",boundary_root=None,crosswalk=None):\n        crosswalk=crosswalk or {}\n        label,processed,primary,secondary,boundary,primary_label,secondary_label=config\n        folder=root/\"data/archive\"/country;files=sorted((folder/\"stats\").glob(\"*.json\"))\n>       if not files:raise ValueError(f\"{country}: archive is missing\")\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       ValueError: ghana: archive is missing\n\nscripts/build_homepage_summary.py:56: ValueError\n\nDuring handling of the above exception, another exception occurred:\n\narchive = PosixPath('/tmp/pytest-of-kayob/pytest-3/test_gadm_publication_guard0')\n\n    def test_gadm_publication_guard(archive):\n>       with pytest.raises(ValueError,match=\"cannot be published\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       AssertionError: Regex pattern did not match.\nE         Expected regex: 'cannot be published'\nE         Actual message: 'ghana: archive is missing'\n\ntests/test_homepage_summary.py:105: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_homepage_summary.py::test_gadm_publication_guard - Assertio...\n1 failed in 0.17s\n"
+  }
+]

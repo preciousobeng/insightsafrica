@@ -1,0 +1,44 @@
+{
+  "command": "python3 scripts/build_homepage_summary.py --boundaries gadm",
+  "exit": 0,
+  "stdout": "Homepage summary: 532,392 bytes / 142,896 gzip; latest 2026-09; ghana: 549 months, nigeria: 549 months, ivorycoast: 549 months, senegal: 549 months, capeverde: 549 months, southafrica: 549 months\n",
+  "idempotent_bytes_and_mtimes": true,
+  "files": {
+    "frontend/index.html": {
+      "sha256": "f7039a6035ed9f4e080d352b96c1798403dc8414c09833e3af1a0446aba506cd",
+      "mtime_ns": 1794588310602025991
+    },
+    "frontend/static/data/homepage_countries.topojson": {
+      "sha256": "5cbb4fd0cd36007ad4e3acc0ae54a0906114e23cad4b4c8b4915bcc875dece2e",
+      "mtime_ns": 1794586163772622948
+    },
+    "frontend/static/data/homepage_summary.json": {
+      "sha256": "f37d149f5336633daa8c3a0ce5c2cd9813faf2e14e8710acf38fa4629a1150e7",
+      "mtime_ns": 1794587073399555771
+    },
+    "frontend/static/data/homepage_national.csv": {
+      "sha256": "d468694d3e955807dec114da902ea835bd0da987597ed9cb46f9163ad32dd04e",
+      "mtime_ns": 1794585662014209859
+    },
+    "frontend/static/data/homepage-output/mine-after.webp": {
+      "sha256": "8cdc66232f6c0d784358a152ae46c382b7fe5df5aaa1cd17c454cbe1da951164",
+      "mtime_ns": 1794587073315840247
+    },
+    "frontend/static/data/homepage-output/heat.svg": {
+      "sha256": "7400840659aa09f2f9ee8bacbda3a027571ad0e15121de07460d803b9963397d",
+      "mtime_ns": 1794587064426983923
+    },
+    "frontend/static/data/homepage-output/flood.svg": {
+      "sha256": "d032fcf7538fbf6d908ff9151fcf79006e141adf09235ab067957ff973890d50",
+      "mtime_ns": 1794588310599997552
+    },
+    "frontend/static/data/homepage-output/crop.svg": {
+      "sha256": "4b1327f0d51bfe8eb62076f862ee87624f097c738be72fb6837534284d9d4772",
+      "mtime_ns": 1794587064423654712
+    },
+    "frontend/static/data/homepage-output/mine-before.webp": {
+      "sha256": "0f0251e4c0d5ab3633ec0f5ce05fd55aed5c68572ea58d40098ec502ce675821",
+      "mtime_ns": 1794587068907988381
+    }
+  }
+}

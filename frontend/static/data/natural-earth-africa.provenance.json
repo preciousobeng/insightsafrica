@@ -1,0 +1,14 @@
+{
+  "dataset": "Natural Earth 1:110m Admin 0 Countries",
+  "version": "5.1.1",
+  "license": "Public domain",
+  "terms": "https://www.naturalearthdata.com/about/terms-of-use/",
+  "download_page": "https://www.naturalearthdata.com/downloads/110m-cultural-vectors/110m-admin-0-countries/",
+  "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.1/geojson/ne_110m_admin_0_countries.geojson",
+  "source_sha256": "6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f",
+  "output_sha256": "f38ec5b09d24444ea0ca6cc447f16cc3774483e4e241228f218cdcd1e3e69130",
+  "feature_count": 51,
+  "transform": "Filter CONTINENT == Africa; retain geometry unchanged and only ADMIN/ADM0_A3 as name/iso_a3 properties.",
+  "caveat": "Natural Earth displays de facto boundaries. 110m omits small islands, including Cabo Verde; covered-country detail must come from the project's own region boundaries.",
+  "prepared": "2026-11-13"
+}

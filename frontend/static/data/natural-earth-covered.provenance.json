@@ -1,0 +1,163 @@
+{
+  "dataset": "Natural Earth 1:10m Admin 0 Countries",
+  "version": "5.1.1",
+  "license": "Public domain",
+  "terms": "https://www.naturalearthdata.com/about/terms-of-use/",
+  "download_page": "https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-0-countries/",
+  "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.1/geojson/ne_10m_admin_0_countries.geojson",
+  "source_sha256": "239eec57ac17f100a11e2536cffc56752c318b50ae765b0918ff7aab4ce8f255",
+  "output_sha256": "c13ef744d4a42762948cd4241d720b53aaf821f960a6c2be8a5ead70b74091fa",
+  "feature_count": 6,
+  "countries": [
+    {
+      "id": "GHA",
+      "country": "ghana",
+      "iso_a3": "GHA",
+      "name": "Ghana",
+      "geometry_type": "Polygon",
+      "polygon_count": 1
+    },
+    {
+      "id": "NGA",
+      "country": "nigeria",
+      "iso_a3": "NGA",
+      "name": "Nigeria",
+      "geometry_type": "MultiPolygon",
+      "polygon_count": 3
+    },
+    {
+      "id": "CIV",
+      "country": "ivorycoast",
+      "iso_a3": "CIV",
+      "name": "Ivory Coast",
+      "geometry_type": "MultiPolygon",
+      "polygon_count": 2
+    },
+    {
+      "id": "SEN",
+      "country": "senegal",
+      "iso_a3": "SEN",
+      "name": "Senegal",
+      "geometry_type": "Polygon",
+      "polygon_count": 1
+    },
+    {
+      "id": "CPV",
+      "country": "capeverde",
+      "iso_a3": "CPV",
+      "name": "Cabo Verde",
+      "geometry_type": "MultiPolygon",
+      "polygon_count": 11
+    },
+    {
+      "id": "ZAF",
+      "country": "southafrica",
+      "iso_a3": "ZAF",
+      "name": "South Africa",
+      "geometry_type": "MultiPolygon",
+      "polygon_count": 3
+    }
+  ],
+  "transform": "Filter ADM0_A3 to GHA/NGA/CIV/SEN/CPV/ZAF; preserve every coordinate and polygon; retain only country/iso_a3/name and ISO3 feature id. No simplification, resampling, GADM or geoBoundaries geometry.",
+  "winding": {
+    "source": "Natural Earth ring winding preserved; clockwise outer rings and counterclockwise holes where present.",
+    "d3_compatible": true,
+    "check": "Every selected country has d3.geoArea below a hemisphere; no complementary-globe fill.",
+    "features": [
+      {
+        "id": "GHA",
+        "area_steradians": 0.005904850548337261,
+        "d3_bounds": [
+          [
+            -3.262509,
+            4.737128
+          ],
+          [
+            1.187968,
+            11.162937
+          ]
+        ],
+        "d3_small_polygon": true
+      },
+      {
+        "id": "NGA",
+        "area_steradians": 0.02244949790568059,
+        "d3_bounds": [
+          [
+            2.671082,
+            4.272162
+          ],
+          [
+            14.669936,
+            13.880291
+          ]
+        ],
+        "d3_small_polygon": true
+      },
+      {
+        "id": "CIV",
+        "area_steradians": 0.007933984343581325,
+        "d3_bounds": [
+          [
+            -8.61872,
+            4.344062
+          ],
+          [
+            -2.506328,
+            10.726478
+          ]
+        ],
+        "d3_small_polygon": true
+      },
+      {
+        "id": "SEN",
+        "area_steradians": 0.004852018032236276,
+        "d3_bounds": [
+          [
+            -17.536041,
+            12.305607
+          ],
+          [
+            -11.377776,
+            16.691385
+          ]
+        ],
+        "d3_small_polygon": true
+      },
+      {
+        "id": "CPV",
+        "area_steradians": 0.00009707749925664753,
+        "d3_bounds": [
+          [
+            -25.360422,
+            14.803941
+          ],
+          [
+            -22.666575,
+            17.196601
+          ]
+        ],
+        "d3_small_polygon": true
+      },
+      {
+        "id": "ZAF",
+        "area_steradians": 0.03009251959599544,
+        "d3_bounds": [
+          [
+            16.469981,
+            -46.965753
+          ],
+          [
+            37.977794,
+            -22.126452
+          ]
+        ],
+        "d3_small_polygon": true
+      }
+    ]
+  },
+  "caveat": "Natural Earth draws de facto boundaries. This is a country fallback, not administrative reporting-zone geometry.",
+  "prepared": "2026-11-13",
+  "bytes": 179193,
+  "gzip_bytes": 68408
+}

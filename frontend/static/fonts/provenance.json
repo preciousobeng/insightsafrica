@@ -1,0 +1,53 @@
+{
+  "prepared": "2026-11-13",
+  "fonts": [
+    {
+      "family": "Fraunces",
+      "file": "fraunces-latin-600.woff2",
+      "source": "https://fonts.gstatic.com/s/fraunces/v38/6NUu8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7iQcIfJD58njt0oc7qv8.woff2",
+      "license": "SIL OFL 1.1",
+      "license_source": "https://raw.githubusercontent.com/google/fonts/581699fcc0df7715a0f944e28b1a18d38e4aad62/ofl/fraunces/OFL.txt",
+      "sha256": "170a928c701ef00e4b91105f870dd2c764b9ddb0c725cda6e71de576a8e72a00",
+      "bytes": 35120,
+      "axes": {
+        "opsz": [
+          9,
+          144
+        ],
+        "wght": 600
+      },
+      "subset": "Latin; Google Fonts official WOFF2 subset"
+    },
+    {
+      "family": "IBM Plex Sans",
+      "file": "ibm-plex-sans-latin-variable.woff2",
+      "source": "https://fonts.gstatic.com/s/ibmplexsans/v23/zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxeKYY.woff2",
+      "license": "SIL OFL 1.1",
+      "license_source": "https://raw.githubusercontent.com/google/fonts/e0b9f6ca2d88f7d6e89710ee06b17d53a21f6a22/ofl/ibmplexsans/OFL.txt",
+      "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "bytes": 45712,
+      "axes": {
+        "wght": [
+          100,
+          700
+        ]
+      },
+      "subset": "Latin; Google Fonts official WOFF2 subset"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "file": "ibm-plex-mono-latin-400.woff2",
+      "source": "https://fonts.gstatic.com/s/ibmplexmono/v23/-F63fjptAgt5VM-kVkqdyU8n1i8q1w.woff2",
+      "license": "SIL OFL 1.1",
+      "license_source": "https://raw.githubusercontent.com/google/fonts/465b90c97b4de569e0b546bb2536900194cf7187/ofl/ibmplexmono/OFL.txt",
+      "sha256": "7ced53420784c93cecccb7c27237594f0e41e5a7990581565f0aef8eda9e9d2f",
+      "bytes": 14648,
+      "axes": {
+        "wght": 400
+      },
+      "subset": "Latin; Google Fonts official WOFF2 subset"
+    }
+  ],
+  "google_css_request": "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@100..700&family=IBM+Plex+Mono:wght@400&display=swap",
+  "total_woff2_bytes": 95480
+}

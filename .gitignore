@@ -44,3 +44,13 @@ package-lock.json
 *.key
 *.pem
 data/exposure/*.tif
+
+# Homepage local-only inputs and GADM development geometry (TD-3).
+.ia-*.py
+.ia-open-boundaries/
+.ia-local-geometry/
+evidence/homepage/local-gadm/
+
+.ia-qa/
+.ia-*.cjs
+.ia-*.mjs
