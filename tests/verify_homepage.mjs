@@ -56,6 +56,7 @@ try{
  }
  const page=await pageFor();await ready(page);
  const data=await page.evaluate(async()=>fetch('/static/data/homepage_summary.json').then(r=>r.json()));
+ check('Headline uses the exact plain-English rank copy',await page.$eval('.headline-rank',(e,text)=>e.textContent.trim()===text,data.headline.split('; ')[1]));
  check('Natural Earth country fallback',await page.$eval('#map-mode',e=>e.textContent.includes('Country view')));
  check('No public regional file configured',data.region_geometry_url===null);
  await page.focus('#month-range');await page.keyboard.press('ArrowLeft');
@@ -73,7 +74,7 @@ try{
  await page.type('#place-search','Tamale');await page.keyboard.press('ArrowDown');await page.keyboard.press('Enter');
  const place=data.countries.ghana.places.find(p=>p.name==='Tamale'),card=await page.$eval('#place-card',e=>e.textContent);
  check('Search shows computed exact observation',card.includes(place.value[0].toFixed(1)+' mm'));
- check('Search shows computed rank',card.includes('Ranked '+place.rank+' of '+place.samples));
+ check('Search shows computed rank',card.includes(place.rank_text));
  check('Search does not invent a selected-district deep link',await page.$eval('#place-card a',e=>e.getAttribute('href')==='/ghana/flood/'));
  if (data.outputs.mine.mode === 'comparison') {
   await page.$eval('#mine-range',e=>{e.value='80';e.dispatchEvent(new Event('input',{bubbles:true}))});

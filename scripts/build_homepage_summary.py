@@ -180,6 +180,50 @@ def boundary_path(root, country, config, source, boundary_root):
     return base / country / (country + "-adm1-mapped.geojson")
 
 
+def rank_sentence(rank, samples, first_year, last_year, month, drier=False):
+    """Describe the competition rank; tied observations share the same rank."""
+    if rank is None:
+        return "Historical comparison unavailable."
+    direction = "driest" if drier else "wettest"
+    if rank == 1:
+        return f"The {direction} {month} in the record ({first_year}–{last_year})."
+    if rank <= 10:
+        suffix = (
+            "th"
+            if 11 <= rank % 100 <= 13
+            else {1: "st", 2: "nd", 3: "rd"}.get(rank % 10, "th")
+        )
+        return f"The {rank}{suffix}-{direction} {month} since {first_year}."
+    comparison = "Drier" if drier else "Wetter"
+    plural = month[:-1] + "ies" if month in ("January", "February") else month + "s"
+    return f"{comparison} than {samples - rank} of the {samples} {plural} since {first_year}."
+
+
+def rank_statistics(mm, seasonal, mean, month):
+    """Compute both ends directly from the same nonmissing calendar-month data."""
+    wet_rank = 1 + sum(value > mm for _, value in seasonal) if mm is not None else None
+    dry_rank = 1 + sum(value < mm for _, value in seasonal) if mm is not None else None
+    years = [int(ym[:4]) for ym, _ in seasonal]
+    first_year = min(years) if years else None
+    last_year = max(years) if years else None
+    drier = mm is not None and mean is not None and mm < mean
+    return {
+        "rank": wet_rank,
+        "dry_rank": dry_rank,
+        "samples": len(seasonal),
+        "first_year": first_year,
+        "last_year": last_year,
+        "rank_text": rank_sentence(
+            dry_rank if drier else wet_rank,
+            len(seasonal),
+            first_year,
+            last_year,
+            calendar.month_name[month],
+            drier,
+        ),
+    }
+
+
 def country_summary(
     root, country, config, boundaries="gadm", boundary_root=None, crosswalk=None
 ):
@@ -266,11 +310,11 @@ def country_summary(
             )
         region_id, _ = identity(country, primary, key, crosswalk)
         seasonal = [
-            observed(zonal(record, primary).get(key))
+            (ym, observed(zonal(record, primary).get(key)))
             for ym, record in zip(months, records)
             if int(ym[5:]) == month
         ]
-        seasonal = [value for value in seasonal if value is not None]
+        seasonal = [(ym, value) for ym, value in seasonal if value is not None]
         mean = observed(primary_norm.get(key))
         regions[region_id] = {
             "key": key,
@@ -278,10 +322,7 @@ def country_summary(
             "level": primary_label,
             "normal_mm": rounded(mean),
             "headline_eligible": mean is not None and mean >= 20,
-            "rank": 1 + sum(value > mm for value in seasonal)
-            if mm is not None
-            else None,
-            "samples": len(seasonal),
+            **rank_statistics(mm, seasonal, mean, month),
             "value": relative(mm, primary_norm.get(key)),
             "recent": recent_values,
         }
@@ -298,9 +339,6 @@ def country_summary(
                 if int(ym[5:]) == month
             ]
             seasonal = [(ym, value) for ym, value in seasonal if value is not None]
-            rank = (
-                1 + sum(value > mm for _, value in seasonal) if mm is not None else None
-            )
             previous = [
                 int(ym[:4])
                 for ym, value in seasonal
@@ -316,8 +354,7 @@ def country_summary(
                     "level": kind,
                     "group": level,
                     "value": relative(mm, normal_item),
-                    "rank": rank,
-                    "samples": len(seasonal),
+                    **rank_statistics(mm, seasonal, observed(normal_item), month),
                     "last_wetter": max(previous) if previous else None,
                     "recent": [
                         rounded(observed(zonal(record, level).get(key)))
@@ -374,7 +411,7 @@ def headline(summary):
     )
     return (
         f"{when}: {region['name']}, {country['name']} received {mm:g} mm, {comparison}; "
-        f"rank {region['rank']} of {region['samples']} {month} observations since 1981 (1 = wettest)."
+        f"{region['rank_text']}"
     )
 
 
@@ -493,11 +530,11 @@ def build(
     page = root / "frontend/index.html"
     if update_html:
         current = (root / "frontend/_templates/home.html").read_text()
-        lead, separator, rank = summary["headline"].partition("; rank ")
+        lead, separator, rank = summary["headline"].partition("; ")
         headline_markup = html.escape(lead)
         if separator:
             headline_markup += (
-                f'<span class="headline-rank"> Rank {html.escape(rank)}</span>'
+                f'<span class="headline-rank"> {html.escape(rank)}</span>'
             )
         current = replace_block(current, "headline", headline_markup)
         current = replace_block(current, "tables", fallback_table(summary))

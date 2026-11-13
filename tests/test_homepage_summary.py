@@ -318,6 +318,9 @@ def headline_region(mm=60, pct=200, normal=20, rank=1, samples=41):
         "headline_eligible": normal >= 20,
         "rank": rank,
         "samples": samples,
+        "rank_text": summary.rank_sentence(
+            rank, samples, 1981, 2021, "January", pct < 0
+        ),
     }
 
 
@@ -333,7 +336,7 @@ def test_headline_excludes_low_baselines_and_keeps_rank():
     )
     text = summary.headline(data)
     assert "60 mm, about 3.0× its January normal" in text
-    assert "rank 1 of 41 January observations since 1981" in text
+    assert "The wettest January in the record (1981–2021)." in text
     assert "900" not in text and "14.7" not in text and "z" not in text
 
 
@@ -346,7 +349,7 @@ def test_headline_low_baseline_fallback_and_dry_comparison():
         headline_snapshot({"dry": headline_region(10, -50, 20, 40)})
     )
     assert "10 mm, 50% below its January normal" in text
-    assert "rank 40 of 41" in text
+    assert "Drier than 1 of the 41 Januaries since 1981." in text
 
 
 @pytest.mark.parametrize(
@@ -512,3 +515,63 @@ def test_repeated_refresh_keeps_git_checkout_clean(archive, monkeypatch):
     summary.build(archive)
     assert (archive / "frontend/index.html").read_bytes() != before
     assert git("status", "--porcelain") == ""
+
+
+@pytest.mark.parametrize(
+    "rank,expected",
+    [
+        (1, "The wettest September in the record (1981–2026)."),
+        (3, "The 3rd-wettest September since 1981."),
+        (23, "Wetter than 23 of the 46 Septembers since 1981."),
+    ],
+)
+def test_plain_english_rank_copy(rank, expected):
+    assert summary.rank_sentence(rank, 46, 1981, 2026, "September") == expected
+
+
+def test_tied_rank_one_and_actual_sample_years():
+    data = summary.rank_statistics(
+        40, [("1983-09", 40), ("1990-09", 20), ("2024-09", 40)], 20, 9
+    )
+    assert data["rank"] == 1
+    assert data["rank_text"] == "The wettest September in the record (1983–2024)."
+
+
+def test_dry_rank_is_computed_from_observations_not_inverted():
+    # Ties make inverted wet rank incorrect: wet rank=3, direct dry rank=1.
+    data = summary.rank_statistics(
+        10, [("1982-09", 10), ("1995-09", 10), ("2020-09", 20), ("2026-09", 30)], 20, 9
+    )
+    assert data["rank"] == 3
+    assert data["dry_rank"] == 1
+    assert data["dry_rank"] != data["samples"] - data["rank"] + 1
+    assert data["rank_text"] == "The driest September in the record (1982–2026)."
+
+
+@pytest.mark.parametrize(
+    "rank,expected",
+    [
+        (3, "The 3rd-driest September since 1981."),
+        (23, "Drier than 23 of the 46 Septembers since 1981."),
+    ],
+)
+def test_dry_rank_plain_english(rank, expected):
+    assert summary.rank_sentence(rank, 46, 1981, 2026, "September", True) == expected
+
+
+def test_place_and_region_share_the_same_rank_copy(archive):
+    data = summary.country_summary(archive, "test", CONFIG)
+    for region in data["regions"].values():
+        place = next(
+            p
+            for p in data["places"]
+            if p["group"] == "regions" and p["key"] == region["key"]
+        )
+        assert place["rank_text"] == region["rank_text"]
+        assert (
+            place["rank_text"]
+            in summary.headline(
+                {"countries": {"test": dict(data, regions={place["id"]: region})}}
+            )
+            or not region["headline_eligible"]
+        )
