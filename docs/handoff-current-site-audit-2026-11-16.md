@@ -81,7 +81,7 @@ Sources for dashboard/privacy preparation:
 | Branch | Commit | Purpose |
 | --- | --- | --- |
 | maintenance/public-surface | ce8f5c3 | Restrict static files/bulk boundary downloads; preserve map APIs, public data-method notes, CSV policy and auth |
-| maintenance/site-trust | ed38863 | Pinned self-hosted auth SDK, current-site wording/layout, privacy draft and empty/error hub handling |
+| maintenance/site-trust | d7d969f | Pinned self-hosted auth SDK, current-site wording/layout, privacy draft and empty/error hub handling |
 | maintenance/runtime-patch-pins | a09b8fe | Three small runtime patches and the development respx floor |
 | codex/download-event-rls (existing) | 559aff6 | Separately reviewed SQL migration; not merged/applied by this work |
 
@@ -123,11 +123,16 @@ This maintenance work does not implement or select the migration.
 
 ## Remaining gates
 The privacy draft must not be published before owner details are confirmed.
-Turnstile remains deferred pending the owner's choice; existing contact limits are
+Turnstile is deferred by explicit owner choice; existing contact limits are
 preserved and explicitly tested. HSTS/Cloudflare rules, Supabase settings and the
 live download-events migration state still require owner/senior action. No production
 or dashboard setting has been changed, and redesign/homepage remains at a077246.
 
 Additional scope note: large hub-metadata requests and edge-cache optimisation are
 recorded follow-ups, not claimed as fixed. Existing auth/rate controls and API policy
-were preserved. Turnstile stays deferred pending the unanswered owner preference.
+were preserved. Turnstile is deferred by explicit owner choice.
+
+Privacy proposal update: controller/retention values are now pre-filled as [CONFIRM]
+in maintenance/site-trust (d7d969f), with provider evidence and a separate retention
+follow-up. No purge/aggregation implementation or Turnstile change was introduced.
+The updated draft passed 12 page/trust tests and 375/800-width layout checks.

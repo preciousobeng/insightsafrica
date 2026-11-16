@@ -30,7 +30,7 @@ runtime branch tests that the fourth hourly request is rejected before SMTP.
 Review Cloudflare rate rules against real map/API traffic; a broad API cap can
 block legitimate archive/map exploration. No edge rule or limit was changed.
 
-Turnstile implementation/configuration is deferred pending the owner's choice.
+Turnstile is deferred by explicit owner choice; keep the existing contact rate limits.
 Contact tokens need server-side verification. Supabase auth CAPTCHA is a separate
 provider configuration, and clients must supply captchaToken for the protected
 auth flows. A rule on insightsafrica.org does not protect requests sent directly
@@ -61,3 +61,17 @@ The larger hub-metadata downloads and first-byte/edge caching optimisation remai
 separate performance work. No small summary endpoint or broad cache rule was
 introduced here. Do not apply a blanket public cache rule to authenticated/API-key
 or account/download responses. The prepared work preserves their existing policy.
+
+## Proposed privacy values received
+The controller proposal is [CONFIRM: Precious Kweku Obeng, operating InsightsAfrica],
+contact info@insightsafrica.org, with [CONFIRM: ICO registration] and no invented
+company/registration number. Contact enquiries: [CONFIRM: 24 months after last
+correspondence], then deleted. Download logs: [CONFIRM: raw records 90 days], then
+country/product counts without IPs. Accounts/API keys: while the account exists,
+then deletion within [CONFIRM: 30 days] of a deletion request.
+
+These remain proposals, not approval. No repository purge/aggregation job was found;
+no such job was implemented in this branch. Verify deployed jobs and match system
+procedures to the approved notice before publication. Provider evidence is in the
+site-trust branch's privacy-publication-checks.md; a read-only cloud-id result
+confirmed Oracle hosting. No credentials or database contents were inspected.
