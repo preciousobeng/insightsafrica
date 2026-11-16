@@ -75,3 +75,55 @@ Sources for dashboard/privacy preparation:
 [Cloudflare HSTS](https://developers.cloudflare.com/ssl/edge-certificates/additional-options/http-strict-transport-security/),
 [Turnstile server validation](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/),
 [ICO privacy information](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/the-right-to-be-informed/what-privacy-information-should-we-provide/).
+
+## Prepared branches and combined validation
+
+| Branch | Commit | Purpose |
+| --- | --- | --- |
+| maintenance/public-surface | ce8f5c3 | Restrict static files/bulk boundary downloads; preserve map APIs, public data-method notes, CSV policy and auth |
+| maintenance/site-trust | ed38863 | Pinned self-hosted auth SDK, current-site wording/layout, privacy draft and empty/error hub handling |
+| maintenance/runtime-patch-pins | a09b8fe | Three small runtime patches and the development respx floor |
+| codex/download-event-rls (existing) | 559aff6 | Separately reviewed SQL migration; not merged/applied by this work |
+
+Combined code was tested by applying branch diffs in a disposable detached checkout;
+no branch merge was made. **80 combined tests passed**, including local PostgreSQL
+authorization tests. Three deliberate defects were caught: bypassing the processed-file
+allowlist, bypassing private frontend path filtering, and tampering with the SDK bytes.
+Sources were restored and the clean 80-test suite passed again.
+
+Browser checks on the combined code passed for all six FloodWatch pages (one synthetic
+polygon each), ten current-homepage width/theme cases, the real pinned SDK on login/hub,
+twelve empty/error hub responses, five mocked password-recovery scenarios and mocked
+key management. There were no uncaught JavaScript errors or live auth/email operations.
+The repository's headless harness also passed on the individual map/homepage branches.
+
+## Detailed dependency disposition
+The existing security/oct22-dep-bumps proposal passed 27 targeted API/build tests in
+its own isolated environment. This does not validate the complete scientific/TileServer
+environment, and that larger branch is not declared production-ready.
+
+The grouped minor-and-patch update also changes SciPy, statsmodels, rasterio,
+geopandas, netCDF4, h5py, shapely, TiTiler and other libraries. Only python-dotenv
+1.2.4, schedule 1.2.2, SlowAPI 0.1.10 and development respx >=0.23.1 were separated
+into the tested runtime patch branch (49 targeted tests passed there). NumPy 2,
+pandas 3, rasterstats and the broader GIS upgrades remain held for scientific
+replay/compatibility tests. The older grouped pip proposal's geopandas target is
+already the version in main; it should not be merged as if it were a fresh fix.
+
+## Further data-method finding
+The existing administrative-key notice documents mixed pixel-sampling methods in
+parts of the archive. That scientific limitation was preserved in the new public
+data-key-version.html page; it was not discarded with the old admin URL. No rainfall
+values, baselines, area keys or processing methods changed in this maintenance run.
+
+CHC's primary page independently confirms that CHIRPS v2 production ends after
+December 2026: https://www.chc.ucsb.edu/data/chirps .
+Plan v3 separately and recompute a consistent archive/baseline/ranking set.
+This maintenance work does not implement or select the migration.
+
+## Remaining gates
+The privacy draft must not be published before owner details are confirmed.
+Turnstile remains deferred pending the owner's choice; existing contact limits are
+preserved and explicitly tested. HSTS/Cloudflare rules, Supabase settings and the
+live download-events migration state still require owner/senior action. No production
+or dashboard setting has been changed, and redesign/homepage remains at a077246.
