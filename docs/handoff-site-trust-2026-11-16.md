@@ -39,3 +39,19 @@ No Supabase account, API key, password, SMTP message, database policy or Cloudfl
 setting changed. The privacy notice is a draft, not a declaration of legal compliance.
 This branch should be reviewed separately from maintenance/public-surface and
 merged in a deliberate sequence because both regenerate shared page types.
+
+## Owner privacy proposals and Turnstile decision
+The owner supplied proposed values only, all still marked [CONFIRM]:
+controller Precious Kweku Obeng operating InsightsAfrica; contact info@insightsafrica.org;
+ICO registration remains a confirmation slot, with no company/registration number invented.
+Contact enquiries: 24 months after last correspondence, then delete.
+Download logs: raw records 90 days, then country/product counts with no IPs.
+Accounts/API keys: while the account exists, then delete within 30 days of a request.
+
+No versioned 90-day download-log purge/aggregation job was found. Deployed database
+jobs were not inspected. The privacy draft explicitly marks the system/policy gap.
+Do not publish it as an operating retention promise before matching implementation
+and owner approval. No purge, deletion job or database change was added in this branch.
+
+Provider usage evidence and publication follow-ups are in privacy-publication-checks.md.
+Turnstile is deferred by the owner; existing contact rate limits remain unchanged.
