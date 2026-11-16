@@ -614,11 +614,10 @@
             <label>To</label>
             <input type="month" id="dl-to" value="2025-12" min="2024-01" max="2025-12">
           <a class="dl-btn" href="/api/ivorycoast/flood/archive/download/csv?level=regions" download>Full archive CSV (1981&ndash;present)</a>
-          <a class="dl-btn" href="/docs" target="_blank" rel="noopener">API docs (JSON, full archive)</a>
+          <a class="dl-btn" href="/docs" target="_blank" rel="noopener">API docs (JSON, full archive)</a><p class="data-source-note">Boundary downloads are paused pending licensing review. Interactive map layers remain available.</p>
           </div>
           <button class="dl-btn" onclick="dlCsv('/api/ivorycoast/flood/download/csv?level=districts', 'insightsafrica_ivorycoast_flood_districts.csv')">CSV — Districts</button>
           <button class="dl-btn" onclick="dlCsv('/api/ivorycoast/flood/download/csv?level=regions', 'insightsafrica_ivorycoast_flood_regions.csv')">CSV — Regions</button>
-          <a class="dl-btn" href="/api/ivorycoast/flood/download/districts.geojson" download>GeoJSON — District boundaries</a>
         </div>
       </div>
 

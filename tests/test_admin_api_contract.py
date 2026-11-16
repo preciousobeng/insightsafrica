@@ -19,8 +19,8 @@ def test_flood_response_exposes_identifier_version_and_notice():
         response = client.get('/api/flood/layers')
         assert response.status_code == 200
         assert response.headers['X-Administrative-Key-Version'] == '2'
-        assert 'admin-hierarchy-v2.html' in response.headers['Link']
-        notice = client.get('/admin-hierarchy-v2.html')
+        assert 'data-key-version.html' in response.headers['Link']
+        notice = client.get('/data-key-version.html')
         assert notice.status_code == 200
         assert 'Name|Parent' in notice.text
 

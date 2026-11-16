@@ -53,7 +53,8 @@ from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.errors import RateLimitExceeded
 from fastapi.responses import JSONResponse, RedirectResponse, Response
-from fastapi.staticfiles import StaticFiles
+from fastapi.openapi.utils import get_openapi
+from api.public_files import PublicFrontendFiles, PublicMapFiles
 from pydantic import BaseModel, Field
 
 load_dotenv()
@@ -234,6 +235,7 @@ logger = logging.getLogger("insightsafrica")
 SECURITY_HEADERS = {
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
     "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
 }
@@ -266,7 +268,7 @@ async def security_and_https(request: Request, call_next):
         "/flood/" in request.url.path or "/boundaries/" in request.url.path
     ):
         response.headers["X-Administrative-Key-Version"] = "2"
-        response.headers["Link"] = '</admin-hierarchy-v2.html>; rel="describedby"'
+        response.headers["Link"] = '</data-key-version.html>; rel="describedby"'
 
     return response
 
@@ -661,13 +663,13 @@ def mine_changes():
 # /ghana/ equivalent. Routes are registered before the static mounts below,
 # so they take precedence over the "/" catch-all.
 
-@app.get("/ghana")
-@app.get("/ghana/")
+@app.get("/ghana", include_in_schema=False)
+@app.get("/ghana/", include_in_schema=False)
 def ghana_hub():
     return RedirectResponse(url="/ghana/hub.html")
 
 
-@app.get("/hub.html")
+@app.get("/hub.html", include_in_schema=False)
 def ghana_legacy_hub():
     return RedirectResponse(url="/ghana/hub.html", status_code=301)
 
@@ -678,41 +680,41 @@ def _register_ghana_legacy_redirects():
             return RedirectResponse(url=f"/ghana/{mod}/", status_code=301)
         def deep(path: str, mod: str = mod):
             return RedirectResponse(url=f"/ghana/{mod}/{path}", status_code=301)
-        app.get(f"/{mod}")(bare)
-        app.get(f"/{mod}/")(bare)
-        app.get(f"/{mod}/{{path:path}}")(deep)
+        app.get(f"/{mod}", include_in_schema=False)(bare)
+        app.get(f"/{mod}/", include_in_schema=False)(bare)
+        app.get(f"/{mod}/{{path:path}}", include_in_schema=False)(deep)
 
 _register_ghana_legacy_redirects()
 
 
 # ── Nigeria hub redirect ──────────────────────────────────────────────────────
 
-@app.get("/nigeria")
-@app.get("/nigeria/")
+@app.get("/nigeria", include_in_schema=False)
+@app.get("/nigeria/", include_in_schema=False)
 def nigeria_hub():
     return RedirectResponse(url="/nigeria/hub.html")
 
 
 # ── Ivory Coast hub redirect ──────────────────────────────────────────────────
 
-@app.get("/ivorycoast")
-@app.get("/ivorycoast/")
+@app.get("/ivorycoast", include_in_schema=False)
+@app.get("/ivorycoast/", include_in_schema=False)
 def ivorycoast_hub():
     return RedirectResponse(url="/ivorycoast/hub.html")
 
 
 # ── Senegal API routes ────────────────────────────────────────────────────────
 
-@app.get("/senegal")
-@app.get("/senegal/")
+@app.get("/senegal", include_in_schema=False)
+@app.get("/senegal/", include_in_schema=False)
 def senegal_hub():
     return RedirectResponse(url="/senegal/hub.html")
 
 
 # ── Cape Verde API routes ─────────────────────────────────────────────────────
 
-@app.get("/capeverde")
-@app.get("/capeverde/")
+@app.get("/capeverde", include_in_schema=False)
+@app.get("/capeverde/", include_in_schema=False)
 def capeverde_hub():
     return RedirectResponse(url="/capeverde/hub.html")
 
@@ -1001,10 +1003,7 @@ def _make_mine_csv_dl(sites_path, filename, country):
 
 def _make_geojson_dl(file_path, filename, country, label):
     async def handler(request: Request):
-        token = _extract_token(request)
-        user = await _get_user(token) if token else None
-        await _log_download(request, country, "flood", label, user["id"] if user else None)
-        return _geojson_resp(file_path, filename)
+        raise HTTPException(status_code=410, detail="Boundary downloads are paused pending licensing review. Interactive map layers remain available.")
     return handler
 
 
@@ -1259,69 +1258,88 @@ async def flood_archive_csv(
 # ── South Africa downloads (layers/sites/boundaries handled by the factory above) ──
 @app.get("/api/southafrica/flood/download/provinces.geojson")
 def sa_flood_provinces():
-    path = SOUTHAFRICA_DIR / "southafrica_provinces.geojson"
-    if not path.exists():
-        raise HTTPException(status_code=404, detail="Not available")
-    return JSONResponse(content=json.loads(path.read_text()))
+    raise HTTPException(status_code=410, detail="Boundary downloads are paused pending licensing review.")
 
 @app.get("/api/southafrica/flood/download/districts.geojson")
 def sa_flood_districts():
-    path = SOUTHAFRICA_DIR / "southafrica_districts.geojson"
-    if not path.exists():
-        raise HTTPException(status_code=404, detail="Not available")
-    return JSONResponse(content=json.loads(path.read_text()))
+    raise HTTPException(status_code=410, detail="Boundary downloads are paused pending licensing review.")
 
 
 # ── Static mounts — AFTER all API routes ──
 # Nigeria mounts MUST come before /nigeria root and before Ghana / root
 
-app.mount("/ng-tiles",              StaticFiles(directory=str(NIGERIA_DIR)),                                      name="ng-tiles")
-app.mount("/nigeria/flood",         StaticFiles(directory=str(FRONTEND_DIR / "nigeria" / "flood"),    html=True), name="ng-flood")
-app.mount("/nigeria/mine",          StaticFiles(directory=str(FRONTEND_DIR / "nigeria" / "mine"),     html=True), name="ng-mine")
-app.mount("/nigeria/crop",          StaticFiles(directory=str(FRONTEND_DIR / "nigeria" / "crop"),     html=True), name="ng-crop")
-app.mount("/nigeria/heat",          StaticFiles(directory=str(FRONTEND_DIR / "nigeria" / "heat"),     html=True), name="ng-heat")
-app.mount("/nigeria/human",         StaticFiles(directory=str(FRONTEND_DIR / "nigeria" / "human"),    html=True), name="ng-human")
-app.mount("/nigeria/profile",       StaticFiles(directory=str(FRONTEND_DIR / "nigeria" / "profile"),  html=True), name="ng-profile")
-app.mount("/nigeria",               StaticFiles(directory=str(FRONTEND_DIR / "nigeria"),              html=True), name="nigeria")
-app.mount("/ic-tiles",              StaticFiles(directory=str(IVORYCOAST_DIR)),                                   name="ic-tiles")
-app.mount("/ivorycoast/flood",      StaticFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "flood"), html=True), name="ic-flood")
-app.mount("/ivorycoast/mine",       StaticFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "mine"),  html=True), name="ic-mine")
-app.mount("/ivorycoast/crop",       StaticFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "crop"),  html=True), name="ic-crop")
-app.mount("/ivorycoast/heat",       StaticFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "heat"),  html=True), name="ic-heat")
-app.mount("/ivorycoast/human",      StaticFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "human"), html=True), name="ic-human")
-app.mount("/ivorycoast/profile",    StaticFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "profile"),html=True),name="ic-profile")
-app.mount("/ivorycoast",            StaticFiles(directory=str(FRONTEND_DIR / "ivorycoast"),           html=True), name="ivorycoast")
-app.mount("/sn-tiles",              StaticFiles(directory=str(SENEGAL_DIR)),                                       name="sn-tiles")
-app.mount("/senegal/flood",         StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "flood"),    html=True), name="sn-flood")
-app.mount("/senegal/mine",          StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "mine"),     html=True), name="sn-mine")
-app.mount("/senegal/crop",          StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "crop"),     html=True), name="sn-crop")
-app.mount("/senegal/heat",          StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "heat"),     html=True), name="sn-heat")
-app.mount("/senegal/human",         StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "human"),    html=True), name="sn-human")
-app.mount("/senegal/profile",       StaticFiles(directory=str(FRONTEND_DIR / "senegal" / "profile"),  html=True), name="sn-profile")
-app.mount("/senegal",               StaticFiles(directory=str(FRONTEND_DIR / "senegal"),              html=True), name="senegal")
-app.mount("/za-tiles",              StaticFiles(directory=str(SOUTHAFRICA_DIR)),                                       name="za-tiles")
-app.mount("/southafrica/flood",     StaticFiles(directory=str(FRONTEND_DIR / "southafrica" / "flood"),   html=True), name="za-flood")
-app.mount("/southafrica/mine",      StaticFiles(directory=str(FRONTEND_DIR / "southafrica" / "mine"),    html=True), name="za-mine")
-app.mount("/southafrica/crop",      StaticFiles(directory=str(FRONTEND_DIR / "southafrica" / "crop"),    html=True), name="za-crop")
-app.mount("/southafrica/heat",      StaticFiles(directory=str(FRONTEND_DIR / "southafrica" / "heat"),    html=True), name="za-heat")
-app.mount("/southafrica/human",     StaticFiles(directory=str(FRONTEND_DIR / "southafrica" / "human"),   html=True), name="za-human")
-app.mount("/southafrica/profile",   StaticFiles(directory=str(FRONTEND_DIR / "southafrica" / "profile"), html=True), name="za-profile")
-app.mount("/southafrica",           StaticFiles(directory=str(FRONTEND_DIR / "southafrica"),              html=True), name="southafrica")
-app.mount("/cv-tiles",              StaticFiles(directory=str(CAPEVERDE_DIR)),                                      name="cv-tiles")
-app.mount("/capeverde/flood",      StaticFiles(directory=str(FRONTEND_DIR / "capeverde" / "flood"),  html=True), name="cv-flood")
-app.mount("/capeverde/mine",       StaticFiles(directory=str(FRONTEND_DIR / "capeverde" / "mine"),   html=True), name="cv-mine")
-app.mount("/capeverde/crop",       StaticFiles(directory=str(FRONTEND_DIR / "capeverde" / "crop"),   html=True), name="cv-crop")
-app.mount("/capeverde/heat",       StaticFiles(directory=str(FRONTEND_DIR / "capeverde" / "heat"),   html=True), name="cv-heat")
-app.mount("/capeverde/human",      StaticFiles(directory=str(FRONTEND_DIR / "capeverde" / "human"),  html=True), name="cv-human")
-app.mount("/capeverde/profile",    StaticFiles(directory=str(FRONTEND_DIR / "capeverde" / "profile"),html=True), name="cv-profile")
-app.mount("/capeverde",            StaticFiles(directory=str(FRONTEND_DIR / "capeverde"),             html=True), name="capeverde")
-app.mount("/tiles",                 StaticFiles(directory=str(PROCESSED_DIR)),                                    name="tiles")
-app.mount("/ghana/flood",           StaticFiles(directory=str(FRONTEND_DIR / "ghana" / "flood"),      html=True), name="gh-flood")
-app.mount("/ghana/mine",            StaticFiles(directory=str(FRONTEND_DIR / "ghana" / "mine"),       html=True), name="gh-mine")
-app.mount("/ghana/crop",            StaticFiles(directory=str(FRONTEND_DIR / "ghana" / "crop"),       html=True), name="gh-crop")
-app.mount("/ghana/heat",            StaticFiles(directory=str(FRONTEND_DIR / "ghana" / "heat"),       html=True), name="gh-heat")
-app.mount("/ghana/human",           StaticFiles(directory=str(FRONTEND_DIR / "ghana" / "human"),      html=True), name="gh-human")
-app.mount("/ghana/profile",         StaticFiles(directory=str(FRONTEND_DIR / "ghana" / "profile"),    html=True), name="gh-profile")
-app.mount("/ghana",                 StaticFiles(directory=str(FRONTEND_DIR / "ghana"),                html=True), name="ghana")
-app.mount("/",                      StaticFiles(directory=str(FRONTEND_DIR),                          html=True), name="home")
+app.mount("/ng-tiles",              PublicMapFiles(directory=str(NIGERIA_DIR)),                                      name="ng-tiles")
+app.mount("/nigeria/flood",         PublicFrontendFiles(directory=str(FRONTEND_DIR / "nigeria" / "flood"),    html=True), name="ng-flood")
+app.mount("/nigeria/mine",          PublicFrontendFiles(directory=str(FRONTEND_DIR / "nigeria" / "mine"),     html=True), name="ng-mine")
+app.mount("/nigeria/crop",          PublicFrontendFiles(directory=str(FRONTEND_DIR / "nigeria" / "crop"),     html=True), name="ng-crop")
+app.mount("/nigeria/heat",          PublicFrontendFiles(directory=str(FRONTEND_DIR / "nigeria" / "heat"),     html=True), name="ng-heat")
+app.mount("/nigeria/human",         PublicFrontendFiles(directory=str(FRONTEND_DIR / "nigeria" / "human"),    html=True), name="ng-human")
+app.mount("/nigeria/profile",       PublicFrontendFiles(directory=str(FRONTEND_DIR / "nigeria" / "profile"),  html=True), name="ng-profile")
+app.mount("/nigeria",               PublicFrontendFiles(directory=str(FRONTEND_DIR / "nigeria"),              html=True), name="nigeria")
+app.mount("/ic-tiles",              PublicMapFiles(directory=str(IVORYCOAST_DIR)),                                   name="ic-tiles")
+app.mount("/ivorycoast/flood",      PublicFrontendFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "flood"), html=True), name="ic-flood")
+app.mount("/ivorycoast/mine",       PublicFrontendFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "mine"),  html=True), name="ic-mine")
+app.mount("/ivorycoast/crop",       PublicFrontendFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "crop"),  html=True), name="ic-crop")
+app.mount("/ivorycoast/heat",       PublicFrontendFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "heat"),  html=True), name="ic-heat")
+app.mount("/ivorycoast/human",      PublicFrontendFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "human"), html=True), name="ic-human")
+app.mount("/ivorycoast/profile",    PublicFrontendFiles(directory=str(FRONTEND_DIR / "ivorycoast" / "profile"),html=True),name="ic-profile")
+app.mount("/ivorycoast",            PublicFrontendFiles(directory=str(FRONTEND_DIR / "ivorycoast"),           html=True), name="ivorycoast")
+app.mount("/sn-tiles",              PublicMapFiles(directory=str(SENEGAL_DIR)),                                       name="sn-tiles")
+app.mount("/senegal/flood",         PublicFrontendFiles(directory=str(FRONTEND_DIR / "senegal" / "flood"),    html=True), name="sn-flood")
+app.mount("/senegal/mine",          PublicFrontendFiles(directory=str(FRONTEND_DIR / "senegal" / "mine"),     html=True), name="sn-mine")
+app.mount("/senegal/crop",          PublicFrontendFiles(directory=str(FRONTEND_DIR / "senegal" / "crop"),     html=True), name="sn-crop")
+app.mount("/senegal/heat",          PublicFrontendFiles(directory=str(FRONTEND_DIR / "senegal" / "heat"),     html=True), name="sn-heat")
+app.mount("/senegal/human",         PublicFrontendFiles(directory=str(FRONTEND_DIR / "senegal" / "human"),    html=True), name="sn-human")
+app.mount("/senegal/profile",       PublicFrontendFiles(directory=str(FRONTEND_DIR / "senegal" / "profile"),  html=True), name="sn-profile")
+app.mount("/senegal",               PublicFrontendFiles(directory=str(FRONTEND_DIR / "senegal"),              html=True), name="senegal")
+app.mount("/za-tiles",              PublicMapFiles(directory=str(SOUTHAFRICA_DIR)),                                       name="za-tiles")
+app.mount("/southafrica/flood",     PublicFrontendFiles(directory=str(FRONTEND_DIR / "southafrica" / "flood"),   html=True), name="za-flood")
+app.mount("/southafrica/mine",      PublicFrontendFiles(directory=str(FRONTEND_DIR / "southafrica" / "mine"),    html=True), name="za-mine")
+app.mount("/southafrica/crop",      PublicFrontendFiles(directory=str(FRONTEND_DIR / "southafrica" / "crop"),    html=True), name="za-crop")
+app.mount("/southafrica/heat",      PublicFrontendFiles(directory=str(FRONTEND_DIR / "southafrica" / "heat"),    html=True), name="za-heat")
+app.mount("/southafrica/human",     PublicFrontendFiles(directory=str(FRONTEND_DIR / "southafrica" / "human"),   html=True), name="za-human")
+app.mount("/southafrica/profile",   PublicFrontendFiles(directory=str(FRONTEND_DIR / "southafrica" / "profile"), html=True), name="za-profile")
+app.mount("/southafrica",           PublicFrontendFiles(directory=str(FRONTEND_DIR / "southafrica"),              html=True), name="southafrica")
+app.mount("/cv-tiles",              PublicMapFiles(directory=str(CAPEVERDE_DIR)),                                      name="cv-tiles")
+app.mount("/capeverde/flood",      PublicFrontendFiles(directory=str(FRONTEND_DIR / "capeverde" / "flood"),  html=True), name="cv-flood")
+app.mount("/capeverde/mine",       PublicFrontendFiles(directory=str(FRONTEND_DIR / "capeverde" / "mine"),   html=True), name="cv-mine")
+app.mount("/capeverde/crop",       PublicFrontendFiles(directory=str(FRONTEND_DIR / "capeverde" / "crop"),   html=True), name="cv-crop")
+app.mount("/capeverde/heat",       PublicFrontendFiles(directory=str(FRONTEND_DIR / "capeverde" / "heat"),   html=True), name="cv-heat")
+app.mount("/capeverde/human",      PublicFrontendFiles(directory=str(FRONTEND_DIR / "capeverde" / "human"),  html=True), name="cv-human")
+app.mount("/capeverde/profile",    PublicFrontendFiles(directory=str(FRONTEND_DIR / "capeverde" / "profile"),html=True), name="cv-profile")
+app.mount("/capeverde",            PublicFrontendFiles(directory=str(FRONTEND_DIR / "capeverde"),             html=True), name="capeverde")
+app.mount("/tiles",                 PublicMapFiles(directory=str(PROCESSED_DIR)),                                    name="tiles")
+app.mount("/ghana/flood",           PublicFrontendFiles(directory=str(FRONTEND_DIR / "ghana" / "flood"),      html=True), name="gh-flood")
+app.mount("/ghana/mine",            PublicFrontendFiles(directory=str(FRONTEND_DIR / "ghana" / "mine"),       html=True), name="gh-mine")
+app.mount("/ghana/crop",            PublicFrontendFiles(directory=str(FRONTEND_DIR / "ghana" / "crop"),       html=True), name="gh-crop")
+app.mount("/ghana/heat",            PublicFrontendFiles(directory=str(FRONTEND_DIR / "ghana" / "heat"),       html=True), name="gh-heat")
+app.mount("/ghana/human",           PublicFrontendFiles(directory=str(FRONTEND_DIR / "ghana" / "human"),      html=True), name="gh-human")
+app.mount("/ghana/profile",         PublicFrontendFiles(directory=str(FRONTEND_DIR / "ghana" / "profile"),    html=True), name="gh-profile")
+app.mount("/ghana",                 PublicFrontendFiles(directory=str(FRONTEND_DIR / "ghana"),                html=True), name="ghana")
+app.mount("/",                      PublicFrontendFiles(directory=str(FRONTEND_DIR),                          html=True), name="home")
 
+
+def public_openapi():
+    """Document existing optional download authentication without changing policy."""
+    if app.openapi_schema:
+        return app.openapi_schema
+    schema = get_openapi(title=app.title, version=app.version, routes=app.routes)
+    schema.setdefault("components", {}).setdefault("securitySchemes", {}).update({
+        "APIKey": {"type": "apiKey", "in": "header", "name": "X-API-Key"},
+        "BearerAuth": {"type": "http", "scheme": "bearer"},
+        "SessionCookie": {"type": "apiKey", "in": "cookie", "name": "sb-access-token"},
+    })
+    for path, methods in schema["paths"].items():
+        for method, operation in methods.items():
+            if method not in {"get", "post", "delete", "put", "patch"}:
+                continue
+            if "/download/" in path and not path.endswith(".geojson"):
+                operation["security"] = [{"APIKey": []}, {"BearerAuth": []}, {"SessionCookie": []}, {}]
+                operation["description"] = operation.get("description", "") + "\nAnonymous date-filtered downloads are limited to recent months. Valid API keys or sessions can unlock the full range where supported; a key is not required for the recent window."
+            elif path.startswith("/api/keys"):
+                operation["security"] = [{"BearerAuth": []}, {"SessionCookie": []}]
+    app.openapi_schema = schema
+    return schema
+
+
+app.openapi = public_openapi

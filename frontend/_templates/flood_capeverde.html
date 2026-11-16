@@ -472,10 +472,9 @@
             <label>To</label>
             <input type="month" id="dl-to" value="2025-12" min="2024-01" max="2025-12">
           <a class="dl-btn" href="{{ c.flood.anomaly_base }}/flood/archive/download/csv?level=islands" download>Full archive CSV (1981&ndash;present)</a>
-          <a class="dl-btn" href="/docs" target="_blank" rel="noopener">API docs (JSON, full archive)</a>
+          <a class="dl-btn" href="/docs" target="_blank" rel="noopener">API docs (JSON, full archive)</a><p class="data-source-note">Boundary downloads are paused pending licensing review. Interactive map layers remain available.</p>
           </div>
           <button class="dl-btn" onclick="dlCsv('/api/capeverde/flood/download/csv?level=islands', 'insightsafrica_capeverde_flood_islands.csv')">CSV — Islands</button>
-          <a class="dl-btn" href="/api/capeverde/boundaries/islands" download="capeverde_islands.geojson">GeoJSON — Island boundaries</a>
         </div>
       </div>
 

@@ -55,3 +55,17 @@ Arc-Malstrom on a 10 m DTM, covering the Odaw River basin / ~23% of GAMA) — su
   remaining half — it is the calibration the Risk Index brief anticipates.
 
 Does not block anything; the Risk Index remains correctly labelled provisional until the NADMO half lands.
+
+## TD-3 — replace GADM boundaries and recompute derived products
+
+GADM administrative geometry is still used by interactive maps and the existing
+zonal-statistics archive. Redundant processed-file and bulk-download access is
+being restricted, but the map API must still send geometry to the browser.
+This is partial exposure reduction, not licence clearance. Review applicable
+commercial/derived-data terms with the owner and a qualified adviser.
+
+Select a suitably licensed replacement release for every country and level,
+document its attribution and terms, validate a stable administrative-code
+crosswalk, then recompute the archive, baselines and ranks together. Do not
+silently mix boundary sources or claim the existing statistics were regenerated.
+The separate backlog/paper-audit-findings branch also records this item.
