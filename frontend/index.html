@@ -38,9 +38,7 @@
   </script>
 
   <script>(function(){var t=localStorage.getItem('ia-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/fonts/site-fonts.css" integrity="sha384-VJq+ffWzn8D1kyeoToOMU3OCBp91qWYytvnsucB7R4Wqc54Zx/47CQX9BrK7VbUC" crossorigin="anonymous" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -123,6 +121,12 @@
       text-transform: uppercase; letter-spacing: 0.12em;
     }
 
+    .stat-word { font-size:clamp(1.1rem,2vw,2rem); }
+    @media (min-width:769px) and (max-width:1280px) {
+      #nav .nav-links { margin-left:0.65rem; }
+      #nav .nav-links a { padding:0.4rem 0.5rem; font-size:0.8rem; }
+      .nav-right .nav-cta { display:none; }
+    }
     .nav-links a, .nav-signin { white-space: nowrap; }
     .nav-links { display: flex; align-items: center; gap: 0.1rem; margin-left: 1.5rem; }
     .nav-links a {
@@ -442,7 +446,7 @@
     }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 1280px) {
+    @media (max-width: 986px) {
       .nav-links, .nav-cta, .nav-signin { display:none; }
       .nav-hamburger { display:flex; }
     }
@@ -471,8 +475,7 @@
     }
 
     /* ── CONTACT FORM ── */
-    #contact-privacy-note { font-size:0.8rem; line-height:1.65; color:var(--text-2); }
-    #contact-privacy-note a, .stat-l a { color:inherit; text-decoration:underline; text-underline-offset:3px; }
+    .stat-l a { color:inherit; text-decoration:underline; text-underline-offset:3px; }
     .contact-wrap {
       display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.65fr); gap: 3.5rem; align-items: start;
     }
@@ -810,7 +813,7 @@
       <div class="stat-l">Intelligence products</div>
     </div>
     <div class="stat">
-      <div class="stat-n"><span>Varied</span></div>
+      <div class="stat-n"><span class="stat-word">Open data</span></div>
       <div class="stat-l"><a href="/how-it-works.html#source-terms">Source terms and methods</a></div>
     </div>
   </div>
@@ -1036,7 +1039,7 @@
         <div class="contact-detail"><div class="contact-detail-dot"></div>Open data. Public benefit.</div>
       </div>
 
-      <form class="cform" id="contact-form" aria-describedby="contact-privacy-note" onsubmit="submitContact(event)">
+      <form class="cform" id="contact-form" onsubmit="submitContact(event)">
         <div class="cform-row">
           <div class="cfield">
             <label for="cf-name">Full name</label>
@@ -1062,7 +1065,7 @@
           <label for="cf-msg">Message</label>
           <textarea id="cf-msg" placeholder="Tell us what you're working on…" required></textarea>
         </div>
-        <p id="contact-privacy-note">We use your details to respond to your enquiry. Please read the <a href="/privacy.html">privacy notice</a> and avoid sending passwords or unnecessary sensitive information.</p><div class="cform-msg" id="cf-feedback" role="status" aria-live="polite"></div>
+        <div class="cform-msg" id="cf-feedback" role="status" aria-live="polite"></div>
         <button type="submit" class="cform-submit" id="cf-btn">Send message &rarr;</button>
       </form>
     </div>
@@ -1082,7 +1085,7 @@
       <a href="/capeverde/hub.html">Cape Verde Hub</a>
       <a href="/southafrica/hub.html">South Africa Hub</a>
       <a href="/how-it-works.html">How It Works</a>
-      <a href="#about">About</a><a href="/privacy.html">Privacy notice</a>
+      <a href="#about">About</a>
     </div>
   </div>
   <div class="foot-copy">&copy; 2026 InsightsAfrica</div>

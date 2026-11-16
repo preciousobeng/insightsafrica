@@ -1,0 +1,16 @@
+{
+  "package": "chart.js",
+  "version": "4.4.2",
+  "tarball": "https://registry.npmjs.org/chart.js/-/chart.js-4.4.2.tgz",
+  "npm_integrity": "sha512-6GD7iKwFpP5kbSD4MeRRRlTnQvxfQREy36uEtm1hzHzcOqwWx0YEHuspuoNlslu+nciLIB7fjjsHkUv/FzFcOg==",
+  "files": {
+    "chart.umd.js": {
+      "sha256": "c7e2cbfb0348f9901decc497f316c1fea8420209b610412ffb88fd3d516f9d30",
+      "integrity": "sha384-zuFoHkJ6+XzUchVtS39qBWxb+LvdA7aQ/ze8jYdufBf/A1jeuKGDBg4crfxvZAr8"
+    },
+    "LICENSE.md": {
+      "sha256": "5a0877ad6d818529be4f33009d0942cdf7e2ed7656156f4aba7308459a546030",
+      "integrity": "sha384-k1B8EE6v14zYHoqN/HkFSzv0RMXE3AH1b1bT+CU5/xSU//sya1sD7Zuej8cPWRdv"
+    }
+  }
+}

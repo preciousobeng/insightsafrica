@@ -1,0 +1,51 @@
+{
+  "stylesheet_source": "https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Mono:wght@400;500&display=swap",
+  "fonts": {
+    "site-325a111c247152.woff2": {
+      "source": "https://fonts.gstatic.com/s/dmmono/v16/aFTR7PB1QTsUX8KYvumzEY2tbZX9.woff2",
+      "sha256": "8711f938c3f04f91e35ae64ebc7f2eecd800d2ae1c3542f6c837c758a50422f5",
+      "bytes": 9616
+    },
+    "site-37479ee6171061.woff2": {
+      "source": "https://fonts.gstatic.com/s/dmmono/v16/aFTR7PB1QTsUX8KYvumzEYOtbQ.woff2",
+      "sha256": "9964608a849396bd00c4bfd7034afe03486469dcf20b4f6b8cbdfdd310369951",
+      "bytes": 14988
+    },
+    "site-d893bf46c88fc5.woff2": {
+      "source": "https://fonts.gstatic.com/s/dmmono/v16/aFTU7PB1QTsUX8KYthSQBLyM.woff2",
+      "sha256": "a52e19ebe0398c9c0f8fa28a0c5e9a6bc324f35d9f0881c9aa407d10af447175",
+      "bytes": 9552
+    },
+    "site-54a123c13be845.woff2": {
+      "source": "https://fonts.gstatic.com/s/dmmono/v16/aFTU7PB1QTsUX8KYthqQBA.woff2",
+      "sha256": "e1896b13b2b1bb112fac2f9571bd6c40e118746e77a4511edbf43fbb41bf3e1e",
+      "bytes": 14820
+    },
+    "site-6de212dde3ebba.woff2": {
+      "source": "https://fonts.gstatic.com/s/syne/v24/8vIH7w4qzmVxm25L9Hz_.woff2",
+      "sha256": "83885b130cf2a67bc2fd6175d6f3c2875833552c1762b5943b51335038ae01f2",
+      "bytes": 14724
+    },
+    "site-0b86590d9958dc.woff2": {
+      "source": "https://fonts.gstatic.com/s/syne/v24/8vIH7w4qzmVxm2BL9A.woff2",
+      "sha256": "68b623f0e45b905041b2edb9b2e4f563a505f13db1cd06b5f1946eb2e1f47048",
+      "bytes": 34608
+    },
+    "site-420d2e343a5f74.woff2": {
+      "source": "https://fonts.gstatic.com/s/syne/v24/8vIH7w4qzmVxm2NL9Hz_.woff2",
+      "sha256": "b9ade823e28b34c3a9c038ae698e659f64b66dabeed6c979e0bc347bfcc891a7",
+      "bytes": 11200
+    }
+  },
+  "licences": {
+    "syne-OFL.txt": {
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/syne/OFL.txt",
+      "sha256": "cc43cdce6f91c57989af8459341c276655e34224e954fa69c2ad700831a742d8"
+    },
+    "dmmono-OFL.txt": {
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/dmmono/OFL.txt",
+      "sha256": "2bada5ea45c3c63b7f1ea1f88ce9672c9e4f0c42b2c3b7378949084fe55a3066"
+    }
+  },
+  "css_integrity": "sha384-VJq+ffWzn8D1kyeoToOMU3OCBp91qWYytvnsucB7R4Wqc54Zx/47CQX9BrK7VbUC"
+}

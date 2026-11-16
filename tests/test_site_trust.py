@@ -57,26 +57,16 @@ def test_contact_payload_fields_are_preserved():
     assert fields(current) == fields(original)
 
 
-def test_privacy_draft_is_linked_and_requires_owner_input():
-    notice = (ROOT / "frontend/privacy.html").read_text()
-    assert "owner confirmation required before publication" in notice
-    for name in (
-        "CONTROLLER_NAME_AND_CONTACT",
-        "CONTACT_RETENTION",
-        "DOWNLOAD_LOG_RETENTION",
-        "PURPOSES_AND_LAWFUL_BASES",
-    ):
-        assert "OWNER INPUT · " + name in notice
-    for path in [
+def test_site_trust_does_not_publish_or_link_to_a_privacy_draft():
+    assert not (ROOT / "frontend/privacy.html").exists()
+    paths = [
         ROOT / "frontend/index.html",
         ROOT / "frontend/login.html",
+        ROOT / "frontend/how-it-works.html",
+        *ROOT.glob("frontend/_templates/hub*.html"),
         *ROOT.glob("frontend/*/hub.html"),
-    ]:
-        assert 'href="/privacy.html"' in path.read_text(), path
-    assert (
-        'aria-describedby="contact-privacy-note"'
-        in (ROOT / "frontend/index.html").read_text()
-    )
+    ]
+    assert all("/privacy.html" not in path.read_text() for path in paths)
 
 
 def test_share_description_and_archive_claims_are_consistent():
@@ -95,3 +85,58 @@ def test_hub_wording_does_not_claim_every_download_needs_a_key():
     text = (ROOT / "frontend/ghana/hub.html").read_text()
     assert "A key is not required for the anonymous recent window." in text
     assert "Free keys: 500 requests/day" in text
+
+
+def test_all_vendor_assets_match_provenance_and_pages_use_sri():
+    for folder in ("leaflet-1.9.4", "chartjs-4.4.2"):
+        base = ROOT / "frontend/static/vendor" / folder
+        info = json.loads((base / "provenance.json").read_text())
+        for name, record in info["files"].items():
+            data = (base / name).read_bytes()
+            assert hashlib.sha256(data).hexdigest() == record["sha256"]
+            assert (
+                "sha384-" + base64.b64encode(hashlib.sha384(data).digest()).decode()
+                == record["integrity"]
+            )
+    pages = list((ROOT / "frontend").rglob("*.html"))
+    for page in pages:
+        text = page.read_text()
+        assert "fonts.googleapis.com" not in text
+        assert "fonts.gstatic.com" not in text
+        assert "all open source" not in text.lower()
+        for tag, attrs in Elements(text).tags:
+            url = attrs.get("src", attrs.get("href", ""))
+            if "leaflet" in url or "chart.umd" in url or "site-fonts.css" in url:
+                assert url.startswith("/static/")
+                data = (ROOT / "frontend" / url.lstrip("/")).read_bytes()
+                assert (
+                    attrs["integrity"]
+                    == "sha384-"
+                    + base64.b64encode(hashlib.sha384(data).digest()).decode()
+                )
+
+
+def test_corrected_source_terms_and_open_data_stat():
+    assert ">Open data</span>" in (ROOT / "frontend/index.html").read_text()
+    for country in ("ivorycoast", "senegal", "capeverde"):
+        text = (ROOT / "frontend" / country / "hub.html").read_text()
+        assert "Boundaries: GADM 4.1 (non-commercial licence" in text
+        assert "Boundaries: GADM 4.1 &middot; CC BY-NC" not in text
+
+
+def test_self_hosted_font_files_and_licences_exist():
+    folder = ROOT / "frontend/static/fonts"
+    css = (folder / "site-fonts.css").read_text()
+    import re
+
+    files = re.findall(r"url\(['\"]?([^)'\"]+)", css)
+    assert files
+    for url in files:
+        data = (
+            (ROOT / "frontend" / url.lstrip("/"))
+            if url.startswith("/")
+            else folder / url
+        ).read_bytes()
+        assert data[:4] == b"wOF2"
+    assert (folder / "syne-OFL.txt").exists()
+    assert (folder / "dmmono-OFL.txt").exists()
