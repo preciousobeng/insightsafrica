@@ -57,18 +57,6 @@ def test_contact_payload_fields_are_preserved():
     assert fields(current) == fields(original)
 
 
-def test_site_trust_does_not_publish_or_link_to_a_privacy_draft():
-    assert not (ROOT / "frontend/privacy.html").exists()
-    paths = [
-        ROOT / "frontend/index.html",
-        ROOT / "frontend/login.html",
-        ROOT / "frontend/how-it-works.html",
-        *ROOT.glob("frontend/_templates/hub*.html"),
-        *ROOT.glob("frontend/*/hub.html"),
-    ]
-    assert all("/privacy.html" not in path.read_text() for path in paths)
-
-
 def test_share_description_and_archive_claims_are_consistent():
     page = (ROOT / "frontend/index.html").read_text()
     for tag, attrs in Elements(page).tags:

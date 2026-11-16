@@ -476,6 +476,8 @@
 
     /* ── CONTACT FORM ── */
     .stat-l a { color:inherit; text-decoration:underline; text-underline-offset:3px; }
+    #contact-privacy-note { font-size:0.8rem; line-height:1.65; color:var(--text-2); }
+    #contact-privacy-note a { color:inherit; text-decoration:underline; }
     .contact-wrap {
       display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.65fr); gap: 3.5rem; align-items: start;
     }
@@ -1039,7 +1041,7 @@
         <div class="contact-detail"><div class="contact-detail-dot"></div>Open data. Public benefit.</div>
       </div>
 
-      <form class="cform" id="contact-form" onsubmit="submitContact(event)">
+      <form class="cform" id="contact-form" aria-describedby="contact-privacy-note" onsubmit="submitContact(event)">
         <div class="cform-row">
           <div class="cfield">
             <label for="cf-name">Full name</label>
@@ -1065,7 +1067,7 @@
           <label for="cf-msg">Message</label>
           <textarea id="cf-msg" placeholder="Tell us what you're working on…" required></textarea>
         </div>
-        <div class="cform-msg" id="cf-feedback" role="status" aria-live="polite"></div>
+        <p id="contact-privacy-note">We use your details to respond to your enquiry. Please read the <a href="/privacy.html">privacy notice</a> and avoid sending passwords or unnecessary sensitive information.</p><div class="cform-msg" id="cf-feedback" role="status" aria-live="polite"></div>
         <button type="submit" class="cform-submit" id="cf-btn">Send message &rarr;</button>
       </form>
     </div>
@@ -1085,7 +1087,7 @@
       <a href="/capeverde/hub.html">Cape Verde Hub</a>
       <a href="/southafrica/hub.html">South Africa Hub</a>
       <a href="/how-it-works.html">How It Works</a>
-      <a href="#about">About</a>
+      <a href="#about">About</a><a href="/privacy.html">Privacy notice</a>
     </div>
   </div>
   <div class="foot-copy">&copy; 2026 InsightsAfrica</div>

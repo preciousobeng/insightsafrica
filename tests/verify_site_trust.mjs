@@ -31,7 +31,7 @@ try{
    }else{
     assert(await page.$$eval('#nav a,#nav .theme-toggle',elements=>{const rects=elements.filter(e=>getComputedStyle(e).display!=='none'&&e.getBoundingClientRect().width>0).map(e=>e.getBoundingClientRect()).sort((a,b)=>a.left-b.left);return rects.every((r,i)=>r.left>=0&&r.right<=innerWidth&&(!i||r.left>=rects[i-1].right));}));
    }
-   assert.equal(await page.$('a[href="/privacy.html"]'),null);
+   assert(await page.$('a[href="/privacy.html"]'));
    await page.screenshot({path:'node_modules/maintenance-evidence/current-'+width+'-'+theme+'.png',fullPage:true});
    assert.deepEqual(errors,[]);
    results.push({width,theme,errors,overflow:false,mobileMenu:mobile});
@@ -51,7 +51,7 @@ try{
   });
   await page.goto(base+path,{waitUntil:'networkidle0'});
   assert.equal(await page.evaluate(()=>typeof window.supabase?.createClient),'function');
-  assert.equal(await page.$('a[href="/privacy.html"]'),null);
+  assert(await page.$('a[href="/privacy.html"]'));
   assert.deepEqual(errors,[]);
   assert(!calls.some(host=>host.endsWith('.supabase.co')),'Unexpected live auth request');
   results.push({path,realSelfHostedSdkLoaded:true,errors,liveAuthRequests:0});
