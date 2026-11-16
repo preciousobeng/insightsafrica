@@ -9,3 +9,5 @@ Removed unsupported open-source footer claims; corrected CI/SN/CV GADM wording w
 Measured header links after fonts loaded at every pixel from 850–1100: first collision-free width respecting 32px side padding is 987px. Hamburger applies through 986px; compact desktop controls hide the redundant Explore CTA through 1280px. Hero and mobile navigation retain that destination.
 
 No merge, deployment or production write. Vendoring now overlaps public-surface Flood templates; review the combined patch rather than assuming the original no-overlap finding still holds.
+
+Validation: 15 focused Python/build checks; 16 width/theme browser renders; 12 empty/error hub cases; six synthetic maps with real local Leaflet/Chart.js. Public-surface frontend diff passes git apply --3way --check; this is patch compatibility, not a combined runtime test.
