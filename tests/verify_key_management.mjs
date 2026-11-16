@@ -40,8 +40,12 @@ try {
     }) };
   });
   await page.setRequestInterception(true);
-  page.on('request', request => {
+  page.on('request', async request => {
     const url = new URL(request.url());
+      if (url.pathname.startsWith('/static/fonts/')) {
+        const body = await readFile(new URL('../frontend' + url.pathname, import.meta.url));
+        return request.respond({status:200,contentType:url.pathname.endsWith('.css')?'text/css':'font/woff2',body});
+      }
     if (request.method() !== 'GET') writes.push(request.url());
     if (url.pathname === '/ghana/hub.html') {
       return request.respond({ status: 200, contentType: 'text/html', body: html });
