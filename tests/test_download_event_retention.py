@@ -106,6 +106,43 @@ def test_missing_config_and_argument_bounds(monkeypatch):
         runner.main(["--batch-size", "0"])
 
 
+def test_timeout_does_not_retry_or_leak_secrets():
+    import httpx
+
+    calls = []
+
+    def handle(request):
+        calls.append(request)
+        raise httpx.ReadTimeout("synthetic-secret", request=request)
+
+    client = runner.RetentionClient(
+        "https://synthetic.invalid", "synthetic-key", httpx.MockTransport(handle)
+    )
+    with pytest.raises(RuntimeError) as error:
+        client.retain(2)
+    assert len(calls) == 1
+    assert "synthetic-secret" not in str(error.value)
+
+
+def test_execute_stops_at_batch_limit(monkeypatch, capsys):
+    class FakeClient:
+        def __init__(self):
+            self.calls = 0
+
+        def retain(self, size):
+            self.calls += 1
+            return size
+
+        def count_eligible(self):
+            return 8
+
+    client = FakeClient()
+    monkeypatch.setattr(runner.RetentionClient, "from_env", lambda: client)
+    assert runner.main(["--execute", "--max-batches", "2", "--batch-size", "1"]) == 2
+    assert client.calls == 2
+    assert '"eligible_remaining": 8' in capsys.readouterr().out
+
+
 @pytest.mark.parametrize("version", ["16", "18"])
 def test_atomic_retention_on_disposable_postgres(version):
     binaries = Path("/usr/lib/postgresql") / version / "bin"
