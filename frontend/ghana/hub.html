@@ -801,8 +801,8 @@
   <section class="keys-section" id="keys-section" style="display:none">
     <div class="section-heading">API Access</div>
     <p class="keys-desc">
-      Use API keys to access InsightsAfrica data programmatically.
-      Pass your key as an <code>X-API-Key</code> header on any download endpoint.
+      Recent date-filtered downloads are available without signing in. Sign in for full supported archive access or to manage API keys for scripts.
+      For supported programmatic downloads, pass your key as an <code>X-API-Key</code> header. A key is not required for the anonymous recent window.
       Free keys: 500 requests/day. Premium keys: unlimited.
     </p>
 
@@ -830,7 +830,7 @@
     <div class="footer-note">
       Data: CHIRPS, Sentinel-2, MODIS, Landsat &mdash; all open source
     </div>
-  </footer>
+  <a href="/privacy.html" style="color:inherit">Privacy notice</a></footer>
 
   <script>
   (async function () {
@@ -846,17 +846,17 @@
       fetch('/api/heat/layers').then(r => r.json()),
       fetch('/api/mine/sites').then(r => r.json()),
     ]);
-    if (floodRes.status === 'fulfilled') {
+    if (floodRes.status === 'fulfilled' && Array.isArray(floodRes.value) && floodRes.value.length) {
       const peak = floodRes.value.reduce((a, b) => b.rainfall_mm.mean > a.rainfall_mm.mean ? b : a);
       set('kpi-flood', `${Math.round(peak.rainfall_mm.mean)}mm`, `${peak.label} · national mean`);
     } else { set('kpi-flood', '—', 'unavailable'); }
 
-    if (cropRes.status === 'fulfilled') {
+    if (cropRes.status === 'fulfilled' && Array.isArray(cropRes.value) && cropRes.value.length) {
       const worst = cropRes.value.reduce((a, b) => b.stress_score.severe_stress > a.stress_score.severe_stress ? b : a);
       set('kpi-crop', `${Math.round(worst.stress_score.severe_stress)}%`, `${worst.label} · severe stress`);
     } else { set('kpi-crop', '—', 'unavailable'); }
 
-    if (heatRes.status === 'fulfilled') {
+    if (heatRes.status === 'fulfilled' && Array.isArray(heatRes.value)) {
       const layers = heatRes.value.filter(l => l.city_id === 'accra' && !l.demo);
       const best   = layers.length ? layers.reduce((a, b) => b.stats.uhi_intensity_c > a.stats.uhi_intensity_c ? b : a) : null;
       if (best) {
@@ -866,14 +866,14 @@
       } else { set('kpi-heat', '—', 'no data'); }
     } else { set('kpi-heat', '—', 'unavailable'); }
 
-    if (mineRes.status === 'fulfilled') {
+    if (mineRes.status === 'fulfilled' && Array.isArray(mineRes.value)) {
       const sites = mineRes.value;
       set('kpi-mine', `${sites.length}`, `galamsey sites monitored`);
     } else { set('kpi-mine', '—', 'unavailable'); }
   })();
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/static/vendor/supabase-2.119.0.js" integrity="sha384-uteMfOloLDGt042uDz+xHGF3ym63/WQ6rFq7murQRG8Ih7QrXGEGNtWd8688sb4O" crossorigin="anonymous"></script>
   <script>
     const { createClient } = supabase;
     const sb = createClient(

@@ -620,7 +620,7 @@
 <footer>
   InsightsAfrica &middot; Satellite data: CHIRPS, Sentinel-2, MODIS MOD13Q1, Landsat 9 &middot;
   Boundaries: GADM 4.1 &middot; CC BY-NC 4.0
-</footer>
+<a href="/privacy.html" style="color:inherit">Privacy notice</a></footer>
 
 <script>
   function toggleCS() {
@@ -678,7 +678,7 @@
       set('kpi-crop', '\u2014', 'no data');
     }
 
-    if (heatRes.status === 'fulfilled') {
+    if (heatRes.status === 'fulfilled' && Array.isArray(heatRes.value)) {
       const layers  = heatRes.value.filter(l => l.city_id === 'praia' && !l.demo);
       const hottest = layers.length
         ? layers.reduce((a, b) => b.stats.uhi_intensity_c > a.stats.uhi_intensity_c ? b : a)

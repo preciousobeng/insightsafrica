@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import puppeteer from 'puppeteer-core';
 
-const html = await readFile(new URL('../frontend/login.html', import.meta.url), 'utf8');
+const html = (await readFile(new URL('../frontend/login.html', import.meta.url), 'utf8')).replace(/<script src="\/static\/vendor\/supabase-[^"]+"[^>]*><\/script>/, '');
 const browser = await puppeteer.launch({
   executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome',
   headless: true, args: ['--no-sandbox', '--disable-gpu'],

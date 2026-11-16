@@ -676,7 +676,7 @@
 <footer>
   InsightsAfrica · Satellite data: CHIRPS, Sentinel-2, MODIS MOD13Q1, Landsat 9 ·
   Boundaries: GADM 4.1 · CC BY-NC 4.0
-</footer>
+<a href="/privacy.html" style="color:inherit">Privacy notice</a></footer>
 
 <script>
     function toggleCS() {
@@ -717,7 +717,7 @@ document.addEventListener('DOMContentLoaded', function() {
   ]);
 
   // FloodWatch — peak month by national mean rainfall
-  if (floodRes.status === 'fulfilled') {
+  if (floodRes.status === 'fulfilled' && Array.isArray(floodRes.value) && floodRes.value.length) {
     const layers = floodRes.value;
     const peak   = layers.reduce((a, b) =>
       b.rainfall_mm.mean > a.rainfall_mm.mean ? b : a);
@@ -729,7 +729,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // CropWatch — worst stress composite (highest severe_stress %)
-  if (cropRes.status === 'fulfilled') {
+  if (cropRes.status === 'fulfilled' && Array.isArray(cropRes.value) && cropRes.value.length) {
     const layers = cropRes.value;
     const worst  = layers.reduce((a, b) =>
       b.stress_score.severe_stress > a.stress_score.severe_stress ? b : a);
@@ -741,7 +741,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // HeatWatch — peak UHI for Abidjan (real scenes only)
-  if (heatRes.status === 'fulfilled') {
+  if (heatRes.status === 'fulfilled' && Array.isArray(heatRes.value)) {
     const layers  = heatRes.value.filter(l => l.city_id === 'abidjan' && !l.demo);
     const hottest = layers.length
       ? layers.reduce((a, b) => b.stats.uhi_intensity_c > a.stats.uhi_intensity_c ? b : a)
@@ -761,7 +761,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // MineWatch — site count
-  if (mineRes.status === 'fulfilled') {
+  if (mineRes.status === 'fulfilled' && Array.isArray(mineRes.value)) {
     const sites = mineRes.value;
     const industrial = sites.filter(s => s.category === 'industrial').length;
     set('kpi-mine',
