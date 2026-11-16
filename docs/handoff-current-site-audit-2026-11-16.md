@@ -127,3 +127,7 @@ Turnstile remains deferred pending the owner's choice; existing contact limits a
 preserved and explicitly tested. HSTS/Cloudflare rules, Supabase settings and the
 live download-events migration state still require owner/senior action. No production
 or dashboard setting has been changed, and redesign/homepage remains at a077246.
+
+Additional scope note: large hub-metadata requests and edge-cache optimisation are
+recorded follow-ups, not claimed as fixed. Existing auth/rate controls and API policy
+were preserved. Turnstile stays deferred pending the unanswered owner preference.

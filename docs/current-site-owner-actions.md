@@ -51,3 +51,13 @@ and bulk-download links is not licence clearance. TD-3 needs licensed replacemen
 boundaries, stable crosswalks and recomputation. CHIRPS v3 likewise needs a consistent
 historical archive and normals; it must not be spliced into v2 history. The redesign
 is parked, not released.
+
+## Deployment checks and deferred performance work
+After a separately approved release, verify blocked source/bulk URLs at the edge
+and purge any previously cached copies if needed. Do not rely only on an origin
+404/410. No cache purge or deployment was performed in this task.
+
+The larger hub-metadata downloads and first-byte/edge caching optimisation remain
+separate performance work. No small summary endpoint or broad cache rule was
+introduced here. Do not apply a blanket public cache rule to authenticated/API-key
+or account/download responses. The prepared work preserves their existing policy.
