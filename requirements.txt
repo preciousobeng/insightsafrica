@@ -15,7 +15,7 @@ shapely==2.0.3
 # HTTP / API
 requests==2.34.2
 httpx==0.28.1
-python-dotenv==1.2.2
+python-dotenv==1.2.4
 
 # Backend
 fastapi==0.135.1
@@ -25,8 +25,8 @@ uvicorn[standard]==0.41.0
 titiler[full]==0.18.0
 
 # Scheduling / rate limiting
-schedule==1.2.1
-slowapi==0.1.9
+schedule==1.2.2
+slowapi==0.1.10
 limits>=2.3
 
 # Satellite data processing
